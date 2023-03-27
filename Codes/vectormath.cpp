@@ -7,18 +7,22 @@ Vec3 Vec3::operator + (Vec3 vec)
 {
     return Vec3(x + vec.x, y + vec.y, z + vec.z);
 }
+
 Vec3 Vec3::operator - (Vec3 vec)
 {
     return Vec3(x - vec.x, y - vec.y, z - vec.z);
 }
+
 Vec3 Vec3::operator * (float num)
 {
     return Vec3(x * num, y * num, z * num);
 }
+
 Vec3 Vec3::operator / (float num)
 {
     return Vec3(x / num, y / num, z / num);
 }
+
 bool Vec3::operator == (Vec3 vec)
 {
     if (x != vec.x || y != vec.y || z != vec.z)
@@ -28,22 +32,75 @@ bool Vec3::operator == (Vec3 vec)
     return true;
 }
 
-void Vec3::rotateX(float deg)
+void Vec3::operator += (Vec3 vec)
+{
+    x += vec.x;
+    y += vec.y;
+    z += vec.z;
+}
+
+void Vec3::operator -= (Vec3 vec)
+{
+    x -= vec.x;
+    y -= vec.y;
+    z -= vec.z;
+}
+
+void Vec3::operator *= (float num)
+{
+    x *= num;
+    y *= num;
+    z *= num;
+}
+
+void Vec3::operator /= (float num)
+{
+    x /= num;
+    y /= num;
+    z /= num;
+}
+
+Vec3 Vec3::rotateX(float deg)
 {
     glm::vec3 glmVec = glm::vec3(x, y, z);
     glmVec = glm::rotateX(glmVec, glm::radians(deg));
-    x = glmVec.x;
-    y = glmVec.y;
-    z = glmVec.z;
+    return Vec3(glmVec.x, glmVec.y, glmVec.z);
 }
 
-void Vec3::rotateY(float deg)
+Vec3 Vec3::rotateY(float deg)
 {
     glm::vec3 glmVec = glm::vec3(x, y, z);
     glmVec = glm::rotateY(glmVec, glm::radians(deg));
-    x = glmVec.x;
-    y = glmVec.y;
-    z = glmVec.z;
+    return Vec3(glmVec.x, glmVec.y, glmVec.z);
+}
+
+float Vec3::length()
+{
+    return distance(Vec3(0, 0, 0), Vec3(x, y, z));
+}
+
+Vec3 Vec3::normalize()
+{
+    if (Vec3(x, y, z).length() == 0)
+    {
+        printf("cant normalize vector with length 0\n");
+    }
+    return Vec3(x, y, z) / Vec3(x, y, z).length();
+}
+
+float Vec3::dot(Vec3 vec)
+{
+    return ::dot(Vec3(x, y, z), vec);
+}
+
+Vec3 Vec3::cross(Vec3 vec)
+{
+    return ::cross(Vec3(x, y, z), vec);
+}
+
+std::string Vec3::toString(bool endline)
+{
+    return std::to_string(x) +  " " + std::to_string(y) + " " + std::to_string(z) + (endline ? "\n" : "");
 }
 
 Vec3 cross(Vec3 vec_a, Vec3 vec_b)

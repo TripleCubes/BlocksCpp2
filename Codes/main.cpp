@@ -68,12 +68,12 @@ void onMouseMove(GLFWwindow* window, double mousex, double mousey)
         cameraRotationY -= offsetx * 0.17;
 
         Vec3 lookDir = Vec3(0, 0, -1);
-        lookDir.rotateX(cameraRotationX);
-        lookDir.rotateY(cameraRotationY);
+        lookDir = lookDir.rotateX(cameraRotationX);
+        lookDir = lookDir.rotateY(cameraRotationY);
         mainCamera.lookDir = lookDir;
 
         Vec3 playerFrontDir = Vec3(0, 0, -1);
-        playerFrontDir.rotateY(cameraRotationY);
+        playerFrontDir = playerFrontDir.rotateY(cameraRotationY);
         player.frontDir = playerFrontDir;
     }
     else
@@ -100,6 +100,11 @@ void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
     else if (key == GLFW_KEY_T && action == GLFW_PRESS)
     {
         thirdPersonView = !thirdPersonView;
+    }
+
+    else if (key == GLFW_KEY_F && action == GLFW_PRESS)
+    {
+        flying = !flying;
     }
 }
 
@@ -178,32 +183,40 @@ int main()
 
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
-            player.move(player.frontDir * 5 * deltaTime);
+            player.move(player.frontDir);
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         {
-            Vec3 rotatedfrontDir = player.frontDir;
-            rotatedfrontDir.rotateY(90);
-            player.move(rotatedfrontDir * 5 * deltaTime);
+            player.move(player.frontDir.rotateY(90));
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            player.move(player.frontDir * -5 * deltaTime);
+            player.move(player.frontDir * -1);
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
-            Vec3 rotatedfrontDir = player.frontDir;
-            rotatedfrontDir.rotateY(-90);
-            player.move(rotatedfrontDir * 5 * deltaTime);
+            player.move(player.frontDir.rotateY(-90));
         }
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        if (flying)
         {
-            player.move(Vec3(0, 5 * deltaTime, 0));
+            if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+            {
+                player.move(Vec3(0, 1, 0));
+            }
+            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+            {
+                player.move(Vec3(0, -1, 0));
+            }
         }
-        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        else
         {
-            player.move(Vec3(0, -5 * deltaTime, 0));
+            if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+            {
+                player.jump();
+            }
         }
+
+        player.update();
 
         currentBlockRaycast = BlockRaycast(Vec3(mainCamera.pos.x, mainCamera.pos.y + 1.5, mainCamera.pos.z), mainCamera.lookDir, 5);
         mainCamera.update(player);

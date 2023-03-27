@@ -1,6 +1,7 @@
 #include "globals.h"
 
 bool thirdPersonView = false;
+bool flying = true;
 
 Player player;
 Camera mainCamera;

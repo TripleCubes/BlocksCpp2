@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/rotate_vector.hpp>
+#include <string>
 
 struct Vec3
 {
@@ -20,8 +21,18 @@ struct Vec3
     Vec3 operator * (float num);
     Vec3 operator / (float num);
     bool operator == (Vec3 vec);
-    void rotateX(float deg);
-    void rotateY(float deg);
+    void operator += (Vec3 vec);
+    void operator -= (Vec3 vec);
+    void operator *= (float num);
+    void operator /= (float num);
+    Vec3 rotateX(float deg);
+    Vec3 rotateY(float deg); 
+    float length();
+    Vec3 normalize();
+    float dot(Vec3 vec);
+    Vec3 cross(Vec3 vec);
+    
+    std::string toString(bool endline = true);
 };
 
 Vec3 cross(Vec3 vec_a, Vec3 vec_b);

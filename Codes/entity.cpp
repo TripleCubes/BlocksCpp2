@@ -4,11 +4,21 @@
 #include "chunkLoader.h"
 #include "globals.h"
 #include "graphics.h"
+#include "time.h"
 
 void Entity::init(Vec3 pos, Vec3 frontDir)
 {
     this->pos = pos;
     this->frontDir = frontDir;
+
+    internalVelocityCap = 15;
+    internalVelocityAddAmount = 100;
+    internalVelocitySlowDownAmount = 60;
+
+    externalVelocityCap = 100;
+    externalVelocitySlowDownAmount = 7;
+    gravityVelocityAddAmount = 50;
+    jumpVelocityAddAmount = 15;
     
     std::vector<float> verticies = {
         -0.5,    2, -0.5,    0,    1,    0,    0,    1, // A
@@ -65,6 +75,27 @@ void Entity::init(Vec3 pos, Vec3 frontDir)
     playerTexture.load("./Textures/player.png", NEAREST);
 }
 
+void Entity::update()
+{
+    if (flying)
+    {
+        moveX(internalVelocity.x * deltaTime);
+        moveY(internalVelocity.y * deltaTime);
+        moveZ(internalVelocity.z * deltaTime);
+    }
+    else
+    {
+        addGravity();
+
+        moveX((internalVelocity.x + externalVelocity.x) * deltaTime);
+        moveY((internalVelocity.y + externalVelocity.y) * deltaTime);
+        moveZ((internalVelocity.z + externalVelocity.z) * deltaTime);
+    }
+
+    slowDownVelocity(internalVelocity, internalVelocitySlowDownAmount * deltaTime);
+    slowDownVelocity(externalVelocity, externalVelocitySlowDownAmount * deltaTime);
+}
+
 void Entity::draw()
 {
     glm::mat4 modelMat = glm::mat4(1.0f);
@@ -110,6 +141,8 @@ void Entity::moveX(float moveAmount)
         if (checkBlock.blockType != EMPTY)
         {
             pos.x = floor(nextPos.x) + 0.5;
+            internalVelocity.x = 0;
+            externalVelocity.x = 0;
             blockFound = true;
             break;
         }
@@ -122,6 +155,8 @@ void Entity::moveX(float moveAmount)
 
 void Entity::moveY(float moveAmount)
 {
+    isOnGround = false;
+
     if (moveAmount == 0)
     {
         return;
@@ -153,7 +188,15 @@ void Entity::moveY(float moveAmount)
         if (checkBlock.blockType != EMPTY)
         {
             pos.y = floor(nextPos.y + 0.5);
+            internalVelocity.y = 0;
+            externalVelocity.y = 0;
             blockFound = true;
+
+            if (moveAmount < 0)
+            {
+                isOnGround = true;
+            }
+
             break;
         }
     }
@@ -198,6 +241,8 @@ void Entity::moveZ(float moveAmount)
         if (checkBlock.blockType != EMPTY)
         {
             pos.z = floor(nextPos.z) + 0.5;
+            internalVelocity.z = 0;
+            externalVelocity.z = 0;
             blockFound = true;
             break;
         }
@@ -208,11 +253,44 @@ void Entity::moveZ(float moveAmount)
     }
 }
 
-void Entity::move(Vec3 moveVec)
+void Entity::slowDownVelocity(Vec3 &velocity, float velocitySlowDownAmount)
 {
-    moveY(moveVec.y);
-    moveX(moveVec.x);
-    moveZ(moveVec.z);
+    if (velocitySlowDownAmount >= velocity.length())
+    {
+        velocity = Vec3(0, 0, 0);
+    }
+    else
+    {
+        velocity -= velocity.normalize() * velocitySlowDownAmount;
+    }
+}
+
+void Entity::addVelocity(Vec3 &velocity, Vec3 velocityAddDir, float velocityAddAmount, float velocityCap)
+{
+    velocity += velocityAddDir.normalize() * velocityAddAmount;
+
+    if (velocity.length() > velocityCap)
+    {
+        velocity = velocity.normalize() * velocityCap;
+    }
+}
+
+void Entity::addGravity()
+{
+    addVelocity(externalVelocity, Vec3(0, -1, 0), gravityVelocityAddAmount * deltaTime, externalVelocityCap);
+}
+
+void Entity::move(Vec3 dir)
+{
+    addVelocity(internalVelocity, dir, internalVelocityAddAmount * deltaTime, internalVelocityCap);
+}
+
+void Entity::jump()
+{
+    if (isOnGround)
+    {
+        addVelocity(externalVelocity, Vec3(0, 1, 0), jumpVelocityAddAmount, externalVelocityCap);
+    }
 }
 
 void Entity::release()
