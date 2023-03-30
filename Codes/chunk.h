@@ -2,6 +2,7 @@
 #define CHUNK_H
 
 #include <vector>
+#include <string>
 
 #include "mesh.h"
 #include "shader.h"
@@ -18,6 +19,7 @@ struct IntPos
     bool operator == (IntPos pos);
     IntPos chunkPos();
     IntPos blockChunkPos();
+    std::string toString(bool endline = true);
 };
 
 enum BlockType
@@ -40,14 +42,18 @@ class Chunk
         std::vector<Block> blocks;
         std::vector<float> verticies;
         Mesh mesh;
-        IntPos pos;
+        bool meshUpdated = false;
+        IntPos chunkPos;
 
     public:
         Chunk(int x, int y, int z);
+        Chunk(IntPos chunkPos);
         Chunk();
+        IntPos getChunkPos();
         void addBlock(Block block);
         void removeBlock(IntPos pos);
         void setMesh();
+        bool meshIsUpdated();
         Block getBlock(int x, int y, int z);
         Block getBlock(IntPos pos);
         void draw();

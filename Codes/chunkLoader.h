@@ -11,6 +11,8 @@
 class ChunkLoader 
 {
     private:
+        static int loadDistance;
+
         static std::unordered_map<std::string, Chunk> chunks;
         static FastNoiseLite terrainHeightNoise;
 
@@ -20,11 +22,22 @@ class ChunkLoader
     public:
         static void init();
 
+        static void chunkLoadThreadFunction();
+        static void setMeshesThreadFunction();
+        static void chunkUnloadThreadFunction();
+
         static Block getBlock(int x, int y, int z);
         static Block getBlock(IntPos pos);
         static void placeBlock(Block block);
         static void breakBlock(IntPos pos);
 
+        static bool chunkLoaded(IntPos chunkPos);
+        static bool chunkLoaded(std::string key);
+
+        static void loadChunk(IntPos chunkPos);
+        static std::unordered_map<std::string, Chunk>::iterator unloadChunk(IntPos chunkPos);
+
+        static void update();
         static void draw();
 
         static void release();

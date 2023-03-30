@@ -79,6 +79,9 @@ void Entity::update()
 {
     if (flying)
     {
+        addVelocity(internalVelocity, Vec3(0, 1, 0), externalVelocity.y, internalVelocityCap);
+        externalVelocity = Vec3(0, 0, 0);
+
         moveX(internalVelocity.x * deltaTime);
         moveY(internalVelocity.y * deltaTime);
         moveZ(internalVelocity.z * deltaTime);

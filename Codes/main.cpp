@@ -17,6 +17,8 @@
 #include "ui.h"
 #include "graphics.h"
 
+#include "threadControls.h"
+
 float cameraRotationX = 0;
 float cameraRotationY = 0;
 
@@ -26,19 +28,20 @@ bool mouseInWindow = false;
 
 bool mouseLock = true;
 
-GLFWwindow *window = NULL;
-
 void onWindowResize(GLFWwindow *window, int width, int height)
 {
-    currentWindowWidth = width;
-    currentWindowHeight = height;
+    if (width != 0 && height != 0)
+    {
+        currentWindowWidth = width;
+        currentWindowHeight = height;
 
-    glm::mat4 projectionMat = glm::perspective(glm::radians(70.0f), (float)currentWindowWidth / (float)currentWindowHeight, 0.1f, 300.0f);
-    Graphics::getViewShader().useProgram();
-    Graphics::getViewShader().setUniform("projectionMat", projectionMat);
-    
-    glViewport(0, 0, width, height);
-    Graphics::getViewFrameBuffer().resize();
+        glm::mat4 projectionMat = glm::perspective(glm::radians(70.0f), (float)currentWindowWidth / (float)currentWindowHeight, 0.1f, 300.0f);
+        Graphics::getViewShader().useProgram();
+        Graphics::getViewShader().setUniform("projectionMat", projectionMat);
+        
+        glViewport(0, 0, width, height);
+        Graphics::getViewFrameBuffer().resize();
+    }
 }
 
 void onMouseMove(GLFWwindow* window, double mousex, double mousey)
@@ -134,14 +137,14 @@ void initOpenGL()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(INIT_WINDOW_WIDTH, INIT_WINDOW_HEIGHT, "Blocks", NULL, NULL);
-    if (window == NULL)
+    glfwWindow = glfwCreateWindow(INIT_WINDOW_WIDTH, INIT_WINDOW_HEIGHT, "Blocks", NULL, NULL);
+    if (glfwWindow == NULL)
     {
         printf("failed to create window\n");
         glfwTerminate();
         return;
     }
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(glfwWindow);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -151,10 +154,10 @@ void initOpenGL()
 
     glViewport(0, 0, INIT_WINDOW_WIDTH, INIT_WINDOW_HEIGHT);
 
-    glfwSetFramebufferSizeCallback(window, onWindowResize);
-    glfwSetCursorPosCallback(window, onMouseMove);
-    glfwSetKeyCallback(window, onKeyPress);
-    glfwSetMouseButtonCallback(window, onMouseClick);
+    glfwSetFramebufferSizeCallback(glfwWindow, onWindowResize);
+    glfwSetCursorPosCallback(glfwWindow, onMouseMove);
+    glfwSetKeyCallback(glfwWindow, onKeyPress);
+    glfwSetMouseButtonCallback(glfwWindow, onMouseClick);
 }
 
 int main()
@@ -167,7 +170,7 @@ int main()
     initOpenGL();
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
 
     Graphics::init();
 
@@ -177,40 +180,45 @@ int main()
     player.init(Vec3(0, 0, 10), Vec3(0, 0, -1));
     mainCamera.init(player);
 
-    while (!glfwWindowShouldClose(window))
+    ThreadControls::init();
+
+    while (!glfwWindowShouldClose(glfwWindow))
     {
         float frameStartTime = glfwGetTime();
 
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        ThreadControls::lockMainThread();
+        ChunkLoader::update();
+
+        if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
         {
             player.move(player.frontDir);
         }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
         {
             player.move(player.frontDir.rotateY(90));
         }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
         {
             player.move(player.frontDir * -1);
         }
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
         {
             player.move(player.frontDir.rotateY(-90));
         }
         if (flying)
         {
-            if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+            if (glfwGetKey(glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
             {
                 player.move(Vec3(0, 1, 0));
             }
-            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+            if (glfwGetKey(glfwWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
             {
                 player.move(Vec3(0, -1, 0));
             }
         }
         else
         {
-            if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+            if (glfwGetKey(glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
             {
                 player.jump();
             }
@@ -224,8 +232,10 @@ int main()
         Graphics::update();
         Graphics::draw();
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(glfwWindow);
         glfwPollEvents();
+
+        ThreadControls::markMainThreadCycleFinished();
 
         float frameTime = glfwGetTime() - frameStartTime;
         sleep_for(milliseconds((int)round((1/(float)FPS_CAP - frameTime)* 1000)));
@@ -234,11 +244,12 @@ int main()
         previousTime = glfwGetTime();
     }
 
-    glfwTerminate();
+    ThreadControls::release();
     player.release();
     ChunkLoader::release();
     UI::release();
     Graphics::release();
+    glfwTerminate();
 
     return 0;
 }

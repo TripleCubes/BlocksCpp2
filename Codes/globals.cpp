@@ -1,5 +1,7 @@
 #include "globals.h"
 
+GLFWwindow* glfwWindow = NULL;
+
 bool thirdPersonView = false;
 bool flying = true;
 

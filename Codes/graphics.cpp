@@ -77,7 +77,10 @@ void Graphics::draw()
     viewShader.setUniform("viewMat", viewViewMat);
     ChunkLoader::draw();
     player.draw();
-    UI::drawSelectedBlock();
+    if (currentBlockRaycast.found)
+    {
+        UI::drawSelectedBlock();
+    }
 
 
 

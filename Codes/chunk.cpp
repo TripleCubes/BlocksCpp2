@@ -26,6 +26,11 @@ IntPos IntPos::blockChunkPos()
     return IntPos(mod(x, CHUNK_SIZE), mod(y, CHUNK_SIZE), mod(z, CHUNK_SIZE));
 }
 
+std::string IntPos::toString(bool endline)
+{
+    return std::to_string(x) +  " " + std::to_string(y) + " " + std::to_string(z) + (endline ? "\n" : "");
+}
+
 
 
 Block::Block(BlockType blockType, IntPos pos): blockType{blockType}, pos{pos} {}
@@ -33,8 +38,14 @@ Block::Block(): blockType{EMPTY}, pos{IntPos(0, 0, 0)} {}
 
 
 
-Chunk::Chunk(int x, int y, int z): pos(IntPos(x, y, z)) {}
-Chunk::Chunk(): pos(IntPos(0, 0, 0)) {}
+Chunk::Chunk(int x, int y, int z): chunkPos(IntPos(x, y, z)) {}
+Chunk::Chunk(IntPos chunkPos): chunkPos(chunkPos) {}
+Chunk::Chunk(): chunkPos(IntPos(0, 0, 0)) {}
+
+IntPos Chunk::getChunkPos()
+{
+    return chunkPos;
+}
 
 void Chunk::addBlock(Block block)
 {
@@ -114,12 +125,18 @@ void Chunk::setMesh()
     }
 
     mesh.set(verticies);
+    meshUpdated = true;
+}
+
+bool Chunk::meshIsUpdated()
+{
+    return meshUpdated;
 }
 
 void Chunk::draw()
 {
     glm::mat4 modelMat = glm::mat4(1.0f);
-    modelMat = glm::translate(modelMat, glm::vec3(pos.x*CHUNK_SIZE, pos.y*CHUNK_SIZE, pos.z*CHUNK_SIZE));
+    modelMat = glm::translate(modelMat, glm::vec3(chunkPos.x*CHUNK_SIZE, chunkPos.y*CHUNK_SIZE, chunkPos.z*CHUNK_SIZE));
 
     Graphics::getViewShader().useProgram();
     Graphics::getViewShader().setUniform("modelMat", modelMat);
