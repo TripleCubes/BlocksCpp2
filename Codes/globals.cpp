@@ -4,6 +4,8 @@ GLFWwindow* glfwWindow = NULL;
 
 bool thirdPersonView = false;
 bool flying = true;
+bool wireframeMode = false;
+bool ignoreCollision = false;
 
 Player player;
 Camera mainCamera;

@@ -9,6 +9,8 @@
 class ThreadControls
 {
     private:
+        static const int SAFE_THREAD;
+
         static std::vector<std::thread> threads;
         static std::vector<std::vector<int>> groups;
         static std::vector<bool> running;

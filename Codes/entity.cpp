@@ -77,22 +77,32 @@ void Entity::init(Vec3 pos, Vec3 frontDir)
 
 void Entity::update()
 {
-    if (flying)
+    if (ignoreCollision)
     {
         addVelocity(internalVelocity, Vec3(0, 1, 0), externalVelocity.y, internalVelocityCap);
         externalVelocity = Vec3(0, 0, 0);
 
-        moveX(internalVelocity.x * deltaTime);
-        moveY(internalVelocity.y * deltaTime);
-        moveZ(internalVelocity.z * deltaTime);
+        pos += internalVelocity * deltaTime;
     }
     else
     {
-        addGravity();
+        if (flying)
+        {
+            addVelocity(internalVelocity, Vec3(0, 1, 0), externalVelocity.y, internalVelocityCap);
+            externalVelocity = Vec3(0, 0, 0);
 
-        moveX((internalVelocity.x + externalVelocity.x) * deltaTime);
-        moveY((internalVelocity.y + externalVelocity.y) * deltaTime);
-        moveZ((internalVelocity.z + externalVelocity.z) * deltaTime);
+            moveX(internalVelocity.x * deltaTime);
+            moveY(internalVelocity.y * deltaTime);
+            moveZ(internalVelocity.z * deltaTime);
+        }
+        else
+        {
+            addGravity();
+
+            moveX((internalVelocity.x + externalVelocity.x) * deltaTime);
+            moveY((internalVelocity.y + externalVelocity.y) * deltaTime);
+            moveZ((internalVelocity.z + externalVelocity.z) * deltaTime);
+        }
     }
 
     slowDownVelocity(internalVelocity, internalVelocitySlowDownAmount * deltaTime);

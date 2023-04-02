@@ -19,6 +19,8 @@ extern GLFWwindow* glfwWindow;
 
 extern bool thirdPersonView;
 extern bool flying;
+extern bool wireframeMode;
+extern bool ignoreCollision;
 
 extern Player player;
 extern Camera mainCamera;

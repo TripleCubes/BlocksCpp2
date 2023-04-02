@@ -72,6 +72,15 @@ void Graphics::draw()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
+    if (wireframeMode)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+    glLineWidth(1);
 
     viewShader.useProgram();
     viewShader.setUniform("viewMat", viewViewMat);
@@ -88,6 +97,7 @@ void Graphics::draw()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     screenShader.useProgram();
     screenShader.setUniform("viewTexture", viewFrameBuffer.getTexture(), 0);

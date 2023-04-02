@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <stdio.h>
 
+const int ThreadControls::SAFE_THREAD = -1;
+
 std::vector<std::thread> ThreadControls::threads;
 std::vector<std::vector<int>> ThreadControls::groups;
 std::vector<bool> ThreadControls::running;
@@ -17,18 +19,26 @@ std::mutex ThreadControls::mutex;
 
 void ThreadControls::init()
 {
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i <= 0; i++)
     {
         groups.push_back(std::vector<int>());
     }
-
+    
     addThread(0, ChunkLoader::chunkLoadThreadFunction);
-    addSafeThreadFunction(ChunkLoader::setMeshesThreadFunction);
-    addSafeThreadFunction(ChunkLoader::chunkUnloadThreadFunction);
+    addThread(0, ChunkLoader::updateSurfaceDataThreadFunction);
+
+    addThread(SAFE_THREAD, ChunkLoader::updateMeshesThreadFunction);
+    addThread(SAFE_THREAD, ChunkLoader::chunkUnloadThreadFunction);
 }
 
 void ThreadControls::addThread(int group, std::function<void()> threadFunction)
 {
+    if (group == SAFE_THREAD)
+    {
+        addSafeThreadFunction(threadFunction);
+        return;
+    }
+
     if (group >= groups.size())
     {
         printf("Group doesnt exist\n");
@@ -97,8 +107,7 @@ void ThreadControls::updateGroupStatus()
         currentRunningGroup++;
         if (currentRunningGroup >= groups.size())
         {
-            runSafeThread();
-            currentRunningGroup = 0;
+            currentRunningGroup = SAFE_THREAD;
         }
     }
 }
@@ -122,6 +131,12 @@ void ThreadControls::lockMainThread()
         {
             runMainThread = true;
         }
+
+        if (currentRunningGroup == SAFE_THREAD)
+        {
+            runSafeThread();
+            currentRunningGroup++;
+        }
     }
     while (!runMainThread);
 }
@@ -137,6 +152,7 @@ std::vector<std::function<void()>> ThreadControls::safeThreadFunctions;
 
 void ThreadControls::addSafeThreadFunction(std::function<void()> safeThreadFunction)
 {
+    std::lock_guard<std::mutex> guard(mutex);
     safeThreadFunctions.push_back(safeThreadFunction);
 }
 

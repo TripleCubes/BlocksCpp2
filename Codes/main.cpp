@@ -109,6 +109,16 @@ void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         flying = !flying;
     }
+
+    else if (key == GLFW_KEY_M && action == GLFW_PRESS)
+    {
+        wireframeMode = !wireframeMode;
+    }
+
+    else if (key == GLFW_KEY_N && action == GLFW_PRESS)
+    {
+        ignoreCollision = !ignoreCollision;
+    }
 }
 
 void onMouseClick(GLFWwindow* window, int button, int action, int mods)
@@ -205,7 +215,7 @@ int main()
         {
             player.move(player.frontDir.rotateY(-90));
         }
-        if (flying)
+        if (flying || ignoreCollision)
         {
             if (glfwGetKey(glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
             {

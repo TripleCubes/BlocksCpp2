@@ -164,6 +164,11 @@ void Mesh::set2d(std::vector<float> verticies, std::vector<unsigned int> indicie
 
 void Mesh::draw(bool drawLine)
 {
+    if (!VAOInitialized)
+    {
+        return;
+    }
+
     glBindVertexArray(VAO);
     if (!EBOInitialized)
     {

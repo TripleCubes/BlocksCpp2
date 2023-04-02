@@ -2,6 +2,7 @@
 #define CHUNK_H
 
 #include <vector>
+#include <array>
 #include <string>
 
 #include "mesh.h"
@@ -20,6 +21,7 @@ struct IntPos
     IntPos chunkPos();
     IntPos blockChunkPos();
     std::string toString(bool endline = true);
+    Vec3 toVec3();
 };
 
 enum BlockType
@@ -33,30 +35,52 @@ struct Block
     Block(BlockType blockType, IntPos pos);
     Block();
     IntPos pos = IntPos(0, 0, 0);
+    IntPos chunkPos = IntPos(0, 0, 0);
+    IntPos blockChunkPos = IntPos(0, 0, 0);
     BlockType blockType = EMPTY;
 };
 
 class Chunk 
 {
     private:
-        std::vector<Block> blocks;
+        enum Dir
+        {
+            TOP, BOTTOM, LEFT, RIGHT, FORWARD, BACKWARD
+        };
+
+        struct Surface
+        {
+            Dir dir;
+            IntPos blockChunkPos;
+            int w;
+            int h;
+        };
+
+        std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> blocks;
         std::vector<float> verticies;
+        std::vector<Surface> surfaceData;
         Mesh mesh;
-        bool meshUpdated = false;
         IntPos chunkPos;
+
+        bool meshInitialized = false;
+        bool meshUpdated = false;
+        bool surfaceDataUpdated = false;
 
     public:
         Chunk(int x, int y, int z);
         Chunk(IntPos chunkPos);
         Chunk();
+
         IntPos getChunkPos();
         void addBlock(Block block);
-        void removeBlock(IntPos pos);
-        void setMesh();
-        bool meshIsUpdated();
-        Block getBlock(int x, int y, int z);
-        Block getBlock(IntPos pos);
+        void removeBlock(IntPos blockChunkPos);
+        Block getBlock(IntPos blockChunkPos);
+
+        void requestUpdateMesh();
+        void updateSurfaceData();
+        void updateMesh();
         void draw();
+
         void release();
 };
 

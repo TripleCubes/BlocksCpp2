@@ -3,12 +3,14 @@
 #include "globals.h"
 #include "threadControls.h"
 
-int ChunkLoader::loadDistance = 1;
+int ChunkLoader::loadDistance = 3;
+int ChunkLoader::chunkLoadPerCycle = 3;
 std::unordered_map<std::string, Chunk> ChunkLoader::chunks;
 FastNoiseLite ChunkLoader::terrainHeightNoise;
 
 void ChunkLoader::chunkLoadThreadFunction()
 {
+    int numberOfChunkLoaded = 0;
     IntPos playerChunkPos = IntPos(player.pos.x, player.pos.y, player.pos.z).chunkPos();
 
     for (int i = playerChunkPos.x - loadDistance; i <= playerChunkPos.x + loadDistance; i++)
@@ -20,20 +22,30 @@ void ChunkLoader::chunkLoadThreadFunction()
                 if (!chunkLoaded(IntPos(i, j, k)))
                 {
                     loadChunk(IntPos(i, j, k));
+                    numberOfChunkLoaded++;
+                    if (numberOfChunkLoaded = chunkLoadPerCycle)
+                    {
+                        return;
+                    }
                 }
             }
         }
     }
 }
 
-void ChunkLoader::setMeshesThreadFunction()
+void ChunkLoader::updateSurfaceDataThreadFunction()
 {
     for (std::unordered_map<std::string, Chunk>::iterator i = chunks.begin(); i != chunks.end(); i++)
     {
-        if (!i->second.meshIsUpdated())
-        {
-            i->second.setMesh();
-        }
+        i->second.updateSurfaceData();
+    }
+}
+
+void ChunkLoader::updateMeshesThreadFunction()
+{
+    for (std::unordered_map<std::string, Chunk>::iterator i = chunks.begin(); i != chunks.end(); i++)
+    {
+        i->second.updateMesh();
     }
 }
 
@@ -76,9 +88,19 @@ std::string ChunkLoader::convertToKey(int x, int y, int z)
     return key;
 }
 
-std::string ChunkLoader::convertToKey(IntPos pos)
+std::string ChunkLoader::convertToKey(IntPos chunkPos)
 {
-    return convertToKey(pos.x, pos.y, pos.z);
+    return convertToKey(chunkPos.x, chunkPos.y, chunkPos.z);
+}
+
+Chunk ChunkLoader::getChunk(IntPos chunkPos)
+{
+    return getChunk(convertToKey(chunkPos));
+}
+
+Chunk ChunkLoader::getChunk(std::string key)
+{
+    return chunks[key];
 }
 
 Block ChunkLoader::getBlock(int x, int y, int z)
@@ -90,7 +112,7 @@ Block ChunkLoader::getBlock(IntPos pos)
 {
     if (chunkLoaded(pos.chunkPos()))
     {
-        return chunks[convertToKey(pos.chunkPos())].getBlock(pos);
+        return chunks[convertToKey(pos.chunkPos())].getBlock(pos.blockChunkPos());
     }
     
     return Block(EMPTY, IntPos(0, 0, 0));
@@ -100,14 +122,12 @@ void ChunkLoader::placeBlock(Block block)
 {
     std::string key = convertToKey(block.pos.chunkPos());
     chunks[key].addBlock(block);
-    chunks[key].setMesh();
 }
 
 void ChunkLoader::breakBlock(IntPos pos)
 {
     std::string key = convertToKey(pos.chunkPos());
-    chunks[key].removeBlock(pos);
-    chunks[key].setMesh();
+    chunks[key].removeBlock(pos.blockChunkPos());
 }
 
 bool ChunkLoader::chunkLoaded(IntPos chunkPos)
@@ -123,17 +143,15 @@ bool ChunkLoader::chunkLoaded(std::string key)
 void ChunkLoader::loadChunk(IntPos chunkPos)
 {
     Chunk chunk(chunkPos);
-    for (int x = 0; x < CHUNK_SIZE; x++)
+    for (int x = CHUNK_SIZE * chunkPos.x; x < CHUNK_SIZE * chunkPos.x + CHUNK_SIZE; x++)
     {
-        for (int z = 0; z < CHUNK_SIZE; z++)
+        for (int z = CHUNK_SIZE * chunkPos.z; z < CHUNK_SIZE * chunkPos.z + CHUNK_SIZE; z++)
         {
-            int terrainHeight = round((terrainHeightNoise.GetNoise((float)(chunkPos.x * CHUNK_SIZE + x), 
-                                                                (float)(chunkPos.z * CHUNK_SIZE + z))+1)/2 * 16) - 16;
+            int terrainHeight = round((terrainHeightNoise.GetNoise((float)x, (float)z)+1)/2 * 16) - 16;
 
-            for (int y = 0; y < CHUNK_SIZE; y++)
+            for (int y = CHUNK_SIZE * chunkPos.y; y < CHUNK_SIZE * chunkPos.y + CHUNK_SIZE; y++)
             {
-                int worldY = chunkPos.y * CHUNK_SIZE + y;
-                if (worldY <= terrainHeight)
+                if (y <= terrainHeight)
                 {
                     chunk.addBlock(Block(TEST, IntPos(x, y, z)));
                 }
@@ -141,6 +159,45 @@ void ChunkLoader::loadChunk(IntPos chunkPos)
         }
     }
     chunks.insert(std::make_pair(convertToKey(chunkPos), chunk));
+
+    std::string topChunkKey         = ChunkLoader::convertToKey(IntPos(chunkPos.x, chunkPos.y + 1, chunkPos.z));
+    std::string bottomChunkKey      = ChunkLoader::convertToKey(IntPos(chunkPos.x, chunkPos.y - 1, chunkPos.z));
+    std::string leftChunkKey        = ChunkLoader::convertToKey(IntPos(chunkPos.x - 1, chunkPos.y, chunkPos.z));
+    std::string rightChunkKey       = ChunkLoader::convertToKey(IntPos(chunkPos.x + 1, chunkPos.y, chunkPos.z));
+    std::string forwardChunkKey     = ChunkLoader::convertToKey(IntPos(chunkPos.x, chunkPos.y, chunkPos.z + 1));
+    std::string backwardChunkKey    = ChunkLoader::convertToKey(IntPos(chunkPos.x, chunkPos.y, chunkPos.z - 1));
+
+    bool topChunkLoaded         = ChunkLoader::chunkLoaded(topChunkKey);
+    bool bottomChunkLoaded      = ChunkLoader::chunkLoaded(bottomChunkKey);
+    bool leftChunkLoaded        = ChunkLoader::chunkLoaded(leftChunkKey);
+    bool rightChunkLoaded       = ChunkLoader::chunkLoaded(rightChunkKey);
+    bool forwardChunkLoaded     = ChunkLoader::chunkLoaded(forwardChunkKey);
+    bool backwardChunkLoaded    = ChunkLoader::chunkLoaded(backwardChunkKey);
+
+    if (topChunkLoaded)
+    {
+        chunks[topChunkKey].requestUpdateMesh();
+    }
+    if (bottomChunkLoaded)
+    {
+        chunks[bottomChunkKey].requestUpdateMesh();
+    }
+    if (leftChunkLoaded)
+    {
+        chunks[leftChunkKey].requestUpdateMesh();
+    }
+    if (rightChunkLoaded)
+    {
+        chunks[rightChunkKey].requestUpdateMesh();
+    }
+    if (forwardChunkLoaded)
+    {
+        chunks[forwardChunkKey].requestUpdateMesh();
+    }
+    if (backwardChunkLoaded)
+    {
+        chunks[backwardChunkKey].requestUpdateMesh();
+    }
 }
 
 std::unordered_map<std::string, Chunk>::iterator ChunkLoader::unloadChunk(IntPos chunkPos)
