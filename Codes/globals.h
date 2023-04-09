@@ -5,17 +5,19 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 
-#include "shader.h"
-#include "player.h"
-#include "frameBuffer.h"
-#include "raycast.h"
-#include "camera.h"
+#include "Graphics/shader.h"
+#include "Graphics/frameBuffer.h"
+#include "Entities/player.h"
+#include "Entities/camera.h"
+#include "Entities/raycast.h"
 
 const int INIT_WINDOW_WIDTH = 800;
 const int INIT_WINDOW_HEIGHT = 500;
 const int FPS_CAP = 60;
 
 extern GLFWwindow* glfwWindow;
+
+extern bool gamePaused;
 
 extern bool thirdPersonView;
 extern bool flying;

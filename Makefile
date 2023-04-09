@@ -1,26 +1,28 @@
-OBJS = shader $\
-		vectormath $\
-		mesh $\
-		time $\
-		texture $\
-		chunk $\
-		chunkLoader $\
-		entity $\
-		math $\
-		raycast $\
-		frameBuffer $\
-		player $\
-		camera $\
-		ui $\
-		graphics $\
-		globals $\
-		threadControls $\
+OBJS = globals 					$\
+		Graphics/frameBuffer 	$\
+		Graphics/shader 		$\
+		Graphics/mesh 			$\
+		Graphics/texture 		$\
+		Graphics/graphics 		$\
+		UI/ui 					$\
+		UI/button 				$\
+		ChunkLoader/chunk 		$\
+		ChunkLoader/chunkLoader $\
+		Entities/entity 		$\
+		Entities/player 		$\
+		Entities/camera 		$\
+		Entities/raycast 		$\
+		Types/vectormath 		$\
+		Types/color 			$\
+		time 					$\
+		math 					$\
+		threadControls 			$\
 		
 INCLUDES = -I"./Libs/glfw-3.3.8.bin.WIN64/include" $\
 		-I"./Libs/glad/include" $\
 		-I"./Libs/glm" $\
 		-I"./Libs/FastNoiseLite" $\
-		-I"./Libs/stb_image"
+		-I"./Libs/stb_image" $\
 
 LIBS = -L"./Libs/glfw-3.3.8.bin.WIN64/lib-mingw-w64" $\
 

@@ -1,6 +1,6 @@
 #include "threadControls.h"
-#include "chunkLoader.h"
 #include "globals.h"
+#include "ChunkLoader/chunkLoader.h"
 #include <glm/glm.hpp>
 #include <stdio.h>
 

@@ -6,16 +6,16 @@
 #include <thread>
 
 #include "globals.h"
-#include "vectormath.h"
-#include "shader.h"
-#include "mesh.h"
-#include "frameBuffer.h"
-#include "texture.h"
+#include "Graphics/shader.h"
+#include "Graphics/mesh.h"
+#include "Graphics/frameBuffer.h"
+#include "Graphics/texture.h"
+#include "Graphics/graphics.h"
+#include "ChunkLoader/chunkLoader.h"
+#include "Types/vectormath.h"
+#include "Entities/camera.h"
+#include "UI/ui.h"
 #include "time.h"
-#include "chunkLoader.h"
-#include "camera.h"
-#include "ui.h"
-#include "graphics.h"
 
 #include "threadControls.h"
 
@@ -89,7 +89,17 @@ void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
-        mouseLock = !mouseLock;
+        gamePaused = !gamePaused;
+        if (gamePaused)
+        {
+            UI::showPauseMenu();
+        }
+        else
+        {
+            UI::hidePauseMenu();
+        }
+
+        mouseLock = !gamePaused;
         if (mouseLock)
         {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
@@ -97,6 +107,7 @@ void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
         else
         {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
+            glfwSetCursorPos(window, currentWindowWidth/2, currentWindowHeight/2);
         }
     }
 
@@ -239,6 +250,7 @@ int main()
         currentBlockRaycast = BlockRaycast(Vec3(mainCamera.pos.x, mainCamera.pos.y + 1.5, mainCamera.pos.z), mainCamera.lookDir, 5);
         mainCamera.update(player);
 
+        UI::update();
         Graphics::update();
         Graphics::draw();
 

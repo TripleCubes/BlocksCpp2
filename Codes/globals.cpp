@@ -2,6 +2,8 @@
 
 GLFWwindow* glfwWindow = NULL;
 
+bool gamePaused = false;
+
 bool thirdPersonView = false;
 bool flying = true;
 bool wireframeMode = false;
