@@ -3,8 +3,8 @@
 #include "../globals.h"
 #include "../threadControls.h"
 
-int ChunkLoader::loadDistance = 3;
-int ChunkLoader::chunkLoadPerCycle = 3;
+int ChunkLoader::loadDistance = 1;
+int ChunkLoader::chunkLoadPerCycle = 5;
 std::unordered_map<std::string, Chunk> ChunkLoader::chunks;
 FastNoiseLite ChunkLoader::terrainHeightNoise;
 
@@ -23,7 +23,7 @@ void ChunkLoader::chunkLoadThreadFunction()
                 {
                     loadChunk(IntPos(i, j, k));
                     numberOfChunkLoaded++;
-                    if (numberOfChunkLoaded = chunkLoadPerCycle)
+                    if (numberOfChunkLoaded == chunkLoadPerCycle)
                     {
                         return;
                     }
@@ -223,6 +223,10 @@ std::unordered_map<std::string, Chunk>::iterator ChunkLoader::unloadChunk(IntPos
 
 void ChunkLoader::update()
 {
+    ChunkLoader::chunkLoadThreadFunction();
+    ChunkLoader::updateSurfaceDataThreadFunction();
+    ChunkLoader::updateMeshesThreadFunction();
+    ChunkLoader::chunkUnloadThreadFunction();
 }
 
 void ChunkLoader::draw()

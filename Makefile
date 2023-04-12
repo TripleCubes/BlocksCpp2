@@ -4,6 +4,7 @@ OBJS = globals 					$\
 		Graphics/mesh 			$\
 		Graphics/texture 		$\
 		Graphics/graphics 		$\
+		Graphics/text			$\
 		UI/ui 					$\
 		UI/button 				$\
 		ChunkLoader/chunk 		$\
@@ -14,6 +15,7 @@ OBJS = globals 					$\
 		Entities/raycast 		$\
 		Types/vectormath 		$\
 		Types/color 			$\
+		Types/rect				$\
 		time 					$\
 		math 					$\
 		threadControls 			$\
@@ -23,10 +25,12 @@ INCLUDES = -I"./Libs/glfw-3.3.8.bin.WIN64/include" $\
 		-I"./Libs/glm" $\
 		-I"./Libs/FastNoiseLite" $\
 		-I"./Libs/stb_image" $\
+		-I"./Libs/FreeType/include" $\
 
 LIBS = -L"./Libs/glfw-3.3.8.bin.WIN64/lib-mingw-w64" $\
+		-L"./Libs/FreeType/Binaries" $\
 
-FLAGS = -lglfw3 -lopengl32 -lgdi32
+FLAGS = -lglfw3 -lopengl32 -lgdi32 -l:freetype.a
 
 OBJPATHS = $(foreach obj,$(OBJS),./Build/$(obj).o)
 

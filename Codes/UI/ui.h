@@ -21,7 +21,8 @@ class UI
         static Mesh rectMesh;
         static Shader rectShader;
 
-        static Button testButton;
+        static Button backToGameButton;
+        static Button settingsButton;
 
     public:
         static void init();

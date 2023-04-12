@@ -101,7 +101,7 @@ void Graphics::draw()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     screenShader.useProgram();
-    screenShader.setUniform("viewTexture", viewFrameBuffer.getTexture(), 0);
+    screenShader.setTextureUniform("viewTexture", viewFrameBuffer.getTexture(), 0);
     screenMesh.draw();
 
     UI::drawCrosshair();

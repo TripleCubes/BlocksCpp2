@@ -10,7 +10,7 @@ std::vector<std::thread> ThreadControls::threads;
 std::vector<std::vector<int>> ThreadControls::groups;
 std::vector<bool> ThreadControls::running;
 std::vector<bool> ThreadControls::cycleFinished;
-int ThreadControls::currentRunningGroup = 0;
+int ThreadControls::currentRunningGroup = ThreadControls::SAFE_THREAD;
 
 int ThreadControls::mainThreadsGroup = 0;
 bool ThreadControls::mainThreadCycleFinished = false;
@@ -24,8 +24,9 @@ void ThreadControls::init()
         groups.push_back(std::vector<int>());
     }
     
-    addThread(0, ChunkLoader::chunkLoadThreadFunction);
-    addThread(0, ChunkLoader::updateSurfaceDataThreadFunction);
+    addThread(0, [](){});
+    addThread(SAFE_THREAD, ChunkLoader::chunkLoadThreadFunction);
+    addThread(SAFE_THREAD, ChunkLoader::updateSurfaceDataThreadFunction);
 
     addThread(SAFE_THREAD, ChunkLoader::updateMeshesThreadFunction);
     addThread(SAFE_THREAD, ChunkLoader::chunkUnloadThreadFunction);

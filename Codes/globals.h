@@ -18,6 +18,7 @@ const int FPS_CAP = 60;
 extern GLFWwindow* glfwWindow;
 
 extern bool gamePaused;
+extern bool mouseLock;
 
 extern bool thirdPersonView;
 extern bool flying;
@@ -31,5 +32,8 @@ extern BlockRaycast currentBlockRaycast;
 
 extern int currentWindowWidth;
 extern int currentWindowHeight;
+
+void pauseGame();
+void resumeGame();
 
 #endif

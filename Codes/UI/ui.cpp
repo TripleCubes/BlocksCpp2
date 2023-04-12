@@ -2,6 +2,7 @@
 #include "../globals.h"
 #include "../Entities/camera.h"
 #include "../Graphics/graphics.h"
+#include "../Graphics/text.h"
 
 Mesh UI::crosshairMesh;
 Shader UI::crosshairShader;
@@ -10,7 +11,8 @@ Shader UI::blockSelectionShader;
 Mesh UI::rectMesh;
 Shader UI::rectShader;
 
-Button UI::testButton(50, 50, 100, 30, Color(0.84, 0.92, 0.61, 1.0));
+Button UI::backToGameButton(50, 50, 150, 30, Color(0.84, 0.92, 0.61, 1.0), "back to game", Color(0.23, 0.27, 0.13, 1.0));
+Button UI::settingsButton(50, 90, 150, 30, Color(0.84, 0.92, 0.61, 1.0), "settings", Color(0.23, 0.27, 0.13, 1.0));
 
 void UI::init()
 {
@@ -87,17 +89,19 @@ void UI::init()
 
 void UI::update()
 {
-    testButton.update();
-    if (testButton.leftMouseHold())
+    backToGameButton.update();
+    if (backToGameButton.leftMouseDown())
     {
-        printf("left clicked\n");
+        resumeGame();
     }
+
+    settingsButton.update();
 }
 
 void UI::drawCrosshair()
 {
     crosshairShader.useProgram();
-    crosshairShader.setUniform("viewTexture", Graphics::getViewFrameBuffer().getTexture(), 0);
+    crosshairShader.setTextureUniform("viewTexture", Graphics::getViewFrameBuffer().getTexture(), 0);
     crosshairMesh.draw();
 }
 
@@ -116,17 +120,20 @@ void UI::drawSelectedBlock()
 
 void UI::hidePauseMenu()
 {
-    testButton.hide();
+    backToGameButton.hide();
+    settingsButton.hide();
 }
 
 void UI::showPauseMenu()
 {
-    testButton.show();
+    backToGameButton.show();
+    settingsButton.show();
 }
 
 void UI::drawPauseMenu()
 {
-    testButton.draw();
+    backToGameButton.draw();
+    settingsButton.draw();
 }
 
 void UI::drawRectPos(float x1, float y1, float x2, float y2, Color color)

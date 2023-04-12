@@ -723,7 +723,7 @@ void Chunk::draw()
 
         Graphics::getViewShader().useProgram();
         Graphics::getViewShader().setUniform("modelMat", modelMat);
-        Graphics::getViewShader().setUniform("testTexture", Graphics::testTexture, 0);
+        Graphics::getViewShader().setTextureUniform("testTexture", Graphics::testTexture, 0);
 
         mesh.draw();
     }

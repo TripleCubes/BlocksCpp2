@@ -1,6 +1,7 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
+#include <string>
 #include "../Types/color.h"
 
 class Button
@@ -25,8 +26,14 @@ class Button
 
         bool isHidden = false;
 
+        std::string text = "";
+        Color textColor = Color(0, 0, 0, 0);
+        bool textCentered = true;
+
     public:
-        Button(float x, float y, float w, float h, Color color);
+        Button(float x, float y, float w, float h, Color color, 
+                std::string text = "", Color textColor = Color(1.0, 1.0, 1.0, 1.0), 
+                bool textCentered = false);
 
         void update();
         void draw();

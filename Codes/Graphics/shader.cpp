@@ -116,12 +116,12 @@ void Shader::setUniform(std::string uniformName, Color color)
     glUniform4f(glGetUniformLocation(shaderProgram, uniformName.c_str()), color.r, color.g, color.b, color.a);
 }
 
-void Shader::setUniform(std::string uniformName, Texture texture, int textureUniformIndex) 
+void Shader::setTextureUniform(std::string uniformName, Texture texture, int textureUniformIndex) 
 {
-    setUniform(uniformName, texture.getTexture(), textureUniformIndex);
+    setTextureUniform(uniformName, texture.getTexture(), textureUniformIndex);
 }
 
-void Shader::setUniform(std::string uniformName, unsigned int texture, int textureUniformIndex)
+void Shader::setTextureUniform(std::string uniformName, unsigned int texture, int textureUniformIndex)
 {
     glUniform1i(glGetUniformLocation(shaderProgram, uniformName.c_str()), textureUniformIndex);
     glActiveTexture(GL_TEXTURE0 + textureUniformIndex);

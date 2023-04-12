@@ -115,7 +115,7 @@ void Entity::draw()
     modelMat = glm::translate(modelMat, glm::vec3(pos.x, pos.y, pos.z));
     Graphics::getViewShader().useProgram();
     Graphics::getViewShader().setUniform("modelMat", modelMat);
-    Graphics::getViewShader().setUniform("testTexture", playerTexture, 0);
+    Graphics::getViewShader().setTextureUniform("testTexture", playerTexture, 0);
     playerMesh.draw();
 }
 

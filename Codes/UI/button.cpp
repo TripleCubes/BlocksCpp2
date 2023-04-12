@@ -1,8 +1,13 @@
 #include "button.h"
 #include "ui.h"
 #include "../globals.h"
+#include "../Graphics/text.h"
 
-Button::Button(float x, float y, float w, float h, Color color): x{x}, y{y}, w{w}, h{h}, color{color} {}
+Button::Button(float x, float y, float w, float h, Color color, 
+                    std::string text, Color textColor, bool textCentered): 
+x{x}, y{y}, w{w}, h{h}, 
+color{color}, text{text}, 
+textColor{textColor}, textCentered{textCentered} {}
 
 void Button::update()
 {
@@ -120,6 +125,18 @@ void Button::draw()
         else
         {
             UI::drawRectWH(x, y, w, h, color);
+        }
+
+        if (text != "")
+        {
+            if (textCentered)
+            {
+                Text::drawTextBoxCentered(x + w/2, y + h/2, text, textColor);
+            }
+            else
+            {
+                Text::drawTextBoxCenteredVertically(x + 7, y + h/2, text, textColor);
+            }
         }
     }
 }

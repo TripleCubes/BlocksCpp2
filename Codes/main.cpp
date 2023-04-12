@@ -11,6 +11,7 @@
 #include "Graphics/frameBuffer.h"
 #include "Graphics/texture.h"
 #include "Graphics/graphics.h"
+#include "Graphics/text.h"
 #include "ChunkLoader/chunkLoader.h"
 #include "Types/vectormath.h"
 #include "Entities/camera.h"
@@ -25,8 +26,6 @@ float cameraRotationY = 0;
 float lastMousePosX = INIT_WINDOW_WIDTH / 2;
 float lastMousePosY = INIT_WINDOW_HEIGHT / 2;
 bool mouseInWindow = false;
-
-bool mouseLock = true;
 
 void onWindowResize(GLFWwindow *window, int width, int height)
 {
@@ -89,64 +88,58 @@ void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
-        gamePaused = !gamePaused;
         if (gamePaused)
         {
-            UI::showPauseMenu();
+            resumeGame();
         }
         else
         {
-            UI::hidePauseMenu();
+            pauseGame();
         }
+    }
 
-        mouseLock = !gamePaused;
-        if (mouseLock)
+    if (!gamePaused)
+    {
+        if (key == GLFW_KEY_T && action == GLFW_PRESS)
         {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+            thirdPersonView = !thirdPersonView;
         }
-        else
+
+        else if (key == GLFW_KEY_F && action == GLFW_PRESS)
         {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
-            glfwSetCursorPos(window, currentWindowWidth/2, currentWindowHeight/2);
+            flying = !flying;
         }
-    }
 
-    else if (key == GLFW_KEY_T && action == GLFW_PRESS)
-    {
-        thirdPersonView = !thirdPersonView;
-    }
+        else if (key == GLFW_KEY_M && action == GLFW_PRESS)
+        {
+            wireframeMode = !wireframeMode;
+        }
 
-    else if (key == GLFW_KEY_F && action == GLFW_PRESS)
-    {
-        flying = !flying;
-    }
-
-    else if (key == GLFW_KEY_M && action == GLFW_PRESS)
-    {
-        wireframeMode = !wireframeMode;
-    }
-
-    else if (key == GLFW_KEY_N && action == GLFW_PRESS)
-    {
-        ignoreCollision = !ignoreCollision;
+        else if (key == GLFW_KEY_N && action == GLFW_PRESS)
+        {
+            ignoreCollision = !ignoreCollision;
+        }
     }
 }
 
 void onMouseClick(GLFWwindow* window, int button, int action, int mods)
 {
-    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+    if (!gamePaused)
     {
-        if (currentBlockRaycast.found)
+        if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
         {
-            ChunkLoader::placeBlock(Block(TEST, IntPos(currentBlockRaycast.blockPlacingPos)));
+            if (currentBlockRaycast.found)
+            {
+                ChunkLoader::placeBlock(Block(TEST, IntPos(currentBlockRaycast.blockPlacingPos)));
+            }
         }
-    }
 
-    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-    {
-        if (currentBlockRaycast.found)
+        else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         {
-            ChunkLoader::breakBlock(currentBlockRaycast.selectedBlockPos);
+            if (currentBlockRaycast.found)
+            {
+                ChunkLoader::breakBlock(currentBlockRaycast.selectedBlockPos);
+            }
         }
     }
 }
@@ -194,6 +187,7 @@ int main()
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
 
     Graphics::init();
+    Text::init();
 
     ChunkLoader::init();
     UI::init();
@@ -201,51 +195,54 @@ int main()
     player.init(Vec3(0, 0, 10), Vec3(0, 0, -1));
     mainCamera.init(player);
 
-    ThreadControls::init();
+    // ThreadControls::init();
 
     while (!glfwWindowShouldClose(glfwWindow))
     {
         float frameStartTime = glfwGetTime();
 
-        ThreadControls::lockMainThread();
+        // ThreadControls::lockMainThread();
         ChunkLoader::update();
 
-        if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
+        if (!gamePaused)
         {
-            player.move(player.frontDir);
-        }
-        if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
-        {
-            player.move(player.frontDir.rotateY(90));
-        }
-        if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
-        {
-            player.move(player.frontDir * -1);
-        }
-        if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
-        {
-            player.move(player.frontDir.rotateY(-90));
-        }
-        if (flying || ignoreCollision)
-        {
-            if (glfwGetKey(glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
+            if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
             {
-                player.move(Vec3(0, 1, 0));
+                player.move(player.frontDir);
             }
-            if (glfwGetKey(glfwWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+            if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
             {
-                player.move(Vec3(0, -1, 0));
+                player.move(player.frontDir.rotateY(90));
             }
-        }
-        else
-        {
-            if (glfwGetKey(glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
+            if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
             {
-                player.jump();
+                player.move(player.frontDir * -1);
             }
-        }
+            if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
+            {
+                player.move(player.frontDir.rotateY(-90));
+            }
+            if (flying || ignoreCollision)
+            {
+                if (glfwGetKey(glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
+                {
+                    player.move(Vec3(0, 1, 0));
+                }
+                if (glfwGetKey(glfwWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+                {
+                    player.move(Vec3(0, -1, 0));
+                }
+            }
+            else
+            {
+                if (glfwGetKey(glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
+                {
+                    player.jump();
+                }
+            }
 
-        player.update();
+            player.update();
+        }
 
         currentBlockRaycast = BlockRaycast(Vec3(mainCamera.pos.x, mainCamera.pos.y + 1.5, mainCamera.pos.z), mainCamera.lookDir, 5);
         mainCamera.update(player);
@@ -257,7 +254,7 @@ int main()
         glfwSwapBuffers(glfwWindow);
         glfwPollEvents();
 
-        ThreadControls::markMainThreadCycleFinished();
+        // ThreadControls::markMainThreadCycleFinished();
 
         float frameTime = glfwGetTime() - frameStartTime;
         sleep_for(milliseconds((int)round((1/(float)FPS_CAP - frameTime)* 1000)));
@@ -266,10 +263,12 @@ int main()
         previousTime = glfwGetTime();
     }
 
-    ThreadControls::release();
+    printf("closed\n");
+    // ThreadControls::release();
     player.release();
     ChunkLoader::release();
     UI::release();
+    Text::release();
     Graphics::release();
     glfwTerminate();
 
