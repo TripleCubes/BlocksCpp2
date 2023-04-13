@@ -1,6 +1,8 @@
 #include "frameBuffer.h"
-#include "../globals.h"
 #include <stdio.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include "../globals.h"
 
 void FrameBuffer::init(bool multisample, int numberOfTextures)
 {

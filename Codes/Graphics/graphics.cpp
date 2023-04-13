@@ -1,4 +1,6 @@
 #include "graphics.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include "../globals.h"
 
 class ChunkLoader
@@ -10,7 +12,7 @@ class ChunkLoader
 class UI
 {
     public:
-        static void drawPauseMenu();
+        static void drawMenus();
         static void drawSelectedBlock();
         static void drawCrosshair();
 };
@@ -87,7 +89,7 @@ void Graphics::draw()
     viewShader.setUniform("viewMat", viewViewMat);
     ChunkLoader::draw();
     player.draw();
-    if (currentBlockRaycast.found)
+    if (!thirdPersonView && currentBlockRaycast.found)
     {
         UI::drawSelectedBlock();
     }
@@ -104,11 +106,11 @@ void Graphics::draw()
     screenShader.setTextureUniform("viewTexture", viewFrameBuffer.getTexture(), 0);
     screenMesh.draw();
 
-    UI::drawCrosshair();
-    if (gamePaused)
+    if (!thirdPersonView)
     {
-        UI::drawPauseMenu();
+        UI::drawCrosshair();
     }
+    UI::drawMenus();
 }
 
 glm::mat4 Graphics::getViewViewMat()

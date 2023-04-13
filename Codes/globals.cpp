@@ -1,8 +1,13 @@
 #include "globals.h"
+#include "Menus/pauseMenu.h"
 
 GLFWwindow* glfwWindow = NULL;
 
-bool gamePaused = false;
+Color uiColor = Color(0.23, 0.27, 0.13, 1.0);
+Color uiTextColor = Color(0.84, 0.92, 0.61, 1.0);
+
+OpeningMenuGroup openingMenuGroup = NONE;
+
 bool mouseLock = true;
 
 bool thirdPersonView = false;
@@ -17,18 +22,3 @@ BlockRaycast currentBlockRaycast;
 
 int currentWindowWidth = INIT_WINDOW_WIDTH;
 int currentWindowHeight = INIT_WINDOW_HEIGHT;
-
-void pauseGame()
-{
-    gamePaused = true;
-    mouseLock = false;
-    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
-    glfwSetCursorPos(glfwWindow, currentWindowWidth/2, currentWindowHeight/2);
-}
-
-void resumeGame()
-{
-    gamePaused = false;
-    mouseLock = true;
-    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
-}

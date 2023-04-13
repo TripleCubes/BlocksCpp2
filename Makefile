@@ -7,6 +7,11 @@ OBJS = globals 					$\
 		Graphics/text			$\
 		UI/ui 					$\
 		UI/button 				$\
+		UI/textbox				$\
+		UI/toggleButton			$\
+		Menus/pauseMenu			$\
+		Menus/settingsMenu		$\
+		Menus/devMenu			$\
 		ChunkLoader/chunk 		$\
 		ChunkLoader/chunkLoader $\
 		Entities/entity 		$\
@@ -19,6 +24,7 @@ OBJS = globals 					$\
 		time 					$\
 		math 					$\
 		threadControls 			$\
+		input					$\
 		
 INCLUDES = -I"./Libs/glfw-3.3.8.bin.WIN64/include" $\
 		-I"./Libs/glad/include" $\

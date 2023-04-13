@@ -42,6 +42,7 @@ class Text
         static Rect getTextBoxSize(std::string text);
         static Rect drawTextBox(float x, float y, std::string text, Color color = Color(1.0, 1.0, 1.0, 1.0));
         static Rect drawTextBoxCentered(float x, float y, std::string text, Color color = Color(1.0, 1.0, 1.0, 1.0));
+        static Rect drawTextBoxCenteredHorizontally(float x, float y, std::string text, Color color = Color(1.0, 1.0, 1.0, 1.0));
         static Rect drawTextBoxCenteredVertically(float x, float y, std::string text, Color color = Color(1.0, 1.0, 1.0, 1.0));
         
         static void release();

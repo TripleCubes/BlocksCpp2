@@ -16,7 +16,10 @@
 #include "Types/vectormath.h"
 #include "Entities/camera.h"
 #include "UI/ui.h"
+#include "Menus/pauseMenu.h"
+#include "Menus/devMenu.h"
 #include "time.h"
+#include "input.h"
 
 #include "threadControls.h"
 
@@ -86,33 +89,11 @@ void onMouseMove(GLFWwindow* window, double mousex, double mousey)
 
 void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    if (openingMenuGroup == NONE)
     {
-        if (gamePaused)
-        {
-            resumeGame();
-        }
-        else
-        {
-            pauseGame();
-        }
-    }
-
-    if (!gamePaused)
-    {
-        if (key == GLFW_KEY_T && action == GLFW_PRESS)
-        {
-            thirdPersonView = !thirdPersonView;
-        }
-
-        else if (key == GLFW_KEY_F && action == GLFW_PRESS)
+        if (key == GLFW_KEY_F && action == GLFW_PRESS)
         {
             flying = !flying;
-        }
-
-        else if (key == GLFW_KEY_M && action == GLFW_PRESS)
-        {
-            wireframeMode = !wireframeMode;
         }
 
         else if (key == GLFW_KEY_N && action == GLFW_PRESS)
@@ -120,11 +101,24 @@ void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
             ignoreCollision = !ignoreCollision;
         }
     }
+
+    if (openingMenuGroup == NONE || openingMenuGroup == DEV)
+    {
+        if (key == GLFW_KEY_T && action == GLFW_PRESS)
+        {
+            thirdPersonView = !thirdPersonView;
+        }
+
+        else if (key == GLFW_KEY_M && action == GLFW_PRESS)
+        {
+            wireframeMode = !wireframeMode;
+        }
+    }
 }
 
 void onMouseClick(GLFWwindow* window, int button, int action, int mods)
 {
-    if (!gamePaused)
+    if (openingMenuGroup == NONE)
     {
         if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
         {
@@ -188,6 +182,7 @@ int main()
 
     Graphics::init();
     Text::init();
+    Input::init();
 
     ChunkLoader::init();
     UI::init();
@@ -202,9 +197,20 @@ int main()
         float frameStartTime = glfwGetTime();
 
         // ThreadControls::lockMainThread();
+        Input::update();
         ChunkLoader::update();
 
-        if (!gamePaused)
+        if (Input::justPressed("ESC") && openingMenuGroup == NONE)
+        {
+            PauseMenu::show(true);
+        }
+
+        if (Input::justPressed("P") && openingMenuGroup == NONE)
+        {
+            DevMenu::show(true);
+        }
+
+        if (openingMenuGroup == NONE)
         {
             if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
             {
@@ -240,7 +246,10 @@ int main()
                     player.jump();
                 }
             }
+        }
 
+        if (openingMenuGroup == NONE || openingMenuGroup == DEV)
+        {
             player.update();
         }
 
@@ -263,7 +272,6 @@ int main()
         previousTime = glfwGetTime();
     }
 
-    printf("closed\n");
     // ThreadControls::release();
     player.release();
     ChunkLoader::release();
@@ -271,6 +279,7 @@ int main()
     Text::release();
     Graphics::release();
     glfwTerminate();
+    printf("game closed successfully\n");
 
     return 0;
 }

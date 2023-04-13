@@ -1,4 +1,6 @@
 #include "texture.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 void Texture::load(std::string path, FilterType filterType)
 {

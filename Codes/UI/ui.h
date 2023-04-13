@@ -21,16 +21,11 @@ class UI
         static Mesh rectMesh;
         static Shader rectShader;
 
-        static Button backToGameButton;
-        static Button settingsButton;
-
     public:
         static void init();
         static void update();
 
-        static void hidePauseMenu();
-        static void showPauseMenu();
-        static void drawPauseMenu();
+        static void drawMenus();
 
         static void drawCrosshair();
         static void drawSelectedBlock();

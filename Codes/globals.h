@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <GLFW/glfw3.h>
 #include <vector>
 
 #include "Graphics/shader.h"
@@ -10,6 +11,7 @@
 #include "Entities/player.h"
 #include "Entities/camera.h"
 #include "Entities/raycast.h"
+#include "Types/color.h"
 
 const int INIT_WINDOW_WIDTH = 800;
 const int INIT_WINDOW_HEIGHT = 500;
@@ -17,7 +19,15 @@ const int FPS_CAP = 60;
 
 extern GLFWwindow* glfwWindow;
 
-extern bool gamePaused;
+extern Color uiColor;
+extern Color uiTextColor;
+
+enum OpeningMenuGroup
+{
+    NONE, PAUSE, DEV
+};
+extern OpeningMenuGroup openingMenuGroup;
+
 extern bool mouseLock;
 
 extern bool thirdPersonView;
@@ -32,8 +42,5 @@ extern BlockRaycast currentBlockRaycast;
 
 extern int currentWindowWidth;
 extern int currentWindowHeight;
-
-void pauseGame();
-void resumeGame();
 
 #endif

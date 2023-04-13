@@ -115,6 +115,13 @@ Rect Text::drawTextBoxCentered(float x, float y, std::string text, Color color)
     return drawTextBox(x - textBoxSize.w/2, y - textBoxSize.h/2 - 2, text, color);
 }
 
+Rect Text::drawTextBoxCenteredHorizontally(float x, float y, std::string text, Color color)
+{
+    Rect textBoxSize = getTextBoxSize(text);
+    
+    return drawTextBox(x - textBoxSize.w/2, y, text, color);
+}
+
 Rect Text::drawTextBoxCenteredVertically(float x, float y, std::string text, Color color)
 {
     Rect textBoxSize = getTextBoxSize(text);

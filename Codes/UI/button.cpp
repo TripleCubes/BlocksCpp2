@@ -3,11 +3,20 @@
 #include "../globals.h"
 #include "../Graphics/text.h"
 
-Button::Button(float x, float y, float w, float h, Color color, 
-                    std::string text, Color textColor, bool textCentered): 
-x{x}, y{y}, w{w}, h{h}, 
-color{color}, text{text}, 
-textColor{textColor}, textCentered{textCentered} {}
+void Button::init(float x, float y, float w, float h, Color color, 
+                    std::string text, Color textColor, bool textCentered)
+{
+    this->x = x;
+    this->y = y;
+    this->w = w;
+    this->h = h;
+
+    this->color = color;
+    this->text = text;
+
+    this->textColor = textColor;
+    this->textCentered = textCentered;
+}
 
 void Button::update()
 {
@@ -46,7 +55,7 @@ void Button::update()
 
         if (glfwGetMouseButton(glfwWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && mouseIsOn)
         {
-            if (!leftMouseIsHold)
+            if (!leftMouseIsHold && !mouseJustEnter)
             {
                 leftMouseJustDown = true;
             }
@@ -73,7 +82,7 @@ void Button::update()
 
         if (glfwGetMouseButton(glfwWindow, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
         {
-            if (!rightMouseIsHold)
+            if (!rightMouseIsHold && !mouseJustEnter)
             {
                 rightMouseJustDown = true;
             }
