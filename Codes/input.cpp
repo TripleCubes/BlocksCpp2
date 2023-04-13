@@ -60,3 +60,11 @@ bool Input::justPressed(std::string key)
     }
     return keys[key].justPressed;
 }
+
+Vec2 Input::getMousePos()
+{
+    double x = 0;
+    double y = 0;
+    glfwGetCursorPos(glfwWindow, &x, &y);
+    return Vec2((float)x, (float)y);
+}

@@ -3,19 +3,23 @@
 #include "../input.h"
 
 Button DevMenu::backToGameButton;
+CurveGraph DevMenu::testGraph;
+
 bool DevMenu::shown = false;
 bool DevMenu::shownFirstFrame = false;
 
 void DevMenu::init()
 {
-    backToGameButton.init(50, 50, 150, 30, uiTextColor, "back to game", uiColor);
+    backToGameButton.init(50, 50, 150, 30, uiColor, "back to game", uiTextColor);
+    testGraph.init(currentWindowWidth - 350, currentWindowHeight - 350, 300, 300, uiColor, uiColor);
 }
 
 void DevMenu::update()
 {
     backToGameButton.update();
+    testGraph.update();
 
-    if (backToGameButton.leftMouseDown() || (Input::justPressed("ESC") && shown && !shownFirstFrame))
+    if (backToGameButton.leftMouseDown() || ((Input::justPressed("ESC") || Input::justPressed("P")) && shown && !shownFirstFrame))
     {
         mouseLock = true;
         glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
@@ -30,6 +34,7 @@ void DevMenu::update()
 void DevMenu::draw()
 {
     backToGameButton.draw();
+    testGraph.draw();
 }
 
 void DevMenu::show(bool fromGame)
@@ -42,6 +47,7 @@ void DevMenu::show(bool fromGame)
     }
 
     backToGameButton.show();
+    testGraph.show();
 
     shown = true;
     shownFirstFrame = true;
@@ -51,6 +57,7 @@ void DevMenu::show(bool fromGame)
 void DevMenu::hide()
 {
     backToGameButton.hide();
+    testGraph.hide();
 
     shown = false;
 }

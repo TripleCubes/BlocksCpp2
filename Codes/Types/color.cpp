@@ -6,3 +6,8 @@ Color Color::operator + (Color color)
 {
     return Color(r + color.r, g + color.g, b + color.b, a + color.a);
 }
+
+Color Color::operator - (Color color)
+{
+    return Color(r - color.r, g - color.g, b - color.b, a - color.a);
+}

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unordered_map>
+#include "Types/vec2.h"
 
 class Input
 {
@@ -22,6 +23,8 @@ class Input
         static void update();
         static bool pressed(std::string key);
         static bool justPressed(std::string key);
+
+        static Vec2 getMousePos();
 };
 
 #endif

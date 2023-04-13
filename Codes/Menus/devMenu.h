@@ -2,11 +2,13 @@
 #define DEVMENU_H
 
 #include "../UI/button.h"
+#include "../UI/curveGraph.h"
 
 class DevMenu
 {
     private:
         static Button backToGameButton;
+        static CurveGraph testGraph;
 
         static bool shown;
         static bool shownFirstFrame;

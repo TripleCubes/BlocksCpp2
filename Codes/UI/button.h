@@ -3,6 +3,7 @@
 
 #include <string>
 #include "../Types/color.h"
+#include "../Types/vec2.h"
 
 class Button
 {
@@ -19,10 +20,12 @@ class Button
         bool leftMouseJustDown = false;
         bool leftMouseJustUp = false;
         bool leftMouseIsHold = false;
+        bool leftMouseIsTrueHold = false;
 
         bool rightMouseJustDown = false;
         bool rightMouseJustUp = false;
         bool rightMouseIsHold = false;
+        bool rightMouseIsTrueHold = false;
 
         bool isHidden = true;
 
@@ -53,10 +56,13 @@ class Button
         void show();
         void hide();
 
-        float getX();
-        float getY();
+        Vec2 getPos();
         void setPos(float x, float y);
+        void setPos(Vec2 pos);
+        Vec2 getCenterPos();
+        void setCenterPos(Vec2 pos);
         void setSize(float w, float h);
+        void setSize(Vec2 size);
 };
 
 #endif

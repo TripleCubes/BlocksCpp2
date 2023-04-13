@@ -10,11 +10,11 @@ bool SettingsMenu::shown = false;
 
 void SettingsMenu::init()
 {
-    backButton.init(50, 50, 150, 30, uiTextColor, "back", uiColor);
+    backButton.init(50, 50, 150, 30, uiColor, "back", uiTextColor);
 
-    toggleWireframeModeTextbox.init(57, 105, "wireframe mode", uiTextColor, false, true);
-    toggleWireframeModeButton.init(250, 90, 50, 30, uiTextColor,
-            {"off", "on"}, uiColor);
+    toggleWireframeModeTextbox.init(57, 105, "wireframe mode", uiColor, false, true);
+    toggleWireframeModeButton.init(250, 90, 50, 30, uiColor,
+            {"off", "on"}, uiTextColor);
 }
 
 void SettingsMenu::update()

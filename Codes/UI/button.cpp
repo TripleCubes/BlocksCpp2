@@ -2,6 +2,7 @@
 #include "ui.h"
 #include "../globals.h"
 #include "../Graphics/text.h"
+#include <stdio.h>
 
 void Button::init(float x, float y, float w, float h, Color color, 
                     std::string text, Color textColor, bool textCentered)
@@ -53,18 +54,22 @@ void Button::update()
             mouseIsOn = false;
         }
 
-        if (glfwGetMouseButton(glfwWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && mouseIsOn)
+        if (glfwGetMouseButton(glfwWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         {
-            if (!leftMouseIsHold && !mouseJustEnter)
+            if (mouseIsOn)
             {
-                leftMouseJustDown = true;
+                if (!leftMouseIsHold && !mouseJustEnter)
+                {
+                    leftMouseJustDown = true;
+                }
+                else
+                {
+                    leftMouseJustDown = false;
+                }
+
+                leftMouseJustUp = false;
+                leftMouseIsHold = true;
             }
-            else
-            {
-                leftMouseJustDown = false;
-            }
-            leftMouseJustUp = false;
-            leftMouseIsHold = true;
         }
         else
         {
@@ -82,16 +87,19 @@ void Button::update()
 
         if (glfwGetMouseButton(glfwWindow, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
         {
-            if (!rightMouseIsHold && !mouseJustEnter)
+            if (mouseIsOn)
             {
-                rightMouseJustDown = true;
+                if (!rightMouseIsHold && !mouseJustEnter)
+                {
+                    rightMouseJustDown = true;
+                }
+                else
+                {
+                    rightMouseJustDown = false;
+                }
+                rightMouseJustUp = false;
+                rightMouseIsHold = true;
             }
-            else
-            {
-                rightMouseJustDown = false;
-            }
-            rightMouseJustUp = false;
-            rightMouseIsHold = true;
         }
         else
         {
@@ -120,6 +128,24 @@ void Button::update()
         rightMouseJustDown = false;
         rightMouseJustUp = false;
         rightMouseIsHold = false;
+    }
+
+    if (leftMouseJustDown)
+    {
+        leftMouseIsTrueHold = true;
+    }
+    if (leftMouseJustUp)
+    {
+        leftMouseIsTrueHold = false;
+    }
+
+    if (rightMouseJustDown)
+    {
+        rightMouseIsTrueHold = true;
+    }
+    if (rightMouseJustUp)
+    {
+        rightMouseIsTrueHold = false;
     }
 }
 
@@ -177,7 +203,7 @@ bool Button::leftMouseDown()
 
 bool Button::leftMouseHold()
 {
-    return leftMouseIsHold;
+    return leftMouseIsTrueHold;
 }
 
 bool Button::rightMouseUp()
@@ -192,7 +218,7 @@ bool Button::rightMouseDown()
 
 bool Button::rightMouseHold()
 {
-    return rightMouseIsHold;
+    return rightMouseIsTrueHold;
 }
 
 void Button::show()
@@ -205,14 +231,9 @@ void Button::hide()
     isHidden = true;
 }
 
-float Button::getX()
+Vec2 Button::getPos()
 {
-    return x;
-}
-
-float Button::getY()
-{
-    return y;
+    return Vec2(x, y);
 }
 
 void Button::setPos(float x, float y)
@@ -221,8 +242,29 @@ void Button::setPos(float x, float y)
     this->y = y;
 }
 
+void Button::setPos(Vec2 pos)
+{
+    setPos(pos.x, pos.y);
+}
+
+Vec2 Button::getCenterPos()
+{
+    return Vec2(x + w/2, y + h/2);
+}
+
+void Button::setCenterPos(Vec2 pos)
+{
+    this->x = pos.x - w/2;
+    this->y = pos.y - h/2;
+}
+
 void Button::setSize(float w, float h)
 {
     this->w = w;
     this->h = h;
+}
+
+void Button::setSize(Vec2 size)
+{
+    setSize(size.x, size.y);
 }

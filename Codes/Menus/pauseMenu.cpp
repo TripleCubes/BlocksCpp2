@@ -11,9 +11,9 @@ bool PauseMenu::shownFirstFrame = false;
 
 void PauseMenu::init()
 {
-    backToGameButton.init(50, 50, 150, 30, uiTextColor, "back to game", uiColor);
-    settingsButton.init(50, 90, 150, 30, uiTextColor, "settings", uiColor);
-    saveAndQuitButton.init(50, 130, 150, 30, uiTextColor, "save and quit", uiColor);
+    backToGameButton.init(50, 50, 150, 30, uiColor, "back to game", uiTextColor);
+    settingsButton.init(50, 90, 150, 30, uiColor, "settings", uiTextColor);
+    saveAndQuitButton.init(50, 130, 150, 30, uiColor, "save and quit", uiTextColor);
 }
 
 void PauseMenu::update()

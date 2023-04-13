@@ -9,6 +9,7 @@ struct Color
     float a = 1.0;
     Color(float r, float g, float b, float a);
     Color operator + (Color color);
+    Color operator - (Color color);
 };
 
 #endif
