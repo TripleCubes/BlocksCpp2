@@ -12,6 +12,8 @@
 class CurveGraph
 {
     private:
+        Button addControlPointButton;
+
         float x = 0;
         float y = 0;
         float w = 0;

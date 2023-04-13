@@ -11,7 +11,7 @@ bool DevMenu::shownFirstFrame = false;
 void DevMenu::init()
 {
     backToGameButton.init(50, 50, 150, 30, uiColor, "back to game", uiTextColor);
-    testGraph.init(currentWindowWidth - 350, currentWindowHeight - 350, 300, 300, uiColor, uiColor);
+    testGraph.init(currentWindowWidth - 350, currentWindowHeight - 350, 300, 300, uiColor, uiTextColor);
 }
 
 void DevMenu::update()

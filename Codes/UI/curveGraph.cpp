@@ -15,27 +15,30 @@ void CurveGraph::init(float x, float y, float w, float h, Color color, Color tex
     this->color = color;
     this->textColor = textColor;
 
-    CurveGraphControlPoint controlPoint;
-    controlPoint.init((float)40, (float)40, this->x, this->y, this->w, this->h, color, Color(0.82, 0.82, 0.8, 1.0));
-    controlPoints.push_back(controlPoint);
+    addControlPointButton.init(this->x + this->w - 30, this->y + this->h - 30, 20, 20, color, "", textColor, true);
 
-    CurveGraphControlPoint controlPoint2;
-    controlPoint2.init((float)100, (float)40, this->x, this->y, this->w, this->h, color, Color(0.82, 0.82, 0.8, 1.0));
-    controlPoints.push_back(controlPoint2);
-
-    CurveGraphControlPoint controlPoint3;
-    controlPoint3.init((float)100, (float)100, this->x, this->y, this->w, this->h, color, Color(0.82, 0.82, 0.8, 1.0));
-    controlPoints.push_back(controlPoint3);
+    calculateMapPoints();
 }
 
 void CurveGraph::update()
 {
+    bool controlPointsUpdated = false;
+
+    addControlPointButton.update();
+    if (addControlPointButton.leftMouseDown())
+    {
+        CurveGraphControlPoint controlPoint;
+        controlPoint.init(w - 40, (float)40, x, y, w, h, color, Color(0.82, 0.82, 0.8, 1.0));
+        controlPoint.show();
+        controlPoints.push_back(controlPoint);
+        controlPointsUpdated = true;
+    }
+
     for (int i = 0; i < controlPoints.size(); i++)
     {
         controlPoints[i].update();
     }
 
-    bool controlPointsUpdated = false;
     for (int i = 0; i < controlPoints.size(); i++)
     {
         CurveGraphControlPoint &controlPoint = controlPoints[i];
@@ -105,6 +108,13 @@ void CurveGraph::update()
             controlPointsUpdated = true;
             break;
         }
+
+        if (controlPoint.getPoint().rightMouseDown())
+        {
+            controlPoints.erase(controlPoints.begin() + i);
+            controlPointsUpdated = true;
+            break;
+        }
     }
 
     if (controlPointsUpdated)
@@ -116,6 +126,7 @@ void CurveGraph::update()
 void CurveGraph::calculateMapPoints()
 {
     calculatedPoints.clear();
+
     std::function<void(Vec2, Vec2, Vec2, Vec2)> calculatePointsOneBezier = [this](Vec2 point1, Vec2 point2, Vec2 point3, Vec2 point4) 
     {
         for (float t = 0; t <= 1; t += 0.05)
@@ -124,6 +135,16 @@ void CurveGraph::calculateMapPoints()
             calculatedPoints.push_back(drawPoint);
         }
     };
+
+    if (controlPoints.size() == 0)
+    {
+        Vec2 point1 = Vec2(x, h + y);
+        Vec2 point2 = Vec2(x, h + y);
+        Vec2 point3 = Vec2(w + x, y);
+        Vec2 point4 = Vec2(w + x, y);
+        calculatePointsOneBezier(point1, point2, point3, point4);
+        return;
+    }
 
     Vec2 point1 = Vec2(x, h + y);
     Vec2 point2 = Vec2(x, h + y);
@@ -167,7 +188,7 @@ void CurveGraph::drawBezierCurves()
 }
 
 void CurveGraph::draw()
-{    
+{   
     if (shown)
     {
         UI::drawRectWH(x - 10, y - 10, w + 20, h + 20, Color(0, 0, 0, 1));
@@ -184,10 +205,19 @@ void CurveGraph::draw()
     {
         controlPoints[i].draw();
     }
+
+    addControlPointButton.draw();
+    if (shown)
+    {
+        Vec2 pos = addControlPointButton.getPos();
+        Text::drawTextBox(pos.x + 5, pos.y - 3, "+", textColor);
+    }
 }
 
 void CurveGraph::show()
 {
+    addControlPointButton.show();
+
     for (int i = 0; i < controlPoints.size(); i++)
     {
         controlPoints[i].show();
@@ -198,6 +228,8 @@ void CurveGraph::show()
 
 void CurveGraph::hide()
 {
+    addControlPointButton.hide();
+
     for (int i = 0; i < controlPoints.size(); i++)
     {
         controlPoints[i].hide();
