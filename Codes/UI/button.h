@@ -2,10 +2,12 @@
 #define BUTTON_H
 
 #include <string>
+#include "uiElement.h"
 #include "../Types/color.h"
 #include "../Types/vec2.h"
+#include <functional>
 
-class Button
+class Button: public UIElement
 {
     protected:
         float x = 0;
@@ -38,8 +40,8 @@ class Button
                 std::string text = "", Color textColor = Color(1.0, 1.0, 1.0, 1.0), 
                 bool textCentered = false);
 
-        void update();
-        void draw();
+        virtual void update() override;
+        virtual void draw() override;
 
         bool mouseEnter();
         bool mouseLeave();
@@ -53,8 +55,8 @@ class Button
         bool rightMouseDown();
         bool rightMouseHold();
 
-        void show();
-        void hide();
+        virtual void show() override;
+        virtual void hide() override;
 
         Vec2 getPos();
         void setPos(float x, float y);
@@ -63,6 +65,22 @@ class Button
         void setCenterPos(Vec2 pos);
         void setSize(float w, float h);
         void setSize(Vec2 size);
+
+        std::function<void(Button*)> onMouseEnter;
+        std::function<void(Button*)> onMouseLeave;
+        std::function<void(Button*)> onMouseOn;
+
+        std::function<void(Button*)> onLeftMouseUp;
+        std::function<void(Button*)> onLeftMouseDown;
+        std::function<void(Button*)> onLeftMouseHold;
+
+        std::function<void(Button*)> onRightMouseUp;
+        std::function<void(Button*)> onRightMouseDown;
+        std::function<void(Button*)> onRightMouseHold;
+
+        std::function<void(Button*)> onUpdate;
+        std::function<void(Button*)> onShow;
+        std::function<void(Button*)> onHide;
 };
 
 #endif

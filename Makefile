@@ -1,4 +1,4 @@
-OBJS = globals 					$\
+OBJS =  globals 					$\
 		Graphics/frameBuffer 		$\
 		Graphics/shader 			$\
 		Graphics/mesh 				$\
@@ -6,14 +6,13 @@ OBJS = globals 					$\
 		Graphics/graphics 			$\
 		Graphics/text				$\
 		UI/ui 						$\
+		UI/uiElement				$\
 		UI/button 					$\
 		UI/textbox					$\
 		UI/toggleButton				$\
 		UI/curveGraph				$\
 		UI/curveGraphControlPoint	$\
-		Menus/pauseMenu				$\
-		Menus/settingsMenu			$\
-		Menus/devMenu				$\
+		UI/Menu						$\
 		ChunkLoader/chunk 			$\
 		ChunkLoader/chunkLoader 	$\
 		Entities/entity 			$\

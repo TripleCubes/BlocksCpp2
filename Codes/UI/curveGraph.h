@@ -5,11 +5,12 @@
 #include "../Types/color.h"
 #include "../Types/vec2.h"
 #include "ui.h"
+#include "uiElement.h"
 #include "button.h"
 #include "curveGraphControlPoint.h"
 #include <vector>
 
-class CurveGraph
+class CurveGraph: public UIElement
 {
     private:
         Button addControlPointButton;
@@ -35,10 +36,10 @@ class CurveGraph
         void init(float x, float y, float w, float h, 
                             Color color = Color(1.0, 1.0, 1.0, 1.0), 
                             Color textColor = Color(1.0, 1.0, 1.0, 1.0));
-        void update();
-        void draw();
-        void show();
-        void hide();
+        void update() override;
+        void draw() override;
+        void show() override;
+        void hide() override;
 };
 
 #endif

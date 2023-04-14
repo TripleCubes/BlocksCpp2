@@ -3,9 +3,12 @@
 #include "../Entities/camera.h"
 #include "../Graphics/graphics.h"
 #include "../Graphics/text.h"
-#include "../Menus/pauseMenu.h"
-#include "../Menus/settingsMenu.h"
-#include "../Menus/devMenu.h"
+#include "button.h"
+#include "toggleButton.h"
+#include "textbox.h"
+#include "curveGraph.h"
+#include "../input.h"
+#include <memory>
 
 Mesh UI::crosshairMesh;
 Shader UI::crosshairShader;
@@ -13,6 +16,10 @@ Mesh UI::blockSelectionMesh;
 Shader UI::blockSelectionShader;
 Mesh UI::rectMesh;
 Shader UI::rectShader;
+
+Menu UI::pauseMenu;
+Menu UI::settingsMenu;
+Menu UI::devMenu;
 
 void UI::init()
 {
@@ -86,23 +93,137 @@ void UI::init()
     rectShader.useProgram();
     rectShader.setUniform("windowSize", (float)currentWindowWidth, (float)currentWindowHeight);
 
-    PauseMenu::init();
-    SettingsMenu::init();
-    DevMenu::init();
+
+
+    {
+        pauseMenu.init(PAUSE);
+        pauseMenu.onUpdate = [](Menu* self)
+        {
+            if (Input::justPressed("ESC") && pauseMenu.getShown() && !pauseMenu.getShownFirstFrame())
+            {
+                mouseLock = true;
+                glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+
+                pauseMenu.hide();
+            }
+        };
+        Button backToGameButton;
+        Button settingsButton;
+        Button saveAndQuitButton;
+        backToGameButton.init(50, 50, 150, 30, uiColor, "back to game", uiTextColor);
+        backToGameButton.onLeftMouseDown = [](Button* self)
+        {
+            mouseLock = true;
+            glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+
+            pauseMenu.hide();
+        };
+        settingsButton.init(50, 90, 150, 30, uiColor, "settings", uiTextColor);
+        settingsButton.onLeftMouseDown = [](Button* self)
+        {
+            pauseMenu.hide();
+            settingsMenu.show();
+        };
+        saveAndQuitButton.init(50, 130, 150, 30, uiColor, "save and quit", uiTextColor);
+        pauseMenu.add(std::make_unique<Button>(backToGameButton));
+        pauseMenu.add(std::make_unique<Button>(settingsButton));
+        pauseMenu.add(std::make_unique<Button>(saveAndQuitButton));
+    }
+
+    {
+        settingsMenu.init(PAUSE);
+        settingsMenu.onUpdate = [](Menu* self)
+        {
+            if (Input::justPressed("ESC") && settingsMenu.getShown())
+            {
+                settingsMenu.hide();
+                pauseMenu.show();
+            }
+        };
+        Button backButton;
+        Textbox toggleWireframeModeTextbox;
+        ToggleButton toggleWireframeModeButton;
+        backButton.init(50, 50, 150, 30, uiColor, "back", uiTextColor);
+        backButton.onLeftMouseDown = [](Button* self){
+            settingsMenu.hide();
+            pauseMenu.show();
+        };
+        toggleWireframeModeTextbox.init(57, 105, "wireframe mode", uiColor, false, true);
+        toggleWireframeModeButton.init(250, 90, 50, 30, uiColor, {"off", "on"}, uiTextColor);
+        toggleWireframeModeButton.onLeftMouseDown = [](ToggleButton* self){
+            if (self->getText() == "on")
+            {
+                wireframeMode = true;
+            }
+            else
+            {
+                wireframeMode = false;
+            }
+        };
+        toggleWireframeModeButton.onShow = [](ToggleButton* self){
+            self->setText(wireframeMode ? "on" : "off");
+        };
+        settingsMenu.add(std::make_unique<Button>(backButton));
+        settingsMenu.add(std::make_unique<Textbox>(toggleWireframeModeTextbox));
+        settingsMenu.add(std::make_unique<ToggleButton>(toggleWireframeModeButton));
+    }
+    
+    {
+        devMenu.init(DEV);
+        devMenu.onUpdate = [](Menu* self)
+        {
+            if ((Input::justPressed("ESC") || Input::justPressed("P")) && devMenu.getShown() && !devMenu.getShownFirstFrame())
+            {
+                mouseLock = true;
+                glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+
+                devMenu.hide();
+            }
+        };
+        Button backToGameButton;
+        CurveGraph testGraph;
+        backToGameButton.init(50, 50, 150, 30, uiColor, "back to game", uiTextColor);
+        backToGameButton.onLeftMouseDown = [](Button* self)
+        {
+            mouseLock = true;
+            glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+
+            devMenu.hide();
+        };
+        testGraph.init(currentWindowWidth - 350, currentWindowHeight - 350, 300, 300, uiColor, uiTextColor);
+        devMenu.add(std::make_unique<Button>(backToGameButton));
+        devMenu.add(std::make_unique<CurveGraph>(testGraph));
+    }
 }
 
 void UI::update()
 {
-    PauseMenu::update();
-    SettingsMenu::update();
-    DevMenu::update();
+    if (Input::justPressed("ESC") && openingMenuGroup == NONE)
+    {
+        pauseMenu.show();
+        mouseLock = false;
+        glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
+        glfwSetCursorPos(glfwWindow, currentWindowWidth/2, currentWindowHeight/2);
+    }
+
+    if (Input::justPressed("P") && openingMenuGroup == NONE)
+    {
+        devMenu.show();
+        mouseLock = false;
+        glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
+        glfwSetCursorPos(glfwWindow, currentWindowWidth/2, currentWindowHeight/2);
+    }
+
+    pauseMenu.update();
+    settingsMenu.update();
+    devMenu.update();
 }
 
 void UI::drawMenus()
 {
-    PauseMenu::draw();
-    SettingsMenu::draw();
-    DevMenu::draw();
+    pauseMenu.draw();
+    settingsMenu.draw();
+    devMenu.draw();
 }
 
 void UI::drawCrosshair()

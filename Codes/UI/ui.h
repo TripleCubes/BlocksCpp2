@@ -4,7 +4,7 @@
 #include "../Graphics/mesh.h"
 #include "../Graphics/shader.h"
 #include "../Types/color.h"
-#include "button.h"
+#include "menu.h"
 
 const float CROSSHAIR_WIDTH = 2;
 const float CROSSHAIR_HEIGHT = 14;
@@ -20,6 +20,10 @@ class UI
 
         static Mesh rectMesh;
         static Shader rectShader;
+
+        static Menu pauseMenu;
+        static Menu settingsMenu;
+        static Menu devMenu;
 
     public:
         static void init();

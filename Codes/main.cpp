@@ -16,8 +16,6 @@
 #include "Types/vectormath.h"
 #include "Entities/camera.h"
 #include "UI/ui.h"
-#include "Menus/pauseMenu.h"
-#include "Menus/devMenu.h"
 #include "time.h"
 #include "input.h"
 
@@ -199,16 +197,6 @@ int main()
         // ThreadControls::lockMainThread();
         Input::update();
         ChunkLoader::update();
-
-        if (Input::justPressed("ESC") && openingMenuGroup == NONE)
-        {
-            PauseMenu::show(true);
-        }
-
-        if (Input::justPressed("P") && openingMenuGroup == NONE)
-        {
-            DevMenu::show(true);
-        }
 
         if (openingMenuGroup == NONE)
         {

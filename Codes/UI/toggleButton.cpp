@@ -29,6 +29,68 @@ void ToggleButton::update()
         }
         text = textList[textIndex];
     }
+
+    if (onUpdate)
+    {
+        onUpdate(this);
+    }
+
+    if (onMouseOn && mouseOn())
+    {
+        onMouseOn(this);
+    }
+    if (onMouseEnter && mouseEnter())
+    {
+        onMouseEnter(this);
+    }
+    if (onMouseLeave && mouseLeave())
+    {
+        onMouseLeave(this);
+    }
+
+    if (onLeftMouseDown && leftMouseDown())
+    {
+        onLeftMouseDown(this);
+    }
+    if (onLeftMouseUp && leftMouseUp())
+    {
+        onLeftMouseUp(this);
+    }
+    if (onLeftMouseHold && leftMouseHold())
+    {
+        onLeftMouseHold(this);
+    }
+
+    if (onRightMouseDown && rightMouseDown())
+    {
+        onRightMouseDown(this);
+    }
+    if (onRightMouseUp && rightMouseUp())
+    {
+        onRightMouseUp(this);
+    }
+    if (onRightMouseHold && rightMouseHold())
+    {
+        onRightMouseHold(this);
+    }
+}
+
+void ToggleButton::show()
+{
+    if(onShow)
+    {
+        onShow(this);
+    }
+    Button::show();
+}
+
+void ToggleButton::hide()
+{
+    if(onHide)
+    {
+        onHide(this);
+    }
+    Button::hide();
 }
 
 std::string ToggleButton::getText()

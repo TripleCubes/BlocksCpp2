@@ -22,11 +22,11 @@ extern GLFWwindow* glfwWindow;
 extern Color uiColor;
 extern Color uiTextColor;
 
-enum OpeningMenuGroup
+enum MenuGroup
 {
     NONE, PAUSE, DEV
 };
-extern OpeningMenuGroup openingMenuGroup;
+extern MenuGroup openingMenuGroup;
 
 extern bool mouseLock;
 

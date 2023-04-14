@@ -147,6 +147,52 @@ void Button::update()
     {
         rightMouseIsTrueHold = false;
     }
+
+
+
+    if (onUpdate)
+    {
+        onUpdate(this);
+    }
+    
+    if (onMouseOn && mouseOn())
+    {
+        onMouseOn(this);
+    }
+    if (onMouseEnter && mouseEnter())
+    {
+        onMouseEnter(this);
+    }
+    if (onMouseLeave && mouseLeave())
+    {
+        onMouseLeave(this);
+    }
+
+    if (onLeftMouseDown && leftMouseDown())
+    {
+        onLeftMouseDown(this);
+    }
+    if (onLeftMouseUp && leftMouseUp())
+    {
+        onLeftMouseUp(this);
+    }
+    if (onLeftMouseHold && leftMouseHold())
+    {
+        onLeftMouseHold(this);
+    }
+
+    if (onRightMouseDown && rightMouseDown())
+    {
+        onRightMouseDown(this);
+    }
+    if (onRightMouseUp && rightMouseUp())
+    {
+        onRightMouseUp(this);
+    }
+    if (onRightMouseHold && rightMouseHold())
+    {
+        onRightMouseHold(this);
+    }
 }
 
 void Button::draw()
@@ -223,11 +269,19 @@ bool Button::rightMouseHold()
 
 void Button::show()
 {
+    if (onShow)
+    {
+        onShow(this);
+    }
     isHidden = false;
 }
 
 void Button::hide()
 {
+    if (onHide)
+    {
+        onHide(this);
+    }
     isHidden = true;
 }
 
