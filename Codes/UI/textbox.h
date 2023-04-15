@@ -25,6 +25,8 @@ class Textbox: public UIElement
         void draw() override;
         void show() override;
         void hide() override;
+
+        void setText(std::string text);
 };
 
 #endif

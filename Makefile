@@ -10,6 +10,7 @@ OBJS =  globals 					$\
 		UI/button 					$\
 		UI/textbox					$\
 		UI/toggleButton				$\
+		UI/slider					$\
 		UI/curveGraph				$\
 		UI/curveGraphControlPoint	$\
 		UI/Menu						$\

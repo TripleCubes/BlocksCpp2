@@ -25,6 +25,8 @@ class UI
         static Menu settingsMenu;
         static Menu devMenu;
 
+        static void initMenus();
+
     public:
         static void init();
         static void update();

@@ -45,3 +45,8 @@ void Textbox::hide()
 {
     shown = false;
 }
+
+void Textbox::setText(std::string text)
+{
+    this->text = text;
+}

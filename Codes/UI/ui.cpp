@@ -1,13 +1,17 @@
 #include "ui.h"
+
 #include "../globals.h"
-#include "../Entities/camera.h"
+#include "../input.h"
+
 #include "../Graphics/graphics.h"
 #include "../Graphics/text.h"
+
 #include "button.h"
 #include "toggleButton.h"
+#include "slider.h"
 #include "textbox.h"
 #include "curveGraph.h"
-#include "../input.h"
+
 #include <memory>
 
 Mesh UI::crosshairMesh;
@@ -21,80 +25,8 @@ Menu UI::pauseMenu;
 Menu UI::settingsMenu;
 Menu UI::devMenu;
 
-void UI::init()
+void UI::initMenus()
 {
-    std::vector<float> crosshairVerticies = {
-        -(float)CROSSHAIR_WIDTH  / 2,  (float)CROSSHAIR_HEIGHT / 2, // A 0
-         (float)CROSSHAIR_WIDTH  / 2,  (float)CROSSHAIR_HEIGHT / 2, // B 1
-         (float)CROSSHAIR_WIDTH  / 2, -(float)CROSSHAIR_HEIGHT / 2, // C 2
-        -(float)CROSSHAIR_WIDTH  / 2, -(float)CROSSHAIR_HEIGHT / 2, // D 3
-        -(float)CROSSHAIR_HEIGHT / 2,  (float)CROSSHAIR_WIDTH  / 2, // E 4
-         (float)CROSSHAIR_HEIGHT / 2,  (float)CROSSHAIR_WIDTH  / 2, // F 5
-         (float)CROSSHAIR_HEIGHT / 2, -(float)CROSSHAIR_WIDTH  / 2, // G 6
-        -(float)CROSSHAIR_HEIGHT / 2, -(float)CROSSHAIR_WIDTH  / 2, // H 7
-    };
-    std::vector<unsigned int> crosshairIndicies = {
-        0, 2, 3, 
-        0, 1, 2, 
-        4, 5, 6, 
-        4, 6, 7
-    };
-
-    crosshairMesh.set2d(crosshairVerticies, crosshairIndicies);
-    crosshairShader.init("./Shaders/UI/crosshair");
-    crosshairShader.useProgram();
-    crosshairShader.setUniform("currentWindowSize", (float)currentWindowWidth, (float)currentWindowHeight);
-
-
-
-    blockSelectionShader.init("./Shaders/UI/blockSelection");
-    blockSelectionShader.useProgram();
-    blockSelectionShader.setUniform("projectionMat", Graphics::getViewProjectionMat());
-
-    std::vector<float> blockSelectionVerticies = {
-        -0.501,  0.501, -0.501, // A 0
-         0.501,  0.501, -0.501, // B 1
-         0.501,  0.501,  0.501, // C 2
-        -0.501,  0.501,  0.501, // D 3
-        -0.501, -0.501, -0.501, // E 4
-         0.501, -0.501, -0.501, // F 5
-         0.501, -0.501,  0.501, // G 6
-        -0.501, -0.501,  0.501, // H 7
-    };
-    std::vector<unsigned int> blockSelectionIndicies = {
-        0, 1,
-        1, 2,
-        2, 3,
-        3, 0,
-        0, 4,
-        1, 5,
-        2, 6,
-        3, 7,
-        4, 5,
-        5, 6,
-        6, 7,
-        7, 4
-    };
-    blockSelectionMesh.set(blockSelectionVerticies, blockSelectionIndicies);
-
-
-
-    std::vector<float> rectVerticies = {
-        0, 1,
-        1, 1,
-        0, 0,
-        
-        1, 1,
-        1, 0,
-        0, 0
-    };
-    rectMesh.set2d(rectVerticies);
-    rectShader.init("./Shaders/UI/rect");
-    rectShader.useProgram();
-    rectShader.setUniform("windowSize", (float)currentWindowWidth, (float)currentWindowHeight);
-
-
-
     {
         pauseMenu.init(PAUSE);
         pauseMenu.onUpdate = [](Menu* self)
@@ -182,6 +114,7 @@ void UI::init()
         };
         Button backToGameButton;
         CurveGraph testGraph;
+        Slider testSlider;
         backToGameButton.init(50, 50, 150, 30, uiColor, "back to game", uiTextColor);
         backToGameButton.onLeftMouseDown = [](Button* self)
         {
@@ -191,9 +124,88 @@ void UI::init()
             devMenu.hide();
         };
         testGraph.init(currentWindowWidth - 350, currentWindowHeight - 350, 300, 300, uiColor, uiTextColor);
+        testSlider.init(currentWindowWidth - 300, 65, 200, 0, 100, uiColor, 0);
         devMenu.add(std::make_unique<Button>(backToGameButton));
         devMenu.add(std::make_unique<CurveGraph>(testGraph));
+        devMenu.add(std::make_unique<Slider>(testSlider));
     }
+}
+
+void UI::init()
+{
+    std::vector<float> crosshairVerticies = {
+        -(float)CROSSHAIR_WIDTH  / 2,  (float)CROSSHAIR_HEIGHT / 2, // A 0
+         (float)CROSSHAIR_WIDTH  / 2,  (float)CROSSHAIR_HEIGHT / 2, // B 1
+         (float)CROSSHAIR_WIDTH  / 2, -(float)CROSSHAIR_HEIGHT / 2, // C 2
+        -(float)CROSSHAIR_WIDTH  / 2, -(float)CROSSHAIR_HEIGHT / 2, // D 3
+        -(float)CROSSHAIR_HEIGHT / 2,  (float)CROSSHAIR_WIDTH  / 2, // E 4
+         (float)CROSSHAIR_HEIGHT / 2,  (float)CROSSHAIR_WIDTH  / 2, // F 5
+         (float)CROSSHAIR_HEIGHT / 2, -(float)CROSSHAIR_WIDTH  / 2, // G 6
+        -(float)CROSSHAIR_HEIGHT / 2, -(float)CROSSHAIR_WIDTH  / 2, // H 7
+    };
+    std::vector<unsigned int> crosshairIndicies = {
+        0, 2, 3, 
+        0, 1, 2, 
+        4, 5, 6, 
+        4, 6, 7
+    };
+
+    crosshairMesh.set2d(crosshairVerticies, crosshairIndicies);
+    crosshairShader.init("./Shaders/UI/crosshair");
+    crosshairShader.useProgram();
+    crosshairShader.setUniform("currentWindowSize", (float)currentWindowWidth, (float)currentWindowHeight);
+
+
+
+    blockSelectionShader.init("./Shaders/UI/blockSelection");
+    blockSelectionShader.useProgram();
+    blockSelectionShader.setUniform("projectionMat", Graphics::getViewProjectionMat());
+
+    std::vector<float> blockSelectionVerticies = {
+        -0.501,  0.501, -0.501, // A 0
+         0.501,  0.501, -0.501, // B 1
+         0.501,  0.501,  0.501, // C 2
+        -0.501,  0.501,  0.501, // D 3
+        -0.501, -0.501, -0.501, // E 4
+         0.501, -0.501, -0.501, // F 5
+         0.501, -0.501,  0.501, // G 6
+        -0.501, -0.501,  0.501, // H 7
+    };
+    std::vector<unsigned int> blockSelectionIndicies = {
+        0, 1,
+        1, 2,
+        2, 3,
+        3, 0,
+        0, 4,
+        1, 5,
+        2, 6,
+        3, 7,
+        4, 5,
+        5, 6,
+        6, 7,
+        7, 4
+    };
+    blockSelectionMesh.set(blockSelectionVerticies, blockSelectionIndicies);
+
+
+
+    std::vector<float> rectVerticies = {
+        0, 1,
+        1, 1,
+        0, 0,
+        
+        1, 1,
+        1, 0,
+        0, 0
+    };
+    rectMesh.set2d(rectVerticies);
+    rectShader.init("./Shaders/UI/rect");
+    rectShader.useProgram();
+    rectShader.setUniform("windowSize", (float)currentWindowWidth, (float)currentWindowHeight);
+
+
+
+    initMenus();
 }
 
 void UI::update()
