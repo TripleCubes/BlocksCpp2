@@ -20,7 +20,7 @@ void Slider::init(float x, float y, float w, float min, float max, Color color, 
     
     std::stringstream ss;
     ss << std::fixed << std::setprecision(decimalNumbers) << min;
-    textbox.init(x, y-35, ss.str());
+    textbox.init(x+w+15, y-14, ss.str());
 }
 
 void Slider::update()
@@ -46,6 +46,11 @@ void Slider::update()
         std::stringstream ss;
         ss << std::fixed << std::setprecision(decimalNumbers) << currentValue;
         textbox.setText(ss.str());
+
+        if (onValueUpdate)
+        {
+            onValueUpdate(this);
+        }
     }
 }
 
@@ -72,4 +77,9 @@ void Slider::hide()
     button.hide();
     textbox.hide();
     shown = false;
+}
+
+float Slider::getCurrentValue()
+{
+    return currentValue;
 }

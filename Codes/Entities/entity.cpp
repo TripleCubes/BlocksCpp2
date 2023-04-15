@@ -82,7 +82,7 @@ void Entity::update()
         addVelocity(internalVelocity, Vec3(0, 1, 0), externalVelocity.y, internalVelocityCap);
         externalVelocity = Vec3(0, 0, 0);
 
-        pos += internalVelocity * deltaTime;
+        pos += internalVelocity * Time::getDeltaTime();
     }
     else
     {
@@ -91,22 +91,22 @@ void Entity::update()
             addVelocity(internalVelocity, Vec3(0, 1, 0), externalVelocity.y, internalVelocityCap);
             externalVelocity = Vec3(0, 0, 0);
 
-            moveX(internalVelocity.x * deltaTime);
-            moveY(internalVelocity.y * deltaTime);
-            moveZ(internalVelocity.z * deltaTime);
+            moveX(internalVelocity.x * Time::getDeltaTime());
+            moveY(internalVelocity.y * Time::getDeltaTime());
+            moveZ(internalVelocity.z * Time::getDeltaTime());
         }
         else
         {
             addGravity();
 
-            moveX((internalVelocity.x + externalVelocity.x) * deltaTime);
-            moveY((internalVelocity.y + externalVelocity.y) * deltaTime);
-            moveZ((internalVelocity.z + externalVelocity.z) * deltaTime);
+            moveX((internalVelocity.x + externalVelocity.x) * Time::getDeltaTime());
+            moveY((internalVelocity.y + externalVelocity.y) * Time::getDeltaTime());
+            moveZ((internalVelocity.z + externalVelocity.z) * Time::getDeltaTime());
         }
     }
 
-    slowDownVelocity(internalVelocity, internalVelocitySlowDownAmount * deltaTime);
-    slowDownVelocity(externalVelocity, externalVelocitySlowDownAmount * deltaTime);
+    slowDownVelocity(internalVelocity, internalVelocitySlowDownAmount * Time::getDeltaTime());
+    slowDownVelocity(externalVelocity, externalVelocitySlowDownAmount * Time::getDeltaTime());
 }
 
 void Entity::draw()
@@ -290,12 +290,12 @@ void Entity::addVelocity(Vec3 &velocity, Vec3 velocityAddDir, float velocityAddA
 
 void Entity::addGravity()
 {
-    addVelocity(externalVelocity, Vec3(0, -1, 0), gravityVelocityAddAmount * deltaTime, externalVelocityCap);
+    addVelocity(externalVelocity, Vec3(0, -1, 0), gravityVelocityAddAmount * Time::getDeltaTime(), externalVelocityCap);
 }
 
 void Entity::move(Vec3 dir)
 {
-    addVelocity(internalVelocity, dir, internalVelocityAddAmount * deltaTime, internalVelocityCap);
+    addVelocity(internalVelocity, dir, internalVelocityAddAmount * Time::getDeltaTime(), internalVelocityCap);
 }
 
 void Entity::jump()

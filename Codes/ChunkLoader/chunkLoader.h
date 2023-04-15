@@ -7,6 +7,7 @@
 #include <FastNoiseLite.h>
 
 #include "chunk.h"
+#include "../UI/uiValueUpdate.h"
 
 class ChunkLoader 
 {
@@ -16,6 +17,9 @@ class ChunkLoader
 
         static std::unordered_map<std::string, Chunk> chunks;
         static FastNoiseLite terrainHeightNoise;
+        static int maxTerrainHeight;
+
+        static void unloadAllChunks();
 
     public:
         static void init();
@@ -46,6 +50,10 @@ class ChunkLoader
         static void draw();
 
         static void release();
+
+        static UIValueUpdate uiValueUpdate_terrainHeightNoise_Octave;
+        static UIValueUpdate uiValueUpdate_terrainHeightNoise_Frequency;
+        static UIValueUpdate uiValueUpdate_maxTerrainHeight;
 };
 
 #endif

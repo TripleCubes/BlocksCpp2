@@ -15,7 +15,6 @@
 
 const int INIT_WINDOW_WIDTH = 800;
 const int INIT_WINDOW_HEIGHT = 500;
-const int FPS_CAP = 60;
 
 extern GLFWwindow* glfwWindow;
 

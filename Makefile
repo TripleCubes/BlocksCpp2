@@ -6,6 +6,7 @@ OBJS =  globals 					$\
 		Graphics/graphics 			$\
 		Graphics/text				$\
 		UI/ui 						$\
+		UI/uiValueUpdate			$\
 		UI/uiElement				$\
 		UI/button 					$\
 		UI/textbox					$\
@@ -25,6 +26,7 @@ OBJS =  globals 					$\
 		Types/color 				$\
 		Types/rect					$\
 		time 						$\
+		intervalsAndWaits			$\
 		math 						$\
 		threadControls 				$\
 		input						$\

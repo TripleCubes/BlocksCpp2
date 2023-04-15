@@ -3,10 +3,15 @@
 #include "../globals.h"
 #include "../threadControls.h"
 
-int ChunkLoader::loadDistance = 3;
+int ChunkLoader::loadDistance = 5;
 int ChunkLoader::chunkLoadPerCycle = 5;
 std::unordered_map<std::string, Chunk> ChunkLoader::chunks;
 FastNoiseLite ChunkLoader::terrainHeightNoise;
+int ChunkLoader::maxTerrainHeight = 16;
+
+UIValueUpdate ChunkLoader::uiValueUpdate_terrainHeightNoise_Octave;
+UIValueUpdate ChunkLoader::uiValueUpdate_terrainHeightNoise_Frequency;
+UIValueUpdate ChunkLoader::uiValueUpdate_maxTerrainHeight;
 
 void ChunkLoader::chunkLoadThreadFunction()
 {
@@ -68,12 +73,42 @@ void ChunkLoader::chunkUnloadThreadFunction()
     }
 }
 
+void ChunkLoader::unloadAllChunks()
+{
+    for (std::unordered_map<std::string, Chunk>::iterator i = chunks.begin(); i != chunks.end();)
+    {
+        IntPos chunkPos = i->second.getChunkPos();
+        i = unloadChunk(chunkPos);
+    }
+}
+
 void ChunkLoader::init()
 {
     terrainHeightNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
     terrainHeightNoise.SetSeed(rand());
     terrainHeightNoise.SetFractalOctaves(3);
     terrainHeightNoise.SetFrequency(0.005);
+
+    uiValueUpdate_terrainHeightNoise_Octave.init(0.1);
+    uiValueUpdate_terrainHeightNoise_Octave.onValueUpdate = []()
+    {
+        terrainHeightNoise.SetFractalOctaves((int)round(uiValueUpdate_terrainHeightNoise_Octave.getCurrentValue()));
+        unloadAllChunks();
+    };
+
+    uiValueUpdate_terrainHeightNoise_Frequency.init(0.1);
+    uiValueUpdate_terrainHeightNoise_Frequency.onValueUpdate = []()
+    {
+        terrainHeightNoise.SetFrequency(uiValueUpdate_terrainHeightNoise_Frequency.getCurrentValue());
+        unloadAllChunks();
+    };
+
+    uiValueUpdate_maxTerrainHeight.init(0.1);
+    uiValueUpdate_maxTerrainHeight.onValueUpdate = []()
+    {
+        maxTerrainHeight = uiValueUpdate_maxTerrainHeight.getCurrentValue();
+        unloadAllChunks();
+    };
 }
 
 std::string ChunkLoader::convertToKey(int x, int y, int z)
@@ -191,7 +226,7 @@ void ChunkLoader::loadChunk(IntPos chunkPos)
     {
         for (int z = CHUNK_SIZE * chunkPos.z; z < CHUNK_SIZE * chunkPos.z + CHUNK_SIZE; z++)
         {
-            int terrainHeight = round((terrainHeightNoise.GetNoise((float)x, (float)z)+1)/2 * 16) - 16;
+            int terrainHeight = round((terrainHeightNoise.GetNoise((float)x, (float)z)+1)/2 * maxTerrainHeight) - 16;
 
             for (int y = CHUNK_SIZE * chunkPos.y; y < CHUNK_SIZE * chunkPos.y + CHUNK_SIZE; y++)
             {

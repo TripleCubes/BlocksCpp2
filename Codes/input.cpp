@@ -14,6 +14,7 @@ void Input::addKey(std::string keyString, int glfwKey)
 void Input::init()
 {
     addKey("ESC", GLFW_KEY_ESCAPE);
+    addKey("A", GLFW_KEY_A);
     addKey("P", GLFW_KEY_P);
 }
 

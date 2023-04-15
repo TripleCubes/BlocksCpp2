@@ -23,7 +23,9 @@ class UI
 
         static Menu pauseMenu;
         static Menu settingsMenu;
+
         static Menu devMenu;
+        static Menu devChunkLoaderMenu;
 
         static void initMenus();
 

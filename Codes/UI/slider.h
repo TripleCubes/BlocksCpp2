@@ -5,6 +5,7 @@
 #include "button.h"
 #include "textbox.h"
 #include "../Types/color.h"
+#include <functional>
 
 class Slider: public UIElement
 {
@@ -30,6 +31,10 @@ class Slider: public UIElement
         void draw() override;
         void show() override;
         void hide() override;
+
+        float getCurrentValue();
+
+        std::function<void(Slider*)> onValueUpdate;
 };
 
 #endif

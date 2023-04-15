@@ -2,8 +2,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <vector>
-#include <chrono>
-#include <thread>
 
 #include "globals.h"
 #include "Graphics/shader.h"
@@ -17,6 +15,7 @@
 #include "Entities/camera.h"
 #include "UI/ui.h"
 #include "time.h"
+#include "intervalsAndWaits.h"
 #include "input.h"
 
 #include "threadControls.h"
@@ -164,19 +163,17 @@ void initOpenGL()
     glfwSetCursorPosCallback(glfwWindow, onMouseMove);
     glfwSetKeyCallback(glfwWindow, onKeyPress);
     glfwSetMouseButtonCallback(glfwWindow, onMouseClick);
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
 }
 
 int main()
 {
-    using namespace std::chrono;
-    using namespace std::this_thread;
-
     srand(time(0));
 
     initOpenGL();
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
-    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
 
     Graphics::init();
     Text::init();
@@ -192,7 +189,7 @@ int main()
 
     while (!glfwWindowShouldClose(glfwWindow))
     {
-        float frameStartTime = glfwGetTime();
+        Time::setFrameStartTime();
 
         // ThreadControls::lockMainThread();
         Input::update();
@@ -245,6 +242,9 @@ int main()
         mainCamera.update(player);
 
         UI::update();
+
+        updateIntervals();
+
         Graphics::update();
         Graphics::draw();
 
@@ -253,11 +253,8 @@ int main()
 
         // ThreadControls::markMainThreadCycleFinished();
 
-        float frameTime = glfwGetTime() - frameStartTime;
-        sleep_for(milliseconds((int)round((1/(float)FPS_CAP - frameTime)* 1000)));
-
-        deltaTime = glfwGetTime() - previousTime;
-        previousTime = glfwGetTime();
+        Time::syncFrame();
+        Time::update();
     }
 
     // ThreadControls::release();

@@ -12,6 +12,8 @@
 #include "textbox.h"
 #include "curveGraph.h"
 
+#include "../ChunkLoader/chunkLoader.h"
+
 #include <memory>
 
 Mesh UI::crosshairMesh;
@@ -24,9 +26,15 @@ Shader UI::rectShader;
 Menu UI::pauseMenu;
 Menu UI::settingsMenu;
 Menu UI::devMenu;
+Menu UI::devChunkLoaderMenu;
 
 void UI::initMenus()
 {
+    float marginLeft = 50;
+    float marginLeft2 = 250;
+    float marginTop = 50;
+    float lineHeight = 40;
+
     {
         pauseMenu.init(PAUSE);
         pauseMenu.onUpdate = [](Menu* self)
@@ -39,10 +47,9 @@ void UI::initMenus()
                 pauseMenu.hide();
             }
         };
+
         Button backToGameButton;
-        Button settingsButton;
-        Button saveAndQuitButton;
-        backToGameButton.init(50, 50, 150, 30, uiColor, "back to game", uiTextColor);
+        backToGameButton.init(marginLeft, marginTop, 150, 30, uiColor, "back to game", uiTextColor);
         backToGameButton.onLeftMouseDown = [](Button* self)
         {
             mouseLock = true;
@@ -50,15 +57,19 @@ void UI::initMenus()
 
             pauseMenu.hide();
         };
-        settingsButton.init(50, 90, 150, 30, uiColor, "settings", uiTextColor);
+        pauseMenu.add(std::make_unique<Button>(backToGameButton));
+
+        Button settingsButton;
+        settingsButton.init(marginLeft, marginTop+lineHeight, 150, 30, uiColor, "settings", uiTextColor);
         settingsButton.onLeftMouseDown = [](Button* self)
         {
             pauseMenu.hide();
             settingsMenu.show();
         };
-        saveAndQuitButton.init(50, 130, 150, 30, uiColor, "save and quit", uiTextColor);
-        pauseMenu.add(std::make_unique<Button>(backToGameButton));
         pauseMenu.add(std::make_unique<Button>(settingsButton));
+
+        Button saveAndQuitButton;
+        saveAndQuitButton.init(marginLeft, marginTop+lineHeight*2, 150, 30, uiColor, "save and quit", uiTextColor);
         pauseMenu.add(std::make_unique<Button>(saveAndQuitButton));
     }
 
@@ -72,16 +83,21 @@ void UI::initMenus()
                 pauseMenu.show();
             }
         };
+
         Button backButton;
-        Textbox toggleWireframeModeTextbox;
-        ToggleButton toggleWireframeModeButton;
-        backButton.init(50, 50, 150, 30, uiColor, "back", uiTextColor);
+        backButton.init(marginLeft, marginTop, 150, 30, uiColor, "back", uiTextColor);
         backButton.onLeftMouseDown = [](Button* self){
             settingsMenu.hide();
             pauseMenu.show();
         };
-        toggleWireframeModeTextbox.init(57, 105, "wireframe mode", uiColor, false, true);
-        toggleWireframeModeButton.init(250, 90, 50, 30, uiColor, {"off", "on"}, uiTextColor);
+        settingsMenu.add(std::make_unique<Button>(backButton));
+
+        Textbox toggleWireframeModeTextbox;
+        toggleWireframeModeTextbox.init(marginLeft+7, marginTop+lineHeight+15, "wireframe mode", uiColor, false, true);
+        settingsMenu.add(std::make_unique<Textbox>(toggleWireframeModeTextbox));
+
+        ToggleButton toggleWireframeModeButton;
+        toggleWireframeModeButton.init(marginLeft2, marginTop+lineHeight, 50, 30, uiColor, {"off", "on"}, uiTextColor);
         toggleWireframeModeButton.onLeftMouseDown = [](ToggleButton* self){
             if (self->getText() == "on")
             {
@@ -95,8 +111,6 @@ void UI::initMenus()
         toggleWireframeModeButton.onShow = [](ToggleButton* self){
             self->setText(wireframeMode ? "on" : "off");
         };
-        settingsMenu.add(std::make_unique<Button>(backButton));
-        settingsMenu.add(std::make_unique<Textbox>(toggleWireframeModeTextbox));
         settingsMenu.add(std::make_unique<ToggleButton>(toggleWireframeModeButton));
     }
     
@@ -112,10 +126,9 @@ void UI::initMenus()
                 devMenu.hide();
             }
         };
+
         Button backToGameButton;
-        CurveGraph testGraph;
-        Slider testSlider;
-        backToGameButton.init(50, 50, 150, 30, uiColor, "back to game", uiTextColor);
+        backToGameButton.init(marginLeft, marginTop, 150, 30, uiColor, "back to game", uiTextColor);
         backToGameButton.onLeftMouseDown = [](Button* self)
         {
             mouseLock = true;
@@ -123,11 +136,80 @@ void UI::initMenus()
 
             devMenu.hide();
         };
-        testGraph.init(currentWindowWidth - 350, currentWindowHeight - 350, 300, 300, uiColor, uiTextColor);
-        testSlider.init(currentWindowWidth - 300, 65, 200, 0, 100, uiColor, 0);
         devMenu.add(std::make_unique<Button>(backToGameButton));
-        devMenu.add(std::make_unique<CurveGraph>(testGraph));
-        devMenu.add(std::make_unique<Slider>(testSlider));
+
+        Button chunkLoaderMenuButton;
+        chunkLoaderMenuButton.init(marginLeft, marginTop+lineHeight, 150, 30, uiColor, "chunk loader", uiTextColor);
+        chunkLoaderMenuButton.onLeftMouseDown = [](Button* self)
+        {
+            devMenu.hide();
+            devChunkLoaderMenu.show();
+        };
+        devMenu.add(std::make_unique<Button>(chunkLoaderMenuButton));
+    }
+
+    {
+        devChunkLoaderMenu.init(DEV);
+        devChunkLoaderMenu.onUpdate = [](Menu* self)
+        {
+            if (Input::justPressed("ESC") && self->getShown())
+            {
+                devChunkLoaderMenu.hide();
+                devMenu.show();
+            }
+            else if (Input::justPressed("P") && self->getShown())
+            {
+                devChunkLoaderMenu.hide();
+            }
+        };
+
+        Button backButton;
+        backButton.init(marginLeft, marginTop, 150, 30, uiColor, "back", uiTextColor);
+        backButton.onLeftMouseDown = [](Button* self){
+            devChunkLoaderMenu.hide();
+            devMenu.show();
+        };
+        devChunkLoaderMenu.add(std::make_unique<Button>(backButton));
+
+        Textbox terrainHeightNoiseText;
+        terrainHeightNoiseText.init(marginLeft+7, marginTop+lineHeight+15, "terrain height noise", uiColor, false, true);
+        devChunkLoaderMenu.add(std::make_unique<Textbox>(terrainHeightNoiseText));
+
+        Textbox terrainHeightNoise_OctaveText;
+        terrainHeightNoise_OctaveText.init(marginLeft+7, marginTop+lineHeight*2+15, "octave", uiColor, false, true);
+        devChunkLoaderMenu.add(std::make_unique<Textbox>(terrainHeightNoise_OctaveText));
+
+        Slider terrainHeightNoise_OctaveSlider;
+        terrainHeightNoise_OctaveSlider.init(marginLeft2, marginTop+lineHeight*2+17, 100, 0, 4, uiColor, 0);
+        terrainHeightNoise_OctaveSlider.onValueUpdate = [](Slider* self)
+        {
+            ChunkLoader::uiValueUpdate_terrainHeightNoise_Octave.setValue(self->getCurrentValue());
+        };
+        devChunkLoaderMenu.add(std::make_unique<Slider>(terrainHeightNoise_OctaveSlider));
+
+        Textbox terrainHeightNoise_FrequencyText;
+        terrainHeightNoise_FrequencyText.init(marginLeft+7, marginTop+lineHeight*3+15, "frequency", uiColor, false, true);
+        devChunkLoaderMenu.add(std::make_unique<Textbox>(terrainHeightNoise_FrequencyText));
+
+        Slider terrainHeightNoise_FrequencySlider;
+        terrainHeightNoise_FrequencySlider.init(marginLeft2, marginTop+lineHeight*3+17, 300, 0, 1, uiColor, 5);
+        terrainHeightNoise_FrequencySlider.onValueUpdate = [](Slider* self)
+        {
+            ChunkLoader::uiValueUpdate_terrainHeightNoise_Frequency.setValue(self->getCurrentValue());
+        };
+        devChunkLoaderMenu.add(std::make_unique<Slider>(terrainHeightNoise_FrequencySlider));
+
+        Textbox maxTerrainHeightText;
+        maxTerrainHeightText.init(marginLeft+7, marginTop+lineHeight*4+15, "max terrain height", uiColor, false, true);
+        devChunkLoaderMenu.add(std::make_unique<Textbox>(maxTerrainHeightText));
+
+        Slider maxTerrainHeightSlider;
+        maxTerrainHeightSlider.init(marginLeft2, marginTop+lineHeight*4+17, 300, 16, 100, uiColor, 0);
+        maxTerrainHeightSlider.onValueUpdate = [](Slider* self)
+        {
+            ChunkLoader::uiValueUpdate_maxTerrainHeight.setValue(self->getCurrentValue());
+        };
+        devChunkLoaderMenu.add(std::make_unique<Slider>(maxTerrainHeightSlider));
     }
 }
 
@@ -229,6 +311,7 @@ void UI::update()
     pauseMenu.update();
     settingsMenu.update();
     devMenu.update();
+    devChunkLoaderMenu.update();
 }
 
 void UI::drawMenus()
@@ -236,6 +319,7 @@ void UI::drawMenus()
     pauseMenu.draw();
     settingsMenu.draw();
     devMenu.draw();
+    devChunkLoaderMenu.draw();
 }
 
 void UI::drawCrosshair()
