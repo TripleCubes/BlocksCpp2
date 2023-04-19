@@ -242,6 +242,10 @@ std::unordered_map<std::string, Chunk>::iterator ChunkLoader::unloadChunk(IntPos
 
 void ChunkLoader::update()
 {
+    chunkLoadThreadFunction();
+    updateSurfaceDataThreadFunction();
+    updateMeshesThreadFunction();
+    chunkUnloadThreadFunction();
 }
 
 void ChunkLoader::draw()

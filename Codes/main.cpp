@@ -188,13 +188,13 @@ int main()
     player.init(Vec3(0, 0, 10), Vec3(0, 0, -1));
     mainCamera.init(player);
 
-    ThreadControls::init();
+    // ThreadControls::init();
 
     while (!glfwWindowShouldClose(glfwWindow))
     {
         Time::setFrameStartTime();
 
-        ThreadControls::lockMainThread();
+        // ThreadControls::lockMainThread();
         Input::update();
         ChunkLoader::update();
 
@@ -254,13 +254,13 @@ int main()
         glfwSwapBuffers(glfwWindow);
         glfwPollEvents();
 
-        ThreadControls::markMainThreadCycleFinished();
+        // ThreadControls::markMainThreadCycleFinished();
 
         Time::syncFrame();
         Time::update();
     }
 
-    ThreadControls::release();
+    // ThreadControls::release();
     player.release();
     ChunkLoader::release();
     UI::release();
