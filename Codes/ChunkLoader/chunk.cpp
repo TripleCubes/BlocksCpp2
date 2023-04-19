@@ -6,46 +6,6 @@
 #include "../globals.h"
 #include "../Graphics/graphics.h"
 
-IntPos::IntPos(int x, int y, int z): x{x}, y{y}, z{z} {}
-
-bool IntPos::operator == (IntPos pos)
-{
-    if (x != pos.x || y != pos.y || z != pos.z)
-    {
-        return false;
-    }
-    return true;
-}
-
-IntPos IntPos::chunkPos()
-{
-    return IntPos((int)floor((float)x / CHUNK_SIZE), (int)floor((float)y / CHUNK_SIZE), (int)floor((float)z / CHUNK_SIZE));
-}
-
-IntPos IntPos::blockChunkPos()
-{
-    return IntPos(mod(x, CHUNK_SIZE), mod(y, CHUNK_SIZE), mod(z, CHUNK_SIZE));
-}
-
-std::string IntPos::toString(bool endline)
-{
-    return std::to_string(x) +  " " + std::to_string(y) + " " + std::to_string(z) + (endline ? "\n" : "");
-}
-
-Vec3 IntPos::toVec3()
-{
-    return Vec3((float)x, (float)y, (float)z);
-}
-
-
-
-Block::Block(BlockType blockType, IntPos pos): blockType{blockType}, pos{pos}, 
-                                                chunkPos{pos.chunkPos()}, 
-                                                blockChunkPos{pos.blockChunkPos()} {}
-Block::Block(): blockType{EMPTY}, pos{IntPos(0, 0, 0)} {}
-
-
-
 Chunk::Chunk(int x, int y, int z): chunkPos(IntPos(x, y, z)) {}
 Chunk::Chunk(IntPos chunkPos): chunkPos(chunkPos) {}
 Chunk::Chunk(): chunkPos(IntPos(0, 0, 0)) {}
@@ -60,7 +20,7 @@ void Chunk::addBlock(Block block)
     surfaceDataUpdated = false;
     meshUpdated = false;
 
-    blocks[block.blockChunkPos.x][block.blockChunkPos.y][block.blockChunkPos.z] = block;
+    blocks[block.pos.blockChunkPos().x][block.pos.blockChunkPos().y][block.pos.blockChunkPos().z] = block;
 }
 
 void Chunk::removeBlock(IntPos blockChunkPos)

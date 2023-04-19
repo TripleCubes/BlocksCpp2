@@ -6,6 +6,8 @@
 #include "../Graphics/graphics.h"
 #include "../time.h"
 
+#include "../Types/intPos.h"
+
 void Entity::init(Vec3 pos, Vec3 frontDir)
 {
     this->pos = pos;

@@ -6,7 +6,6 @@ OBJS =  globals 					$\
 		Graphics/graphics 			$\
 		Graphics/text				$\
 		UI/ui 						$\
-		UI/uiValueUpdate			$\
 		UI/uiElement				$\
 		UI/button 					$\
 		UI/textbox					$\
@@ -16,15 +15,19 @@ OBJS =  globals 					$\
 		UI/curveGraphControlPoint	$\
 		UI/Menu						$\
 		ChunkLoader/chunk 			$\
+		ChunkLoader/block			$\
 		ChunkLoader/chunkLoader 	$\
+		ChunkLoader/terrain			$\
 		Entities/entity 			$\
 		Entities/player 			$\
 		Entities/camera 			$\
 		Entities/raycast 			$\
 		Types/vectormath 			$\
 		Types/vec2					$\
+		Types/intPos				$\
 		Types/color 				$\
 		Types/rect					$\
+		Types/curveMap				$\
 		time 						$\
 		intervalsAndWaits			$\
 		math 						$\
@@ -51,20 +54,20 @@ define NEWLINE
 endef
 
 rebuild:
-	$(foreach obj,$(OBJS),g++ -c ./Codes/$(obj).cpp -o ./Build/$(obj).o $(INCLUDES) $(LIBS) $(FLAGS)$(NEWLINE))
-	g++ -c ./Codes/main.cpp -o ./Build/main.o $(INCLUDES) $(LIBS) $(FLAGS)
+	$(foreach obj,$(OBJS),g++ -g -c ./Codes/$(obj).cpp -o ./Build/$(obj).o $(INCLUDES) $(LIBS) $(FLAGS)$(NEWLINE))
+	g++ -g -c ./Codes/main.cpp -o ./Build/main.o $(INCLUDES) $(LIBS) $(FLAGS)
 	gcc -c ./Libs/glad/src/glad.c -o ./Build/glad.o $(INCLUDES) $(LIBS) $(FLAGS) 
 	g++ -c ./Codes/stb_image.cpp -o ./Build/stb_image.o -I"./Libs/stb_image"
-	g++ -o ./Build/blocks.exe $(OBJPATHS) ./Build/stb_image.o ./Build/glad.o ./Build/main.o $(INCLUDES) $(LIBS) $(FLAGS) -static-libgcc -static-libstdc++
+	g++ -g -o ./Build/blocks.exe $(OBJPATHS) ./Build/stb_image.o ./Build/glad.o ./Build/main.o $(INCLUDES) $(LIBS) $(FLAGS) -static-libgcc -static-libstdc++
 
 buildRelease:
 	g++ -o ./Release/blocks.exe $(OBJPATHS) ./Build/stb_image.o ./Build/glad.o ./Build/main.o $(INCLUDES) $(LIBS) $(FLAGS) -mwindows -static-libgcc -static-libstdc++
 
 ./Build/blocks.exe: $(OBJPATHS) ./Build/main.o ./Build/glad.o ./Build/stb_image.o
-	g++ -o ./Build/blocks.exe $(OBJPATHS) ./Build/stb_image.o ./Build/glad.o ./Build/main.o $(INCLUDES) $(LIBS) $(FLAGS) -static-libgcc -static-libstdc++
+	g++ -g -o ./Build/blocks.exe $(OBJPATHS) ./Build/stb_image.o ./Build/glad.o ./Build/main.o $(INCLUDES) $(LIBS) $(FLAGS) -static-libgcc -static-libstdc++
 
 ./Build/main.o: ./Codes/main.cpp
-	g++ -c ./Codes/main.cpp -o $@ $(INCLUDES) $(LIBS) $(FLAGS)
+	g++ -g -c ./Codes/main.cpp -o $@ $(INCLUDES) $(LIBS) $(FLAGS)
 
 ./Build/glad.o:
 	gcc -c ./Libs/glad/src/glad.c -o $@ $(INCLUDES) $(LIBS) $(FLAGS) 
@@ -73,4 +76,4 @@ buildRelease:
 	g++ -c ./Codes/stb_image.cpp -o $@ -I"./Libs/stb_image"
 
 $(OBJPATHS): ./Build/%.o: ./Codes/%.cpp ./Codes/%.h
-	g++ -c $< -o $@ $(INCLUDES) $(LIBS) $(FLAGS)
+	g++ -g -c $< -o $@ $(INCLUDES) $(LIBS) $(FLAGS)

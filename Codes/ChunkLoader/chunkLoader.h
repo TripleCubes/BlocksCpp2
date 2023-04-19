@@ -4,10 +4,9 @@
 #include <unordered_map>
 #include <string>
 
-#include <FastNoiseLite.h>
-
 #include "chunk.h"
-#include "../UI/uiValueUpdate.h"
+
+#include "../Types/intPos.h"
 
 class ChunkLoader 
 {
@@ -16,9 +15,8 @@ class ChunkLoader
         static int chunkLoadPerCycle;
 
         static std::unordered_map<std::string, Chunk> chunks;
-        static FastNoiseLite terrainHeightNoise;
-        static int maxTerrainHeight;
 
+        static bool unloadAllChunksRequested;
         static void unloadAllChunks();
 
     public:
@@ -39,6 +37,7 @@ class ChunkLoader
         static void placeBlock(Block block);
         static void breakBlock(IntPos pos);
         static void requestUpdateChunksAround(IntPos chunkPos);
+        static void requestUnloadAllChunks();
 
         static bool chunkLoaded(IntPos chunkPos);
         static bool chunkLoaded(std::string key);
@@ -50,10 +49,6 @@ class ChunkLoader
         static void draw();
 
         static void release();
-
-        static UIValueUpdate uiValueUpdate_terrainHeightNoise_Octave;
-        static UIValueUpdate uiValueUpdate_terrainHeightNoise_Frequency;
-        static UIValueUpdate uiValueUpdate_maxTerrainHeight;
 };
 
 #endif

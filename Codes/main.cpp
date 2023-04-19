@@ -12,6 +12,7 @@
 #include "Graphics/text.h"
 #include "ChunkLoader/chunkLoader.h"
 #include "Types/vectormath.h"
+#include "Types/intPos.h"
 #include "Entities/camera.h"
 #include "UI/ui.h"
 #include "time.h"
@@ -167,6 +168,8 @@ void initOpenGL()
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 int main()

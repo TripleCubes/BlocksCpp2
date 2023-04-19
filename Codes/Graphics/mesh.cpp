@@ -15,7 +15,7 @@ void Mesh::set(std::vector<float> verticies)
 
     if (EBOInitialized)
     {
-        glDeleteVertexArrays(1, &EBO);
+        glDeleteBuffers(1, &EBO);
         EBOInitialized = false;
     }
 
@@ -55,7 +55,7 @@ void Mesh::set(std::vector<float> verticies, std::vector<unsigned int> indicies)
 
     if (EBOInitialized)
     {
-        glDeleteVertexArrays(1, &EBO);
+        glDeleteBuffers(1, &EBO);
     }
     else
     {
@@ -98,7 +98,7 @@ void Mesh::set2d(std::vector<float> verticies)
 
     if (EBOInitialized)
     {
-        glDeleteVertexArrays(1, &EBO);
+        glDeleteBuffers(1, &EBO);
         EBOInitialized = false;
     }
 
@@ -134,7 +134,7 @@ void Mesh::set2d(std::vector<float> verticies, std::vector<unsigned int> indicie
 
     if (EBOInitialized)
     {
-        glDeleteVertexArrays(1, &EBO);
+        glDeleteBuffers(1, &EBO);
     }
     else
     {
@@ -185,6 +185,12 @@ void Mesh::draw(bool drawLine)
 
 void Mesh::release()
 {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &EBO);
+    if (VAOInitialized)
+    {
+        glDeleteVertexArrays(1, &VAO);
+    }
+    if (EBOInitialized)
+    {
+        glDeleteBuffers(1, &EBO);
+    }
 }

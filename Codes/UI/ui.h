@@ -21,16 +21,16 @@ class UI
         static Mesh rectMesh;
         static Shader rectShader;
 
-        static Menu pauseMenu;
-        static Menu settingsMenu;
+        static Menu menu_pause;
+        static Menu menu_pause_settings;
 
-        static Menu devMenu;
-        static Menu devChunkLoaderMenu;
-
-        static void initMenus();
+        static Menu menu_dev;
+        static Menu menu_dev_noises;
+        static Menu menu_dev_noises_terrain;
 
     public:
         static void init();
+        static void initMenus();
         static void update();
 
         static void drawMenus();

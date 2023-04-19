@@ -121,6 +121,25 @@ void CurveGraph::update()
     {
         calculateMapPoints();
     }
+
+    for (int i = 0; i < controlPoints.size(); i++)
+    {
+        if (controlPoints[i].getPoint().leftMouseUp() || controlPoints[i].getCurveControl1().leftMouseUp()
+        || controlPoints[i].getCurveControl2().leftMouseUp())
+        {
+            if (!error && onPointsUpdate)
+            {
+                onPointsUpdate(this);
+            }
+        }
+    }
+    if (addControlPointButton.leftMouseDown())
+    {
+        if (!error && onPointsUpdate)
+        {
+            onPointsUpdate(this);
+        }
+    }
 }
 
 void CurveGraph::calculateMapPoints()
@@ -131,46 +150,50 @@ void CurveGraph::calculateMapPoints()
     {
         for (float t = 0; t <= 1; t += 0.05)
         {
-            Vec2 drawPoint = point1*pow(1-t, 3) + point2*3*t*pow(1-t, 2) + point3*3*(1-t)*pow(t, 2) + point4*pow(t, 3);
-            calculatedPoints.push_back(drawPoint);
+            Vec2 point = point1*pow(1-t, 3) + point2*3*t*pow(1-t, 2) + point3*3*(1-t)*pow(t, 2) + point4*pow(t, 3);
+            calculatedPoints.push_back(Vec2(point.x, 1-point.y));
         }
     };
 
     if (controlPoints.size() == 0)
     {
-        Vec2 point1 = Vec2(x, h + y);
-        Vec2 point2 = Vec2(x, h + y);
-        Vec2 point3 = Vec2(w + x, y);
-        Vec2 point4 = Vec2(w + x, y);
+        Vec2 point1 = Vec2(0, 1);
+        Vec2 point2 = Vec2(0, 1);
+        Vec2 point3 = Vec2(1, 0);
+        Vec2 point4 = Vec2(1, 0);
         calculatePointsOneBezier(point1, point2, point3, point4);
         return;
     }
 
-    Vec2 point1 = Vec2(x, h + y);
-    Vec2 point2 = Vec2(x, h + y);
-    Vec2 point3 = controlPoints[0].getCurveControl1().getCenterPos();
-    Vec2 point4 = controlPoints[0].getPoint().getCenterPos();
+    Vec2 point1 = Vec2(0, 1);
+    Vec2 point2 = Vec2(0, 1);
+    Vec2 point3 = (controlPoints[0].getCurveControl1().getCenterPos() - Vec2(x, y)) / Vec2(w, h);
+    Vec2 point4 = (controlPoints[0].getPoint().getCenterPos() - Vec2(x, y)) / Vec2(w, h);
     calculatePointsOneBezier(point1, point2, point3, point4);
 
     for (int i = 0; i < controlPoints.size() - 1; i++)
     {
-        Vec2 point1 = controlPoints[i].getPoint().getCenterPos();
-        Vec2 point2 = controlPoints[i].getCurveControl2().getCenterPos();
-        Vec2 point3 = controlPoints[i + 1].getCurveControl1().getCenterPos();
-        Vec2 point4 = controlPoints[i + 1].getPoint().getCenterPos();
+        Vec2 point1 = (controlPoints[i].getPoint().getCenterPos() - Vec2(x, y)) / Vec2(w, h);
+        Vec2 point2 = (controlPoints[i].getCurveControl2().getCenterPos() - Vec2(x, y)) / Vec2(w, h);
+        Vec2 point3 = (controlPoints[i + 1].getCurveControl1().getCenterPos() - Vec2(x, y)) / Vec2(w, h);
+        Vec2 point4 = (controlPoints[i + 1].getPoint().getCenterPos() - Vec2(x, y)) / Vec2(w, h);
         calculatePointsOneBezier(point1, point2, point3, point4);
     }
 
-    point1 = controlPoints[controlPoints.size() - 1].getPoint().getCenterPos();
-    point2 = controlPoints[controlPoints.size() - 1].getCurveControl2().getCenterPos();
-    point3 = Vec2(w + x, y);
-    point4 = Vec2(w + x, y);
+    point1 = (controlPoints[controlPoints.size() - 1].getPoint().getCenterPos() - Vec2(x, y)) / Vec2(w, h);
+    point2 = (controlPoints[controlPoints.size() - 1].getCurveControl2().getCenterPos() - Vec2(x, y)) / Vec2(w, h);
+    point3 = Vec2(1, 0);
+    point4 = Vec2(1, 0);
     calculatePointsOneBezier(point1, point2, point3, point4);
+
+    calculatedPoints[0] = Vec2(0, 0);
+    calculatedPoints[calculatedPoints.size() - 1] = Vec2(1, 1);
 
     error = false;
     for (int i = 0; i < calculatedPoints.size() - 1; i++)
     {
-        if (calculatedPoints[i].x > calculatedPoints[i + 1].x)
+        if (calculatedPoints[i].x > calculatedPoints[i + 1].x 
+        || calculatedPoints[i].y < 0 || calculatedPoints[i].y > 1)
         {
             error = true;
             break;
@@ -182,8 +205,10 @@ void CurveGraph::drawBezierCurves()
 {
     for (int i = 0; i < calculatedPoints.size(); i++)
     {
-        UI::drawRectPos(calculatedPoints[i].x - 1, calculatedPoints[i].y - 1, 
-                        calculatedPoints[i].x + 1, calculatedPoints[i].y + 1, Color(0.82, 0.82, 0.8, 1.0));
+        Vec2 drawPoint(calculatedPoints[i].x, 1-calculatedPoints[i].y);
+        drawPoint = drawPoint*Vec2(w,h)+Vec2(x,y);
+        UI::drawRectPos(drawPoint.x - 1, drawPoint.y - 1, 
+                        drawPoint.x + 1, drawPoint.y + 1, Color(0.82, 0.82, 0.8, 1.0));
     }
 }
 
@@ -236,4 +261,9 @@ void CurveGraph::hide()
     }
 
     shown = false;
+}
+
+std::vector<Vec2> CurveGraph::getPoints()
+{
+    return calculatedPoints;
 }

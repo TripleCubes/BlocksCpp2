@@ -9,6 +9,7 @@
 #include "button.h"
 #include "curveGraphControlPoint.h"
 #include <vector>
+#include <functional>
 
 class CurveGraph: public UIElement
 {
@@ -40,6 +41,10 @@ class CurveGraph: public UIElement
         void draw() override;
         void show() override;
         void hide() override;
+
+        std::vector<Vec2> getPoints();
+
+        std::function<void(CurveGraph*)> onPointsUpdate;
 };
 
 #endif

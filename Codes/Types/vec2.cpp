@@ -24,6 +24,16 @@ Vec2 Vec2::operator / (float num)
     return Vec2(x / num, y / num);
 }
 
+Vec2 Vec2::operator * (Vec2 vec)
+{
+    return Vec2(x*vec.x, y*vec.y);
+}
+
+Vec2 Vec2::operator / (Vec2 vec)
+{
+    return Vec2(x/vec.x, y/vec.y);
+}
+
 Vec2 Vec2::normalize()
 {
     return Vec2(x, y) / length();

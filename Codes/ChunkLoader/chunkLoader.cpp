@@ -1,4 +1,5 @@
 #include "chunkLoader.h"
+#include "terrain.h"
 #include "../math.h"
 #include "../globals.h"
 #include "../threadControls.h"
@@ -6,12 +7,7 @@
 int ChunkLoader::loadDistance = 5;
 int ChunkLoader::chunkLoadPerCycle = 5;
 std::unordered_map<std::string, Chunk> ChunkLoader::chunks;
-FastNoiseLite ChunkLoader::terrainHeightNoise;
-int ChunkLoader::maxTerrainHeight = 16;
-
-UIValueUpdate ChunkLoader::uiValueUpdate_terrainHeightNoise_Octave;
-UIValueUpdate ChunkLoader::uiValueUpdate_terrainHeightNoise_Frequency;
-UIValueUpdate ChunkLoader::uiValueUpdate_maxTerrainHeight;
+bool ChunkLoader::unloadAllChunksRequested = false;
 
 void ChunkLoader::chunkLoadThreadFunction()
 {
@@ -84,31 +80,7 @@ void ChunkLoader::unloadAllChunks()
 
 void ChunkLoader::init()
 {
-    terrainHeightNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-    terrainHeightNoise.SetSeed(rand());
-    terrainHeightNoise.SetFractalOctaves(3);
-    terrainHeightNoise.SetFrequency(0.005);
-
-    uiValueUpdate_terrainHeightNoise_Octave.init(0.1);
-    uiValueUpdate_terrainHeightNoise_Octave.onValueUpdate = []()
-    {
-        terrainHeightNoise.SetFractalOctaves((int)round(uiValueUpdate_terrainHeightNoise_Octave.getCurrentValue()));
-        unloadAllChunks();
-    };
-
-    uiValueUpdate_terrainHeightNoise_Frequency.init(0.1);
-    uiValueUpdate_terrainHeightNoise_Frequency.onValueUpdate = []()
-    {
-        terrainHeightNoise.SetFrequency(uiValueUpdate_terrainHeightNoise_Frequency.getCurrentValue());
-        unloadAllChunks();
-    };
-
-    uiValueUpdate_maxTerrainHeight.init(0.1);
-    uiValueUpdate_maxTerrainHeight.onValueUpdate = []()
-    {
-        maxTerrainHeight = uiValueUpdate_maxTerrainHeight.getCurrentValue();
-        unloadAllChunks();
-    };
+    Terrain::init();
 }
 
 std::string ChunkLoader::convertToKey(int x, int y, int z)
@@ -209,6 +181,11 @@ void ChunkLoader::requestUpdateChunksAround(IntPos chunkPos)
     }
 }
 
+void ChunkLoader::requestUnloadAllChunks()
+{
+    unloadAllChunksRequested = true;
+}
+
 bool ChunkLoader::chunkLoaded(IntPos chunkPos)
 {
     return chunkLoaded(convertToKey(chunkPos));
@@ -226,13 +203,12 @@ void ChunkLoader::loadChunk(IntPos chunkPos)
     {
         for (int z = CHUNK_SIZE * chunkPos.z; z < CHUNK_SIZE * chunkPos.z + CHUNK_SIZE; z++)
         {
-            int terrainHeight = round((terrainHeightNoise.GetNoise((float)x, (float)z)+1)/2 * maxTerrainHeight) - 16;
-
             for (int y = CHUNK_SIZE * chunkPos.y; y < CHUNK_SIZE * chunkPos.y + CHUNK_SIZE; y++)
             {
-                if (y <= terrainHeight)
+                Block block = Terrain::getBlock(IntPos(x, y, z));
+                if (block.blockType != EMPTY)
                 {
-                    chunk.addBlock(Block(TEST, IntPos(x, y, z)));
+                    chunk.addBlock(block);
                 }
             }
         }
@@ -262,6 +238,11 @@ void ChunkLoader::update()
     ChunkLoader::updateSurfaceDataThreadFunction();
     ChunkLoader::updateMeshesThreadFunction();
     ChunkLoader::chunkUnloadThreadFunction();
+    if (unloadAllChunksRequested)
+    {
+        unloadAllChunks();
+        unloadAllChunksRequested = false;
+    }
 }
 
 void ChunkLoader::draw()

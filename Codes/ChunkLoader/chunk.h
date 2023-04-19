@@ -8,37 +8,10 @@
 #include "../Graphics/mesh.h"
 #include "../Graphics/shader.h"
 #include "../Types/vectormath.h"
+#include "../Types/intPos.h"
+#include "block.h"
 
 const int CHUNK_SIZE = 16;
-
-struct IntPos
-{
-    IntPos(int x, int y, int z);
-    int x = 0;
-    int y = 0;
-    int z = 0;
-    bool operator == (IntPos pos);
-    IntPos chunkPos();
-    IntPos blockChunkPos();
-    std::string toString(bool endline = true);
-    Vec3 toVec3();
-};
-
-enum BlockType
-{
-    EMPTY,
-    TEST
-};
-
-struct Block
-{
-    Block(BlockType blockType, IntPos pos);
-    Block();
-    IntPos pos = IntPos(0, 0, 0);
-    IntPos chunkPos = IntPos(0, 0, 0);
-    IntPos blockChunkPos = IntPos(0, 0, 0);
-    BlockType blockType = EMPTY;
-};
 
 class Chunk 
 {

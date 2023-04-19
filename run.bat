@@ -1,1 +1,1 @@
-%~dp0Build/blocks.exe
+gdb %~dp0Build/blocks.exe

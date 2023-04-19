@@ -1,4 +1,6 @@
 #include "menu.h"
+#include "ui.h"
+#include "../globals.h"
 
 void Menu::init(MenuGroup menuGroup)
 {
@@ -22,6 +24,10 @@ void Menu::update()
 
 void Menu::draw()
 {
+    if (shown)
+    {
+        UI::drawRectWH(0, 0, currentWindowWidth, currentWindowHeight, Color(0.0, 0.0, 0.0, 0.3));
+    }
     for (int i = 0; i < uiList.size(); i++)
     {
         uiList[i]->draw();

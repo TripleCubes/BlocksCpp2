@@ -12,6 +12,8 @@ struct Vec2
     Vec2 operator - (Vec2 vec);
     Vec2 operator * (float num);
     Vec2 operator / (float num);
+    Vec2 operator * (Vec2 vec);
+    Vec2 operator / (Vec2 vec);
     Vec2 normalize();
     float length();
     float getYFromX(Vec2 vec, float x);

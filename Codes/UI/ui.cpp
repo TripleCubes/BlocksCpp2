@@ -13,6 +13,7 @@
 #include "curveGraph.h"
 
 #include "../ChunkLoader/chunkLoader.h"
+#include "../ChunkLoader/terrain.h"
 
 #include <memory>
 
@@ -23,82 +24,97 @@ Shader UI::blockSelectionShader;
 Mesh UI::rectMesh;
 Shader UI::rectShader;
 
-Menu UI::pauseMenu;
-Menu UI::settingsMenu;
-Menu UI::devMenu;
-Menu UI::devChunkLoaderMenu;
+Menu UI::menu_pause;
+Menu UI::menu_pause_settings;
+Menu UI::menu_dev;
+Menu UI::menu_dev_noises;
+Menu UI::menu_dev_noises_terrain;
 
 void UI::initMenus()
 {
-    float marginLeft = 50;
-    float marginLeft2 = 250;
-    float marginTop = 50;
+    float margin = 50;
+    float margin2 = 250;
     float lineHeight = 40;
 
+    float buttonw = 150;
+    float buttonh= 30;
+
+    float textMarginTop = 15;
+
+    float curveGraphWH = 250;
+
     {
-        pauseMenu.init(PAUSE);
-        pauseMenu.onUpdate = [](Menu* self)
+        menu_pause.init(PAUSE);
+        menu_pause.onUpdate = [](Menu* self)
         {
-            if (Input::justPressed("ESC") && pauseMenu.getShown() && !pauseMenu.getShownFirstFrame())
+            if (Input::justPressed("ESC") && menu_pause.getShown() && !menu_pause.getShownFirstFrame())
             {
                 mouseLock = true;
                 glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
 
-                pauseMenu.hide();
+                menu_pause.hide();
             }
         };
 
-        Button backToGameButton;
-        backToGameButton.init(marginLeft, marginTop, 150, 30, uiColor, "back to game", uiTextColor);
-        backToGameButton.onLeftMouseDown = [](Button* self)
+        Textbox text_title;
+        text_title.init(margin, margin, "PAUSE", uiColor);
+        menu_pause.add(std::make_unique<Textbox>(text_title));
+
+        Button button_backToGame;
+        button_backToGame.init(margin, margin+lineHeight, buttonw, buttonh, uiColor, "back to game", uiTextColor);
+        button_backToGame.onLeftMouseDown = [](Button* self)
         {
             mouseLock = true;
             glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
 
-            pauseMenu.hide();
+            menu_pause.hide();
         };
-        pauseMenu.add(std::make_unique<Button>(backToGameButton));
+        menu_pause.add(std::make_unique<Button>(button_backToGame));
 
-        Button settingsButton;
-        settingsButton.init(marginLeft, marginTop+lineHeight, 150, 30, uiColor, "settings", uiTextColor);
-        settingsButton.onLeftMouseDown = [](Button* self)
+        Button button_settings;
+        button_settings.init(margin, margin+lineHeight*2, buttonw, buttonh, uiColor, "settings", uiTextColor);
+        button_settings.onLeftMouseDown = [](Button* self)
         {
-            pauseMenu.hide();
-            settingsMenu.show();
+            menu_pause.hide();
+            menu_pause_settings.show();
         };
-        pauseMenu.add(std::make_unique<Button>(settingsButton));
+        menu_pause.add(std::make_unique<Button>(button_settings));
 
-        Button saveAndQuitButton;
-        saveAndQuitButton.init(marginLeft, marginTop+lineHeight*2, 150, 30, uiColor, "save and quit", uiTextColor);
-        pauseMenu.add(std::make_unique<Button>(saveAndQuitButton));
+        Button button_saveAndQuit;
+        button_saveAndQuit.init(margin, margin+lineHeight*3, buttonw, buttonh, uiColor, "save and quit", uiTextColor);
+        menu_pause.add(std::make_unique<Button>(button_saveAndQuit));
     }
 
     {
-        settingsMenu.init(PAUSE);
-        settingsMenu.onUpdate = [](Menu* self)
+        menu_pause_settings.init(PAUSE);
+        menu_pause_settings.onUpdate = [](Menu* self)
         {
-            if (Input::justPressed("ESC") && settingsMenu.getShown())
+            if (Input::justPressed("ESC") && menu_pause_settings.getShown())
             {
-                settingsMenu.hide();
-                pauseMenu.show();
+                menu_pause_settings.hide();
+                menu_pause.show();
             }
         };
 
-        Button backButton;
-        backButton.init(marginLeft, marginTop, 150, 30, uiColor, "back", uiTextColor);
-        backButton.onLeftMouseDown = [](Button* self){
-            settingsMenu.hide();
-            pauseMenu.show();
+        Textbox text_title;
+        text_title.init(margin, margin, "SETTINGS", uiColor);
+        menu_pause_settings.add(std::make_unique<Textbox>(text_title));
+
+        Button button_back;
+        button_back.init(margin, margin+lineHeight, buttonw, buttonh, uiColor, "back", uiTextColor);
+        button_back.onLeftMouseDown = [](Button* self){
+            menu_pause_settings.hide();
+            menu_pause.show();
         };
-        settingsMenu.add(std::make_unique<Button>(backButton));
+        menu_pause_settings.add(std::make_unique<Button>(button_back));
 
-        Textbox toggleWireframeModeTextbox;
-        toggleWireframeModeTextbox.init(marginLeft+7, marginTop+lineHeight+15, "wireframe mode", uiColor, false, true);
-        settingsMenu.add(std::make_unique<Textbox>(toggleWireframeModeTextbox));
+        Textbox text_toggleWireframeMode;
+        text_toggleWireframeMode.init(margin+7, margin+lineHeight*2+textMarginTop, "wireframe mode", uiColor, false, true);
+        menu_pause_settings.add(std::make_unique<Textbox>(text_toggleWireframeMode));
 
-        ToggleButton toggleWireframeModeButton;
-        toggleWireframeModeButton.init(marginLeft2, marginTop+lineHeight, 50, 30, uiColor, {"off", "on"}, uiTextColor);
-        toggleWireframeModeButton.onLeftMouseDown = [](ToggleButton* self){
+        ToggleButton button_toggleWireframeMode;
+        button_toggleWireframeMode.init(margin2, margin+lineHeight*2, 50, buttonh, uiColor, {"off", "on"}, uiTextColor);
+        button_toggleWireframeMode.onLeftMouseDown = [](ToggleButton* self){
             if (self->getText() == "on")
             {
                 wireframeMode = true;
@@ -108,108 +124,129 @@ void UI::initMenus()
                 wireframeMode = false;
             }
         };
-        toggleWireframeModeButton.onShow = [](ToggleButton* self){
+        button_toggleWireframeMode.onShow = [](ToggleButton* self){
             self->setText(wireframeMode ? "on" : "off");
         };
-        settingsMenu.add(std::make_unique<ToggleButton>(toggleWireframeModeButton));
+        menu_pause_settings.add(std::make_unique<ToggleButton>(button_toggleWireframeMode));
     }
     
     {
-        devMenu.init(DEV);
-        devMenu.onUpdate = [](Menu* self)
+        menu_dev.init(DEV);
+        menu_dev.onUpdate = [](Menu* self)
         {
-            if ((Input::justPressed("ESC") || Input::justPressed("P")) && devMenu.getShown() && !devMenu.getShownFirstFrame())
+            if ((Input::justPressed("ESC") || Input::justPressed("P")) && menu_dev.getShown() && !menu_dev.getShownFirstFrame())
             {
                 mouseLock = true;
                 glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
 
-                devMenu.hide();
+                menu_dev.hide();
             }
         };
 
-        Button backToGameButton;
-        backToGameButton.init(marginLeft, marginTop, 150, 30, uiColor, "back to game", uiTextColor);
-        backToGameButton.onLeftMouseDown = [](Button* self)
+        Textbox text_title;
+        text_title.init(margin, margin, "DEV", uiColor);
+        menu_dev.add(std::make_unique<Textbox>(text_title));
+
+        Button button_backToGame;
+        button_backToGame.init(margin, margin+lineHeight, buttonw, buttonh, uiColor, "back to game", uiTextColor);
+        button_backToGame.onLeftMouseDown = [](Button* self)
         {
             mouseLock = true;
             glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
 
-            devMenu.hide();
+            menu_dev.hide();
         };
-        devMenu.add(std::make_unique<Button>(backToGameButton));
+        menu_dev.add(std::make_unique<Button>(button_backToGame));
 
-        Button chunkLoaderMenuButton;
-        chunkLoaderMenuButton.init(marginLeft, marginTop+lineHeight, 150, 30, uiColor, "chunk loader", uiTextColor);
-        chunkLoaderMenuButton.onLeftMouseDown = [](Button* self)
+        Button button_noises;
+        button_noises.init(margin, margin+lineHeight*2, buttonw, buttonh, uiColor, "noises", uiTextColor);
+        button_noises.onLeftMouseDown = [](Button* self)
         {
-            devMenu.hide();
-            devChunkLoaderMenu.show();
+            menu_dev.hide();
+            menu_dev_noises.show();
         };
-        devMenu.add(std::make_unique<Button>(chunkLoaderMenuButton));
+        menu_dev.add(std::make_unique<Button>(button_noises));
     }
 
     {
-        devChunkLoaderMenu.init(DEV);
-        devChunkLoaderMenu.onUpdate = [](Menu* self)
+        menu_dev_noises.init(DEV);
+        menu_dev_noises.onUpdate = [](Menu* self)
         {
-            if (Input::justPressed("ESC") && self->getShown())
+            if (self->getShown() && !self->getShownFirstFrame())
             {
-                devChunkLoaderMenu.hide();
-                devMenu.show();
+                if (Input::justPressed("ESC"))
+                {
+                    self->hide();
+                    menu_dev.show();
+                }
+                else if (Input::justPressed("P"))
+                {
+                    self->hide();
+                }
             }
-            else if (Input::justPressed("P") && self->getShown())
+        };
+
+        Textbox text_title;
+        text_title.init(margin, margin, "DEV > NOISES", uiColor);
+        menu_dev_noises.add(std::make_unique<Textbox>(text_title));
+
+        Button button_back;
+        button_back.init(margin, margin+lineHeight, buttonw, buttonh, uiColor, "back", uiTextColor);
+        button_back.onLeftMouseDown = [](Button* self){
+            menu_dev_noises.hide();
+            menu_dev.show();
+        };
+        menu_dev_noises.add(std::make_unique<Button>(button_back));
+
+        Button button_terrain;
+        button_terrain.init(margin, margin+lineHeight*2, buttonw, buttonh, uiColor, "terrain", uiTextColor);
+        button_terrain.onLeftMouseDown = [](Button* self)
+        {
+            menu_dev_noises.hide();
+            menu_dev_noises_terrain.show();
+        };
+        menu_dev_noises.add(std::make_unique<Button>(button_terrain));
+    }
+
+    {
+        menu_dev_noises_terrain.init(DEV);
+        menu_dev_noises_terrain.onUpdate = [](Menu* self)
+        {
+            if (self->getShown() && !self->getShownFirstFrame())
             {
-                devChunkLoaderMenu.hide();
+                if (Input::justPressed("ESC"))
+                {
+                    self->hide();
+                    menu_dev_noises.show();
+                }
+                else if (Input::justPressed("P"))
+                {
+                    self->hide();
+                }
             }
         };
 
-        Button backButton;
-        backButton.init(marginLeft, marginTop, 150, 30, uiColor, "back", uiTextColor);
-        backButton.onLeftMouseDown = [](Button* self){
-            devChunkLoaderMenu.hide();
-            devMenu.show();
+        Textbox text_title;
+        text_title.init(margin, margin, "DEV > NOISES > TERRAIN", uiColor);
+        menu_dev_noises_terrain.add(std::make_unique<Textbox>(text_title));
+
+        Button button_back;
+        button_back.init(margin, margin+lineHeight, buttonw, buttonh, uiColor, "back", uiTextColor);
+        button_back.onLeftMouseDown = [](Button* self){
+            menu_dev_noises_terrain.hide();
+            menu_dev_noises.show();
         };
-        devChunkLoaderMenu.add(std::make_unique<Button>(backButton));
+        menu_dev_noises_terrain.add(std::make_unique<Button>(button_back));
 
-        Textbox terrainHeightNoiseText;
-        terrainHeightNoiseText.init(marginLeft+7, marginTop+lineHeight+15, "terrain height noise", uiColor, false, true);
-        devChunkLoaderMenu.add(std::make_unique<Textbox>(terrainHeightNoiseText));
-
-        Textbox terrainHeightNoise_OctaveText;
-        terrainHeightNoise_OctaveText.init(marginLeft+7, marginTop+lineHeight*2+15, "octave", uiColor, false, true);
-        devChunkLoaderMenu.add(std::make_unique<Textbox>(terrainHeightNoise_OctaveText));
-
-        Slider terrainHeightNoise_OctaveSlider;
-        terrainHeightNoise_OctaveSlider.init(marginLeft2, marginTop+lineHeight*2+17, 100, 0, 4, uiColor, 0);
-        terrainHeightNoise_OctaveSlider.onValueUpdate = [](Slider* self)
+        CurveGraph curveGraph;
+        curveGraph.init(currentWindowWidth-margin-curveGraphWH, currentWindowHeight-margin-curveGraphWH,
+                        curveGraphWH, curveGraphWH, uiColor, uiTextColor);
+        curveGraph.onPointsUpdate = [](CurveGraph* self)
         {
-            ChunkLoader::uiValueUpdate_terrainHeightNoise_Octave.setValue(self->getCurrentValue());
+            Terrain::terrainCurveMap.setPoints(self->getPoints());
+            ChunkLoader::requestUnloadAllChunks();
         };
-        devChunkLoaderMenu.add(std::make_unique<Slider>(terrainHeightNoise_OctaveSlider));
-
-        Textbox terrainHeightNoise_FrequencyText;
-        terrainHeightNoise_FrequencyText.init(marginLeft+7, marginTop+lineHeight*3+15, "frequency", uiColor, false, true);
-        devChunkLoaderMenu.add(std::make_unique<Textbox>(terrainHeightNoise_FrequencyText));
-
-        Slider terrainHeightNoise_FrequencySlider;
-        terrainHeightNoise_FrequencySlider.init(marginLeft2, marginTop+lineHeight*3+17, 300, 0, 1, uiColor, 5);
-        terrainHeightNoise_FrequencySlider.onValueUpdate = [](Slider* self)
-        {
-            ChunkLoader::uiValueUpdate_terrainHeightNoise_Frequency.setValue(self->getCurrentValue());
-        };
-        devChunkLoaderMenu.add(std::make_unique<Slider>(terrainHeightNoise_FrequencySlider));
-
-        Textbox maxTerrainHeightText;
-        maxTerrainHeightText.init(marginLeft+7, marginTop+lineHeight*4+15, "max terrain height", uiColor, false, true);
-        devChunkLoaderMenu.add(std::make_unique<Textbox>(maxTerrainHeightText));
-
-        Slider maxTerrainHeightSlider;
-        maxTerrainHeightSlider.init(marginLeft2, marginTop+lineHeight*4+17, 300, 16, 100, uiColor, 0);
-        maxTerrainHeightSlider.onValueUpdate = [](Slider* self)
-        {
-            ChunkLoader::uiValueUpdate_maxTerrainHeight.setValue(self->getCurrentValue());
-        };
-        devChunkLoaderMenu.add(std::make_unique<Slider>(maxTerrainHeightSlider));
+        menu_dev_noises_terrain.add(std::make_unique<CurveGraph>(curveGraph));
     }
 }
 
@@ -294,7 +331,7 @@ void UI::update()
 {
     if (Input::justPressed("ESC") && openingMenuGroup == NONE)
     {
-        pauseMenu.show();
+        menu_pause.show();
         mouseLock = false;
         glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
         glfwSetCursorPos(glfwWindow, currentWindowWidth/2, currentWindowHeight/2);
@@ -302,24 +339,26 @@ void UI::update()
 
     if (Input::justPressed("P") && openingMenuGroup == NONE)
     {
-        devMenu.show();
+        menu_dev.show();
         mouseLock = false;
         glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
         glfwSetCursorPos(glfwWindow, currentWindowWidth/2, currentWindowHeight/2);
     }
 
-    pauseMenu.update();
-    settingsMenu.update();
-    devMenu.update();
-    devChunkLoaderMenu.update();
+    menu_pause.update();
+    menu_pause_settings.update();
+    menu_dev.update();
+    menu_dev_noises.update();
+    menu_dev_noises_terrain.update();
 }
 
 void UI::drawMenus()
 {
-    pauseMenu.draw();
-    settingsMenu.draw();
-    devMenu.draw();
-    devChunkLoaderMenu.draw();
+    menu_pause.draw();
+    menu_pause_settings.draw();
+    menu_dev.draw();
+    menu_dev_noises.draw();
+    menu_dev_noises_terrain.draw();
 }
 
 void UI::drawCrosshair()

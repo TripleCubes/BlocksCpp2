@@ -2,6 +2,8 @@
 #define RAYCAST_H
 
 #include "../Types/vectormath.h"
+#include "../Types/intPos.h"
+
 #include "../ChunkLoader/chunk.h"
 
 struct BlockRaycast
