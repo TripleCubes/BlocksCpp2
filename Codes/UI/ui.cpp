@@ -181,6 +181,9 @@ void UI::initMenus()
                 }
                 else if (Input::justPressed("P"))
                 {
+                    mouseLock = true;
+                    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+
                     self->hide();
                 }
             }
@@ -221,6 +224,9 @@ void UI::initMenus()
                 }
                 else if (Input::justPressed("P"))
                 {
+                    mouseLock = true;
+                    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+                    
                     self->hide();
                 }
             }
@@ -243,7 +249,7 @@ void UI::initMenus()
                         curveGraphWH, curveGraphWH, uiColor, uiTextColor);
         curveGraph.onPointsUpdate = [](CurveGraph* self)
         {
-            Terrain::terrainCurveMap.setPoints(self->getPoints());
+            Terrain::terrain_curveMap.setPoints(self->getPoints());
             ChunkLoader::requestUnloadAllChunks();
         };
         menu_dev_noises_terrain.add(std::make_unique<CurveGraph>(curveGraph));
