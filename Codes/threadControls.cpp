@@ -24,10 +24,8 @@ void ThreadControls::init()
         groups.push_back(std::vector<int>());
     }
     
-    addThread(0, [](){});
-    addThread(SAFE_THREAD, ChunkLoader::chunkLoadThreadFunction);
-    addThread(SAFE_THREAD, ChunkLoader::updateSurfaceDataThreadFunction);
-
+    addThread(0, ChunkLoader::chunkLoadThreadFunction);
+    addThread(0, ChunkLoader::updateSurfaceDataThreadFunction);
     addThread(SAFE_THREAD, ChunkLoader::updateMeshesThreadFunction);
     addThread(SAFE_THREAD, ChunkLoader::chunkUnloadThreadFunction);
 }
@@ -55,14 +53,21 @@ void ThreadControls::addThread(int group, std::function<void()> threadFunction)
     {
         while (running[currentThreadIndex])
         {
-            bool runThread;
+            bool runThread = false;
             do
             {
                 std::lock_guard<std::mutex> guard(mutex);
-                runThread = !cycleFinished[currentThreadIndex] 
-                            && std::find(groups[currentRunningGroup].begin(), 
-                                        groups[currentRunningGroup].end(), 
-                                        currentThreadIndex) != groups[currentRunningGroup].end();
+                if (currentRunningGroup == SAFE_THREAD)
+                {
+                    runThread = false;
+                }
+                else
+                {
+                    runThread = !cycleFinished[currentThreadIndex] 
+                                && std::find(groups[currentRunningGroup].begin(), 
+                                            groups[currentRunningGroup].end(), 
+                                            currentThreadIndex) != groups[currentRunningGroup].end();
+                }
                 if (!running[currentThreadIndex])
                 {
                     runThread = true;
@@ -79,6 +84,11 @@ void ThreadControls::addThread(int group, std::function<void()> threadFunction)
 
 void ThreadControls::updateGroupStatus()
 {
+    if (currentRunningGroup == SAFE_THREAD)
+    {
+        return;
+    }
+
     bool allThreadsInRunningGroupFinished = true;
     for (int i = 0; i < groups[currentRunningGroup].size(); i++)
     {

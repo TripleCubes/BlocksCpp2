@@ -52,6 +52,13 @@ void ChunkLoader::updateMeshesThreadFunction()
 
 void ChunkLoader::chunkUnloadThreadFunction()
 {
+    if (unloadAllChunksRequested)
+    {
+        unloadAllChunks();
+        unloadAllChunksRequested = false;
+        return;
+    }
+
     IntPos playerChunkPos = IntPos(player.pos.x, player.pos.y, player.pos.z).chunkPos();
 
     for (std::unordered_map<std::string, Chunk>::iterator i = chunks.begin(); i != chunks.end();)
@@ -60,7 +67,8 @@ void ChunkLoader::chunkUnloadThreadFunction()
         if (abs(chunkPos.x - playerChunkPos.x) > loadDistance || abs(chunkPos.z - playerChunkPos.z) > loadDistance
         || abs(chunkPos.y - playerChunkPos.y) > loadDistance)
         {
-            i = unloadChunk(chunkPos);
+            i->second.release();
+            i = chunks.erase(i);
         }
         else
         {
@@ -234,15 +242,6 @@ std::unordered_map<std::string, Chunk>::iterator ChunkLoader::unloadChunk(IntPos
 
 void ChunkLoader::update()
 {
-    ChunkLoader::chunkLoadThreadFunction();
-    ChunkLoader::updateSurfaceDataThreadFunction();
-    ChunkLoader::updateMeshesThreadFunction();
-    ChunkLoader::chunkUnloadThreadFunction();
-    if (unloadAllChunksRequested)
-    {
-        unloadAllChunks();
-        unloadAllChunksRequested = false;
-    }
 }
 
 void ChunkLoader::draw()
