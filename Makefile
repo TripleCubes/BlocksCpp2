@@ -61,7 +61,11 @@ rebuild:
 	g++ -g -o ./Build/blocks.exe $(OBJPATHS) ./Build/stb_image.o ./Build/glad.o ./Build/main.o $(INCLUDES) $(LIBS) $(FLAGS) -static-libgcc -static-libstdc++
 
 buildRelease:
-	g++ -o ./Release/blocks.exe $(OBJPATHS) ./Build/stb_image.o ./Build/glad.o ./Build/main.o $(INCLUDES) $(LIBS) $(FLAGS) -mwindows -static-libgcc -static-libstdc++
+	$(foreach obj,$(OBJS),g++ -c ./Codes/$(obj).cpp -o ./Release/$(obj).o $(INCLUDES) $(LIBS) $(FLAGS)$(NEWLINE))
+	g++ -c ./Codes/main.cpp -o ./Release/main.o $(INCLUDES) $(LIBS) $(FLAGS)
+	gcc -c ./Libs/glad/src/glad.c -o ./Release/glad.o $(INCLUDES) $(LIBS) $(FLAGS) 
+	g++ -c ./Codes/stb_image.cpp -o ./Release/stb_image.o -I"./Libs/stb_image"	
+	g++ -o ./Release/blocks.exe $(OBJPATHS) ./Release/stb_image.o ./Release/glad.o ./Release/main.o $(INCLUDES) $(LIBS) $(FLAGS) -mwindows -static-libgcc -static-libstdc++
 
 ./Build/blocks.exe: $(OBJPATHS) ./Build/main.o ./Build/glad.o ./Build/stb_image.o
 	g++ -g -o ./Build/blocks.exe $(OBJPATHS) ./Build/stb_image.o ./Build/glad.o ./Build/main.o $(INCLUDES) $(LIBS) $(FLAGS) -static-libgcc -static-libstdc++
