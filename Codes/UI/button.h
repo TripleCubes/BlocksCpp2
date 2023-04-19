@@ -33,12 +33,10 @@ class Button: public UIElement
 
         std::string text = "";
         Color textColor = Color(0, 0, 0, 0);
-        bool textCentered = true;
 
     public:
         void init(float x, float y, float w, float h, Color color, 
-                std::string text = "", Color textColor = Color(1.0, 1.0, 1.0, 1.0), 
-                bool textCentered = false);
+                std::string text = "", Color textColor = Color(1.0, 1.0, 1.0, 1.0));
 
         virtual void update() override;
         virtual void draw() override;

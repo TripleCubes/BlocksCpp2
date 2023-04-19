@@ -13,7 +13,7 @@ class ToggleButton: public Button
 
     public:        
         void init(float x, float y, float w, float h, Color color, 
-                    std::vector<std::string> textList, Color textColor, bool textCentered = false);
+                    std::vector<std::string> textList, Color textColor);
         void update() override;
         void show() override;
         void hide() override;

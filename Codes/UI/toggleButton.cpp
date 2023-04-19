@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 void ToggleButton::init(float x, float y, float w, float h, Color color, 
-                                std::vector<std::string> textList, Color textColor, bool textCentered)
+                                std::vector<std::string> textList, Color textColor)
 {
     this->x = x;
     this->y = y;
@@ -11,7 +11,6 @@ void ToggleButton::init(float x, float y, float w, float h, Color color,
     this->color = color;
     this->textList = std::vector<std::string>(textList);
     this->textColor = textColor;
-    this->textCentered = textCentered;
 
     this->text = textList[0];
 }

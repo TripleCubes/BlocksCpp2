@@ -1,39 +1,56 @@
 #include "textbox.h"
+#include "../Types/rect.h"
 #include "../Graphics/text.h"
 
 void Textbox::init(float x, float y, std::string text,
                     Color textColor, 
-                    bool centeredX, bool centeredY)
+                    HorizontalAlignment horizontalAlignment,
+                    VerticalAlignment verticalAlignment)
 {
     this->x = x;
     this->y = y;
     this->text = text;
     this->textColor = textColor;
-    this->centeredX = centeredX;
-    this->centeredY = centeredY;
+    this->horizontalAlignment = horizontalAlignment;
+    this->verticalAlignment = verticalAlignment;
 }
 
 void Textbox::draw()
 {
-    if (shown)
+    if (!shown)
     {
-        if (centeredX && centeredY)
-        {
-            Text::drawTextBoxCentered(x, y, text, textColor);
-        }
-        else if (centeredX)
-        {
-            Text::drawTextBoxCenteredHorizontally(x, y, text, textColor);
-        }
-        else if (centeredY)
-        {
-            Text::drawTextBoxCenteredVertically(x, y, text, textColor);
-        }
-        else
-        {
-            Text::drawTextBox(x, y, text, textColor);
-        }
+        return;
     }
+
+    if (horizontalAlignment == HorizontalAlignment::LEFT && verticalAlignment == VerticalAlignment::TOP)
+    {
+        Text::drawTextBox(x, y, text, textColor);
+        return;
+    }
+
+    Rect size = Text::getTextBoxSize(text);
+    float drawPosx = x;
+    float drawPosy = y;
+
+    if (horizontalAlignment == HorizontalAlignment::CENTER)
+    {
+        drawPosx = x - size.w/2;
+    }
+    else if (horizontalAlignment == HorizontalAlignment::RIGHT)
+    {
+        drawPosx = x - size.w;
+    }
+
+    if (verticalAlignment == VerticalAlignment::CENTER)
+    {
+        drawPosy = y - size.h/2;
+    }
+    else if (verticalAlignment == VerticalAlignment::BOTTOM)
+    {
+        drawPosy = y - size.h;
+    }
+
+    Text::drawTextBox(drawPosx, drawPosy, text, textColor);
 }
 
 void Textbox::show()

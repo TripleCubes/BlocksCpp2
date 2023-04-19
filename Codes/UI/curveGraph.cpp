@@ -15,7 +15,7 @@ void CurveGraph::init(float x, float y, float w, float h, Color color, Color tex
     this->color = color;
     this->textColor = textColor;
 
-    addControlPointButton.init(this->x + this->w - 30, this->y + this->h - 30, 20, 20, color, "", textColor, true);
+    addControlPointButton.init(this->x + this->w - 30, this->y + this->h - 30, 20, 20, color, "", textColor);
 
     calculateMapPoints();
 }
@@ -216,7 +216,6 @@ void CurveGraph::draw()
 {   
     if (shown)
     {
-        UI::drawRectWH(x - 10, y - 10, w + 20, h + 20, Color(0, 0, 0, 1));
         UI::drawRectWH(x - 3, y - 3, 3, h + 6, uiColor);
         UI::drawRectWH(x - 3, y+h, w + 6, 3, uiColor);
         if (error)

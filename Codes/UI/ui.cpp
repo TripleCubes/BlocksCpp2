@@ -39,7 +39,7 @@ void UI::initMenus()
     float buttonw = 150;
     float buttonh= 30;
 
-    float textMarginTop = 15;
+    float textMarginTop = 2;
 
     float curveGraphWH = 250;
 
@@ -109,7 +109,7 @@ void UI::initMenus()
         menu_pause_settings.add(std::make_unique<Button>(button_back));
 
         Textbox text_toggleWireframeMode;
-        text_toggleWireframeMode.init(margin+7, margin+lineHeight*2+textMarginTop, "wireframe mode", uiColor, false, true);
+        text_toggleWireframeMode.init(margin+7, margin+lineHeight*2+textMarginTop, "wireframe mode", uiColor);
         menu_pause_settings.add(std::make_unique<Textbox>(text_toggleWireframeMode));
 
         ToggleButton button_toggleWireframeMode;
@@ -253,6 +253,16 @@ void UI::initMenus()
             ChunkLoader::requestUnloadAllChunks();
         };
         menu_dev_noises_terrain.add(std::make_unique<CurveGraph>(curveGraph));
+
+        Textbox text_terrainHeight;
+        text_terrainHeight.init(currentWindowWidth-margin-100, currentWindowHeight-margin,
+                                "terrain height +");
+        menu_dev_noises_terrain.add(std::make_unique<Textbox>(text_terrainHeight));
+
+        Textbox text_filter;
+        text_filter.init(currentWindowWidth-margin-curveGraphWH, currentWindowHeight-margin-curveGraphWH-25,
+                                "filter +");
+        menu_dev_noises_terrain.add(std::make_unique<Textbox>(text_filter));
     }
 }
 
