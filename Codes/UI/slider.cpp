@@ -46,7 +46,10 @@ void Slider::update()
         std::stringstream ss;
         ss << std::fixed << std::setprecision(decimalNumbers) << currentValue;
         textbox.setText(ss.str());
+    }
 
+    if (button.leftMouseUp())
+    {
         if (onValueUpdate)
         {
             onValueUpdate(this);
@@ -79,7 +82,7 @@ void Slider::hide()
     shown = false;
 }
 
-float Slider::getCurrentValue()
+float Slider::getValue()
 {
     return currentValue;
 }

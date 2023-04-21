@@ -148,7 +148,7 @@ void CurveGraph::calculateMapPoints()
 
     std::function<void(Vec2, Vec2, Vec2, Vec2)> calculatePointsOneBezier = [this](Vec2 point1, Vec2 point2, Vec2 point3, Vec2 point4) 
     {
-        for (float t = 0; t <= 1; t += 0.05)
+        for (float t = 0; t <= 1; t += 0.1)
         {
             Vec2 point = point1*pow(1-t, 3) + point2*3*t*pow(1-t, 2) + point3*3*(1-t)*pow(t, 2) + point4*pow(t, 3);
             calculatedPoints.push_back(Vec2(point.x, 1-point.y));
@@ -216,6 +216,7 @@ void CurveGraph::draw()
 {   
     if (shown)
     {
+        UI::drawRectWH(x - 10, y - 10, w + 20, h + 20, Color(0, 0, 0, 0.6));
         UI::drawRectWH(x - 3, y - 3, 3, h + 6, uiColor);
         UI::drawRectWH(x - 3, y+h, w + 6, 3, uiColor);
         if (error)

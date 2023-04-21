@@ -4,7 +4,7 @@
 #include "../globals.h"
 #include "../threadControls.h"
 
-int ChunkLoader::loadDistance = 5;
+int ChunkLoader::loadDistance = 8;
 int ChunkLoader::chunkLoadPerCycle = 5;
 std::unordered_map<std::string, Chunk> ChunkLoader::chunks;
 bool ChunkLoader::unloadAllChunksRequested = false;
@@ -14,24 +14,28 @@ void ChunkLoader::chunkLoadThreadFunction()
     int numberOfChunkLoaded = 0;
     IntPos playerChunkPos = IntPos(player.pos.x, player.pos.y, player.pos.z).chunkPos();
 
-    for (int i = playerChunkPos.x - loadDistance; i <= playerChunkPos.x + loadDistance; i++)
+    for (int distance = 0; distance <= loadDistance; distance++)
     {
-        for (int j = playerChunkPos.y - loadDistance; j <= playerChunkPos.y + loadDistance; j++)
+        for (int i = playerChunkPos.x - distance; i <= playerChunkPos.x + distance; i++)
         {
-            for (int k = playerChunkPos.z - loadDistance; k <= playerChunkPos.z + loadDistance; k++)
+            for (int j = playerChunkPos.y - distance; j <= playerChunkPos.y + distance; j++)
             {
-                if (!chunkLoaded(IntPos(i, j, k)))
+                for (int k = playerChunkPos.z - distance; k <= playerChunkPos.z + distance; k++)
                 {
-                    loadChunk(IntPos(i, j, k));
-                    numberOfChunkLoaded++;
-                    if (numberOfChunkLoaded == chunkLoadPerCycle)
+                    if (!chunkLoaded(IntPos(i, j, k)))
                     {
-                        return;
+                        loadChunk(IntPos(i, j, k));
+                        numberOfChunkLoaded++;
+                        if (numberOfChunkLoaded == chunkLoadPerCycle)
+                        {
+                            return;
+                        }
                     }
                 }
             }
         }
     }
+
 }
 
 void ChunkLoader::updateSurfaceDataThreadFunction()
@@ -130,7 +134,7 @@ Block ChunkLoader::getBlock(IntPos pos)
         return chunks[convertToKey(pos.chunkPos())].getBlock(pos.blockChunkPos());
     }
     
-    return Block(EMPTY, IntPos(0, 0, 0));
+    return Block(BlockType::EMPTY, IntPos(0, 0, 0));
 }
 
 void ChunkLoader::placeBlock(Block block)
@@ -214,7 +218,7 @@ void ChunkLoader::loadChunk(IntPos chunkPos)
             for (int y = CHUNK_SIZE * chunkPos.y; y < CHUNK_SIZE * chunkPos.y + CHUNK_SIZE; y++)
             {
                 Block block = Terrain::getBlock(IntPos(x, y, z));
-                if (block.blockType != EMPTY)
+                if (block.blockType != BlockType::EMPTY)
                 {
                     chunk.addBlock(block);
                 }
@@ -238,6 +242,11 @@ std::unordered_map<std::string, Chunk>::iterator ChunkLoader::unloadChunk(IntPos
     }
 
     return ++i;
+}
+
+void ChunkLoader::setLoadDistance(int loadDistance)
+{
+    ChunkLoader::loadDistance = loadDistance;
 }
 
 void ChunkLoader::update()

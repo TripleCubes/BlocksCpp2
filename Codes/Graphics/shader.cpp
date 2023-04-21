@@ -15,7 +15,7 @@ unsigned int compileShader(std::string path, ShaderType shaderType)
     const char *shaderCode = shaderCodeString.c_str();
     unsigned int shader;
 
-    if (shaderType == VERTEX)
+    if (shaderType == ShaderType::VERTEX)
     {
         shader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(shader, 1, &shaderCode, NULL);
@@ -32,7 +32,7 @@ unsigned int compileShader(std::string path, ShaderType shaderType)
                       << infoLog << std::endl;
         }
     }
-    else if (shaderType == FRAGMENT)
+    else if (shaderType == ShaderType::FRAGMENT)
     {
         shader = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(shader, 1, &shaderCode, NULL);
@@ -55,8 +55,8 @@ unsigned int compileShader(std::string path, ShaderType shaderType)
 
 void linkShaderProgram(unsigned int shaderProgram, std::string vertexShaderPath, std::string fragmentShaderPath)
 {
-    unsigned int vertexShader = compileShader(vertexShaderPath, VERTEX);
-    unsigned int fragmentShader = compileShader(fragmentShaderPath, FRAGMENT);
+    unsigned int vertexShader = compileShader(vertexShaderPath, ShaderType::VERTEX);
+    unsigned int fragmentShader = compileShader(fragmentShaderPath, ShaderType::FRAGMENT);
 
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);

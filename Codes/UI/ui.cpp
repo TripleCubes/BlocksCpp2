@@ -28,7 +28,8 @@ Menu UI::menu_pause;
 Menu UI::menu_pause_settings;
 Menu UI::menu_dev;
 Menu UI::menu_dev_noises;
-Menu UI::menu_dev_noises_terrain;
+Menu UI::menu_dev_noises_terrainShape;
+Menu UI::menu_dev_noises_terrainHeight;
 
 void UI::initMenus()
 {
@@ -40,11 +41,14 @@ void UI::initMenus()
     float buttonh= 30;
 
     float textMarginTop = 2;
+    float textMarginLeft = 7;
+
+    float sliderMarginTop = 18;
 
     float curveGraphWH = 250;
 
     {
-        menu_pause.init(PAUSE);
+        menu_pause.init(MenuGroup::PAUSE);
         menu_pause.onUpdate = [](Menu* self)
         {
             if (Input::justPressed("ESC") && menu_pause.getShown() && !menu_pause.getShownFirstFrame())
@@ -86,7 +90,7 @@ void UI::initMenus()
     }
 
     {
-        menu_pause_settings.init(PAUSE);
+        menu_pause_settings.init(MenuGroup::PAUSE);
         menu_pause_settings.onUpdate = [](Menu* self)
         {
             if (Input::justPressed("ESC") && menu_pause_settings.getShown())
@@ -109,7 +113,7 @@ void UI::initMenus()
         menu_pause_settings.add(std::make_unique<Button>(button_back));
 
         Textbox text_toggleWireframeMode;
-        text_toggleWireframeMode.init(margin+7, margin+lineHeight*2+textMarginTop, "wireframe mode", uiColor);
+        text_toggleWireframeMode.init(margin+textMarginLeft, margin+lineHeight*2+textMarginTop, "wireframe mode", uiColor);
         menu_pause_settings.add(std::make_unique<Textbox>(text_toggleWireframeMode));
 
         ToggleButton button_toggleWireframeMode;
@@ -128,10 +132,22 @@ void UI::initMenus()
             self->setText(wireframeMode ? "on" : "off");
         };
         menu_pause_settings.add(std::make_unique<ToggleButton>(button_toggleWireframeMode));
+
+        Textbox text_loadDistance;
+        text_loadDistance.init(margin+textMarginLeft, margin+lineHeight*3+textMarginTop, "load distance", uiColor);
+        menu_pause_settings.add(std::make_unique<Textbox>(text_loadDistance));
+
+        Slider slider_loadDistance;
+        slider_loadDistance.init(margin2, margin+lineHeight*3+sliderMarginTop, 100, 1, 10, uiColor, 0);
+        slider_loadDistance.onValueUpdate = [](Slider* self)
+        {
+            ChunkLoader::setLoadDistance((int)round(self->getValue()));
+        };
+        menu_pause_settings.add(std::make_unique<Slider>(slider_loadDistance));
     }
     
     {
-        menu_dev.init(DEV);
+        menu_dev.init(MenuGroup::DEV);
         menu_dev.onUpdate = [](Menu* self)
         {
             if ((Input::justPressed("ESC") || Input::justPressed("P")) && menu_dev.getShown() && !menu_dev.getShownFirstFrame())
@@ -169,7 +185,7 @@ void UI::initMenus()
     }
 
     {
-        menu_dev_noises.init(DEV);
+        menu_dev_noises.init(MenuGroup::DEV);
         menu_dev_noises.onUpdate = [](Menu* self)
         {
             if (self->getShown() && !self->getShownFirstFrame())
@@ -190,7 +206,7 @@ void UI::initMenus()
         };
 
         Textbox text_title;
-        text_title.init(margin, margin, "DEV > NOISES", uiColor);
+        text_title.init(margin, margin, "MenuGroup::DEV > NOISES", uiColor);
         menu_dev_noises.add(std::make_unique<Textbox>(text_title));
 
         Button button_back;
@@ -201,19 +217,28 @@ void UI::initMenus()
         };
         menu_dev_noises.add(std::make_unique<Button>(button_back));
 
-        Button button_terrain;
-        button_terrain.init(margin, margin+lineHeight*2, buttonw, buttonh, uiColor, "terrain", uiTextColor);
-        button_terrain.onLeftMouseDown = [](Button* self)
+        Button button_terrainShape;
+        button_terrainShape.init(margin, margin+lineHeight*2, buttonw, buttonh, uiColor, "terrain shape", uiTextColor);
+        button_terrainShape.onLeftMouseDown = [](Button* self)
         {
             menu_dev_noises.hide();
-            menu_dev_noises_terrain.show();
+            menu_dev_noises_terrainShape.show();
         };
-        menu_dev_noises.add(std::make_unique<Button>(button_terrain));
+        menu_dev_noises.add(std::make_unique<Button>(button_terrainShape));
+
+        Button button_terrainHeight;
+        button_terrainHeight.init(margin, margin+lineHeight*3, buttonw, buttonh, uiColor, "terrain height", uiTextColor);
+        button_terrainHeight.onLeftMouseDown = [](Button* self)
+        {
+            menu_dev_noises.hide();
+            menu_dev_noises_terrainHeight.show();
+        };
+        menu_dev_noises.add(std::make_unique<Button>(button_terrainHeight));
     }
 
     {
-        menu_dev_noises_terrain.init(DEV);
-        menu_dev_noises_terrain.onUpdate = [](Menu* self)
+        menu_dev_noises_terrainShape.init(MenuGroup::DEV);
+        menu_dev_noises_terrainShape.onUpdate = [](Menu* self)
         {
             if (self->getShown() && !self->getShownFirstFrame())
             {
@@ -233,16 +258,16 @@ void UI::initMenus()
         };
 
         Textbox text_title;
-        text_title.init(margin, margin, "DEV > NOISES > TERRAIN", uiColor);
-        menu_dev_noises_terrain.add(std::make_unique<Textbox>(text_title));
+        text_title.init(margin, margin, "DEV > NOISES > TERRAIN SHAPE", uiColor);
+        menu_dev_noises_terrainShape.add(std::make_unique<Textbox>(text_title));
 
         Button button_back;
         button_back.init(margin, margin+lineHeight, buttonw, buttonh, uiColor, "back", uiTextColor);
         button_back.onLeftMouseDown = [](Button* self){
-            menu_dev_noises_terrain.hide();
+            menu_dev_noises_terrainShape.hide();
             menu_dev_noises.show();
         };
-        menu_dev_noises_terrain.add(std::make_unique<Button>(button_back));
+        menu_dev_noises_terrainShape.add(std::make_unique<Button>(button_back));
 
         CurveGraph curveGraph;
         curveGraph.init(currentWindowWidth-margin-curveGraphWH, currentWindowHeight-margin-curveGraphWH,
@@ -250,19 +275,120 @@ void UI::initMenus()
         curveGraph.onPointsUpdate = [](CurveGraph* self)
         {
             Terrain::terrain_curveMap.setPoints(self->getPoints());
+
+            printf("------------\n");
+            std::vector<Vec2> points = self->getPoints();
+            for (int i = 0; i < points.size(); i++)
+            {
+                printf("Vec2(%f, %f),\n", points[i].x, points[i].y);
+            }
+
             ChunkLoader::requestUnloadAllChunks();
         };
-        menu_dev_noises_terrain.add(std::make_unique<CurveGraph>(curveGraph));
+        menu_dev_noises_terrainShape.add(std::make_unique<CurveGraph>(curveGraph));
+
+        Textbox text_caves;
+        text_caves.init(currentWindowWidth-margin-curveGraphWH, currentWindowHeight-margin-curveGraphWH-28,
+                                "caves +");
+        menu_dev_noises_terrainShape.add(std::make_unique<Textbox>(text_caves));
 
         Textbox text_terrainHeight;
-        text_terrainHeight.init(currentWindowWidth-margin-100, currentWindowHeight-margin,
+        text_terrainHeight.init(currentWindowWidth-margin-120, currentWindowHeight-margin,
                                 "terrain height +");
-        menu_dev_noises_terrain.add(std::make_unique<Textbox>(text_terrainHeight));
+        menu_dev_noises_terrainShape.add(std::make_unique<Textbox>(text_terrainHeight));
+    }
 
-        Textbox text_filter;
-        text_filter.init(currentWindowWidth-margin-curveGraphWH, currentWindowHeight-margin-curveGraphWH-25,
-                                "filter +");
-        menu_dev_noises_terrain.add(std::make_unique<Textbox>(text_filter));
+    {
+        menu_dev_noises_terrainHeight.init(MenuGroup::DEV);
+        menu_dev_noises_terrainHeight.onUpdate = [](Menu* self)
+        {
+            if (self->getShown() && !self->getShownFirstFrame())
+            {
+                if (Input::justPressed("ESC"))
+                {
+                    self->hide();
+                    menu_dev_noises.show();
+                }
+                else if (Input::justPressed("P"))
+                {
+                    mouseLock = true;
+                    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+                    
+                    self->hide();
+                }
+            }
+        };
+
+        Textbox text_title;
+        text_title.init(margin, margin, "DEV > NOISES > TERRAIN HEIGHT", uiColor);
+        menu_dev_noises_terrainHeight.add(std::make_unique<Textbox>(text_title));
+
+        Button button_back;
+        button_back.init(margin, margin+lineHeight, buttonw, buttonh, uiColor, "back", uiTextColor);
+        button_back.onLeftMouseDown = [](Button* self){
+            menu_dev_noises_terrainHeight.hide();
+            menu_dev_noises.show();
+        };
+        menu_dev_noises_terrainHeight.add(std::make_unique<Button>(button_back));
+
+        Textbox text_maxHeight;
+        text_maxHeight.init(margin+textMarginLeft, margin+lineHeight*2+textMarginTop, "max height", uiColor);
+        menu_dev_noises_terrainHeight.add(std::make_unique<Textbox>(text_maxHeight));
+
+        Slider slider_maxHeight;
+        slider_maxHeight.init(margin2, margin+lineHeight*2+sliderMarginTop, 150, 40, 150, uiColor, 0);
+        slider_maxHeight.onValueUpdate = [](Slider* self)
+        {
+            Terrain::terrainHeight_max = (int)round(self->getValue());
+            ChunkLoader::requestUnloadAllChunks();
+        };
+        menu_dev_noises_terrainHeight.add(std::make_unique<Slider>(slider_maxHeight));
+
+        CurveGraph curveGraph_bigMountains;
+        curveGraph_bigMountains.init(currentWindowWidth-margin-(curveGraphWH-70), currentWindowHeight-margin-(curveGraphWH-70),
+                        curveGraphWH-70, curveGraphWH-70, uiColor, uiTextColor);
+        curveGraph_bigMountains.onPointsUpdate = [](CurveGraph* self)
+        {
+            Terrain::bigMountains_curveMap.setPoints(self->getPoints());
+
+            printf("------------\n");
+            std::vector<Vec2> points = self->getPoints();
+            for (int i = 0; i < points.size(); i++)
+            {
+                printf("Vec2(%f, %f),\n", points[i].x, points[i].y);
+            }
+
+            ChunkLoader::requestUnloadAllChunks();
+        };
+        menu_dev_noises_terrainHeight.add(std::make_unique<CurveGraph>(curveGraph_bigMountains));
+
+        Textbox text_bigMountains;
+        text_bigMountains.init(currentWindowWidth-margin-(curveGraphWH-70), currentWindowHeight-margin-(curveGraphWH-70)-25,
+                                "big mountains");
+        menu_dev_noises_terrainHeight.add(std::make_unique<Textbox>(text_bigMountains));
+
+        CurveGraph curveGraph_smallMountains;
+        curveGraph_smallMountains.init(currentWindowWidth-margin-(curveGraphWH-70), currentWindowHeight-margin-(curveGraphWH-70)*2-50,
+                        curveGraphWH-70, curveGraphWH-70, uiColor, uiTextColor);
+        curveGraph_smallMountains.onPointsUpdate = [](CurveGraph* self)
+        {
+            Terrain::smallMountains_curveMap.setPoints(self->getPoints());
+
+            printf("------------\n");
+            std::vector<Vec2> points = self->getPoints();
+            for (int i = 0; i < points.size(); i++)
+            {
+                printf("Vec2(%f, %f),\n", points[i].x, points[i].y);
+            }
+
+            ChunkLoader::requestUnloadAllChunks();
+        };
+        menu_dev_noises_terrainHeight.add(std::make_unique<CurveGraph>(curveGraph_smallMountains));
+
+        Textbox text_smallMountains;
+        text_smallMountains.init(currentWindowWidth-margin-(curveGraphWH-70), currentWindowHeight-margin-(curveGraphWH-70)*2-50-25,
+                                "small mountains");
+        menu_dev_noises_terrainHeight.add(std::make_unique<Textbox>(text_smallMountains));
     }
 }
 
@@ -345,7 +471,7 @@ void UI::init()
 
 void UI::update()
 {
-    if (Input::justPressed("ESC") && openingMenuGroup == NONE)
+    if (Input::justPressed("ESC") && openingMenuGroup == MenuGroup::NONE)
     {
         menu_pause.show();
         mouseLock = false;
@@ -353,7 +479,7 @@ void UI::update()
         glfwSetCursorPos(glfwWindow, currentWindowWidth/2, currentWindowHeight/2);
     }
 
-    if (Input::justPressed("P") && openingMenuGroup == NONE)
+    if (Input::justPressed("P") && openingMenuGroup == MenuGroup::NONE)
     {
         menu_dev.show();
         mouseLock = false;
@@ -365,7 +491,8 @@ void UI::update()
     menu_pause_settings.update();
     menu_dev.update();
     menu_dev_noises.update();
-    menu_dev_noises_terrain.update();
+    menu_dev_noises_terrainShape.update();
+    menu_dev_noises_terrainHeight.update();
 }
 
 void UI::drawMenus()
@@ -374,7 +501,8 @@ void UI::drawMenus()
     menu_pause_settings.draw();
     menu_dev.draw();
     menu_dev_noises.draw();
-    menu_dev_noises_terrain.draw();
+    menu_dev_noises_terrainShape.draw();
+    menu_dev_noises_terrainHeight.draw();
 }
 
 void UI::drawCrosshair()

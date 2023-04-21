@@ -26,7 +26,8 @@ class UI
 
         static Menu menu_dev;
         static Menu menu_dev_noises;
-        static Menu menu_dev_noises_terrain;
+        static Menu menu_dev_noises_terrainShape;
+        static Menu menu_dev_noises_terrainHeight;
 
     public:
         static void init();

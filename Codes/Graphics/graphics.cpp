@@ -38,7 +38,7 @@ void Graphics::init()
     viewShader.init("./Shaders/viewVertex.glsl", "./Shaders/viewFragment.glsl");
     viewShader.useProgram();
     viewShader.setUniform("projectionMat", viewProjectionMat);
-    testTexture.load("./Textures/test.png", NEAREST);
+    testTexture.load("./Textures/test.png", FilterType::NEAREST);
 
     screenShader.init("./Shaders/screenVertex.glsl", "./Shaders/screenFragment.glsl");
     std::vector<float> screenVerticies = {

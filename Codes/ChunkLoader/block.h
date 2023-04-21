@@ -3,7 +3,7 @@
 
 #include "../Types/intPos.h"
 
-enum BlockType
+enum class BlockType
 {
     EMPTY,
     TEST
@@ -14,7 +14,7 @@ struct Block
     Block(BlockType blockType, IntPos pos);
     Block();
     IntPos pos = IntPos(0, 0, 0);
-    BlockType blockType = EMPTY;
+    BlockType blockType = BlockType::EMPTY;
 };
 
 #endif

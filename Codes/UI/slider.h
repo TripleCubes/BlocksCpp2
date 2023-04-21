@@ -32,7 +32,7 @@ class Slider: public UIElement
         void show() override;
         void hide() override;
 
-        float getCurrentValue();
+        float getValue();
 
         std::function<void(Slider*)> onValueUpdate;
 };

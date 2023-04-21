@@ -10,11 +10,16 @@
 class Terrain
 {
     private:
-        static FastNoiseLite terrain_noise;
+        static FastNoiseLite terrainShape_noise;
         static CurveMap terrain_curveMap;
         
         static FastNoiseLite bigMountains_noise;
+        static CurveMap bigMountains_curveMap;
+
         static FastNoiseLite smallMountains_noise;
+        static CurveMap smallMountains_curveMap;
+
+        static int terrainHeight_max;
 
     public:
         static void init();

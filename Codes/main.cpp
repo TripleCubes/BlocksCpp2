@@ -87,7 +87,7 @@ void onMouseMove(GLFWwindow* window, double mousex, double mousey)
 
 void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (openingMenuGroup == NONE)
+    if (openingMenuGroup == MenuGroup::NONE)
     {
         if (key == GLFW_KEY_F && action == GLFW_PRESS)
         {
@@ -100,7 +100,7 @@ void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
         }
     }
 
-    if (openingMenuGroup == NONE || openingMenuGroup == DEV)
+    if (openingMenuGroup == MenuGroup::NONE || openingMenuGroup == MenuGroup::DEV)
     {
         if (key == GLFW_KEY_T && action == GLFW_PRESS)
         {
@@ -116,13 +116,13 @@ void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 
 void onMouseClick(GLFWwindow* window, int button, int action, int mods)
 {
-    if (openingMenuGroup == NONE)
+    if (openingMenuGroup == MenuGroup::NONE)
     {
         if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
         {
             if (currentBlockRaycast.found)
             {
-                ChunkLoader::placeBlock(Block(TEST, IntPos(currentBlockRaycast.blockPlacingPos)));
+                ChunkLoader::placeBlock(Block(BlockType::TEST, IntPos(currentBlockRaycast.blockPlacingPos)));
             }
         }
 
@@ -198,7 +198,7 @@ int main()
         Input::update();
         ChunkLoader::update();
 
-        if (openingMenuGroup == NONE)
+        if (openingMenuGroup == MenuGroup::NONE)
         {
             if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
             {
@@ -236,7 +236,7 @@ int main()
             }
         }
 
-        if (openingMenuGroup == NONE || openingMenuGroup == DEV)
+        if (openingMenuGroup == MenuGroup::NONE || openingMenuGroup == MenuGroup::DEV)
         {
             player.update();
         }

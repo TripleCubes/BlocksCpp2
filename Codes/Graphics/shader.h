@@ -30,7 +30,7 @@ class Shader
         void release();
 };
 
-enum ShaderType 
+enum class ShaderType 
 {
     VERTEX,
     FRAGMENT

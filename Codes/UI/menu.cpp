@@ -64,7 +64,7 @@ void Menu::hide()
     }
 
     shown = false;
-    openingMenuGroup = NONE;
+    openingMenuGroup = MenuGroup::NONE;
 }
 
 bool Menu::getShown()

@@ -4,7 +4,7 @@
 #include <string>
 #include <stb_image.h>
 
-enum FilterType
+enum class FilterType
 {
     LINEAR, NEAREST
 };

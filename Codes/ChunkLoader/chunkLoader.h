@@ -19,6 +19,8 @@ class ChunkLoader
         static bool unloadAllChunksRequested;
         static void unloadAllChunks();
 
+        static void loadAtDistance(int distance);
+
     public:
         static void init();
 
@@ -44,6 +46,8 @@ class ChunkLoader
 
         static void loadChunk(IntPos chunkPos);
         static std::unordered_map<std::string, Chunk>::iterator unloadChunk(IntPos chunkPos);
+
+        static void setLoadDistance(int loadDistance);
 
         static void update();
         static void draw();

@@ -5,7 +5,7 @@ GLFWwindow* glfwWindow = NULL;
 Color uiTextColor = Color(0.23, 0.27, 0.13, 1.0);
 Color uiColor = Color(0.84, 0.92, 0.61, 1.0);
 
-MenuGroup openingMenuGroup = NONE;
+MenuGroup openingMenuGroup = MenuGroup::NONE;
 
 bool mouseLock = true;
 

@@ -10,7 +10,7 @@
 class Menu
 {
     private:
-        MenuGroup menuGroup = NONE;
+        MenuGroup menuGroup = MenuGroup::NONE;
         std::vector<std::unique_ptr<UIElement>> uiList = {};
 
         bool shown = false;

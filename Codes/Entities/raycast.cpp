@@ -108,7 +108,7 @@ BlockRaycast::BlockRaycast(Vec3 from, Vec3 dir, float range)
 		
         IntPos currentBlockPos((int)floor(currentPos.x), (int)floor(currentPos.y), (int)floor(currentPos.z));
         Block currentBlock = ChunkLoader::getBlock(currentBlockPos);
-		if (currentBlock.blockType != EMPTY)
+		if (currentBlock.blockType != BlockType::EMPTY)
         {
 			found = true;
 			selectedBlock = currentBlock;

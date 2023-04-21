@@ -28,7 +28,7 @@ void Chunk::removeBlock(IntPos blockChunkPos)
     surfaceDataUpdated = false;
     meshUpdated = false;
 
-    blocks[blockChunkPos.x][blockChunkPos.y][blockChunkPos.z] = Block(EMPTY, IntPos(0, 0, 0));
+    blocks[blockChunkPos.x][blockChunkPos.y][blockChunkPos.z] = Block(BlockType::EMPTY, IntPos(0, 0, 0));
 }
 
 Block Chunk::getBlock(IntPos blockChunkPos)
@@ -51,7 +51,7 @@ void Chunk::updateSurfaceData()
 
     struct BlockFace
     {
-        BlockType blockType = EMPTY;
+        BlockType blockType = BlockType::EMPTY;
 
         bool hasTopFace = false;
         bool hasBottomFace = false;
@@ -123,11 +123,11 @@ void Chunk::updateSurfaceData()
             {
                 Block block = blocks[x][y][z];
 
-                if (block.blockType != EMPTY)
+                if (block.blockType != BlockType::EMPTY)
                 {
                     if (y == CHUNK_SIZE - 1)
                     {
-                        if (!topChunkLoaded || topChunk.getBlock(IntPos(x, 0, z)).blockType == EMPTY)
+                        if (!topChunkLoaded || topChunk.getBlock(IntPos(x, 0, z)).blockType == BlockType::EMPTY)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasTopFace = true;
@@ -135,7 +135,7 @@ void Chunk::updateSurfaceData()
                     }
                     else
                     {
-                        if (blocks[x][y + 1][z].blockType == EMPTY)
+                        if (blocks[x][y + 1][z].blockType == BlockType::EMPTY)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasTopFace = true;
@@ -144,7 +144,7 @@ void Chunk::updateSurfaceData()
 
                     if (y == 0)
                     {
-                        if (!bottomChunkLoaded || bottomChunk.getBlock(IntPos(x, CHUNK_SIZE - 1, z)).blockType == EMPTY)
+                        if (!bottomChunkLoaded || bottomChunk.getBlock(IntPos(x, CHUNK_SIZE - 1, z)).blockType == BlockType::EMPTY)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasBottomFace = true;
@@ -152,7 +152,7 @@ void Chunk::updateSurfaceData()
                     }
                     else
                     {
-                        if (blocks[x][y - 1][z].blockType == EMPTY)
+                        if (blocks[x][y - 1][z].blockType == BlockType::EMPTY)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasBottomFace = true;
@@ -161,7 +161,7 @@ void Chunk::updateSurfaceData()
 
                     if (x == 0)
                     {
-                        if (!leftChunkLoaded || leftChunk.getBlock(IntPos(CHUNK_SIZE - 1, y, z)).blockType == EMPTY)
+                        if (!leftChunkLoaded || leftChunk.getBlock(IntPos(CHUNK_SIZE - 1, y, z)).blockType == BlockType::EMPTY)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasLeftFace = true;
@@ -169,7 +169,7 @@ void Chunk::updateSurfaceData()
                     }
                     else
                     {
-                        if (blocks[x - 1][y][z].blockType == EMPTY)
+                        if (blocks[x - 1][y][z].blockType == BlockType::EMPTY)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasLeftFace = true;
@@ -178,7 +178,7 @@ void Chunk::updateSurfaceData()
 
                     if (x == CHUNK_SIZE - 1)
                     {
-                        if (!rightChunkLoaded || rightChunk.getBlock(IntPos(0, y, z)).blockType == EMPTY)
+                        if (!rightChunkLoaded || rightChunk.getBlock(IntPos(0, y, z)).blockType == BlockType::EMPTY)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasRightFace = true;
@@ -186,7 +186,7 @@ void Chunk::updateSurfaceData()
                     }
                     else
                     {
-                        if (blocks[x + 1][y][z].blockType == EMPTY)
+                        if (blocks[x + 1][y][z].blockType == BlockType::EMPTY)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasRightFace = true;
@@ -195,7 +195,7 @@ void Chunk::updateSurfaceData()
 
                     if (z == CHUNK_SIZE - 1)
                     {
-                        if (!forwardChunkLoaded || forwardChunk.getBlock(IntPos(x, y, 0)).blockType == EMPTY)
+                        if (!forwardChunkLoaded || forwardChunk.getBlock(IntPos(x, y, 0)).blockType == BlockType::EMPTY)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasForwardFace = true;
@@ -203,7 +203,7 @@ void Chunk::updateSurfaceData()
                     }
                     else
                     {
-                        if (blocks[x][y][z + 1].blockType == EMPTY)
+                        if (blocks[x][y][z + 1].blockType == BlockType::EMPTY)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasForwardFace = true;
@@ -212,7 +212,7 @@ void Chunk::updateSurfaceData()
 
                     if (z == 0)
                     {
-                        if (!backwardChunkLoaded || backwardChunk.getBlock(IntPos(x, y, CHUNK_SIZE - 1)).blockType == EMPTY)
+                        if (!backwardChunkLoaded || backwardChunk.getBlock(IntPos(x, y, CHUNK_SIZE - 1)).blockType == BlockType::EMPTY)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasBackwardFace = true;
@@ -220,7 +220,7 @@ void Chunk::updateSurfaceData()
                     }
                     else
                     {
-                        if (blocks[x][y][z - 1].blockType == EMPTY)
+                        if (blocks[x][y][z - 1].blockType == BlockType::EMPTY)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasBackwardFace = true;
@@ -233,7 +233,7 @@ void Chunk::updateSurfaceData()
 
 
 
-    enum Dir
+    enum class Dir
     {
         TOP, BOTTOM, LEFT, RIGHT, FORWARD, BACKWARD
     };
@@ -296,7 +296,7 @@ void Chunk::updateSurfaceData()
                         }
                     }
 
-                    surfaceData.push_back({TOP, IntPos(x, y, z), checkWidth, checkHeight});
+                    surfaceData.push_back({Dir::TOP, IntPos(x, y, z), checkWidth, checkHeight});
                 }
             }
         }
@@ -350,7 +350,7 @@ void Chunk::updateSurfaceData()
                         }
                     }
 
-                    surfaceData.push_back({BOTTOM, IntPos(x, y, z), checkWidth, checkHeight});
+                    surfaceData.push_back({Dir::BOTTOM, IntPos(x, y, z), checkWidth, checkHeight});
                 }
             }
         }
@@ -404,7 +404,7 @@ void Chunk::updateSurfaceData()
                         }
                     }
 
-                    surfaceData.push_back({LEFT, IntPos(x, y, z), checkWidth, checkHeight});
+                    surfaceData.push_back({Dir::LEFT, IntPos(x, y, z), checkWidth, checkHeight});
                 }
             }
         }
@@ -458,7 +458,7 @@ void Chunk::updateSurfaceData()
                         }
                     }
 
-                    surfaceData.push_back({RIGHT, IntPos(x, y, z), checkWidth, checkHeight});
+                    surfaceData.push_back({Dir::RIGHT, IntPos(x, y, z), checkWidth, checkHeight});
                 }
             }
         }
@@ -512,7 +512,7 @@ void Chunk::updateSurfaceData()
                         }
                     }
 
-                    surfaceData.push_back({FORWARD, IntPos(x, y, z), checkWidth, checkHeight});
+                    surfaceData.push_back({Dir::FORWARD, IntPos(x, y, z), checkWidth, checkHeight});
                 }
             }
         }
@@ -566,7 +566,7 @@ void Chunk::updateSurfaceData()
                         }
                     }
 
-                    surfaceData.push_back({BACKWARD, IntPos(x, y, z), checkWidth, checkHeight});
+                    surfaceData.push_back({Dir::BACKWARD, IntPos(x, y, z), checkWidth, checkHeight});
                 }
             }
         }
@@ -583,7 +583,7 @@ void Chunk::updateSurfaceData()
 
         std::vector<float> surfaceVerticies;
         
-        if (surface.dir == TOP)
+        if (surface.dir == Dir::TOP)
         {
             surfaceVerticies = {
                                0 + pos.x,  1 + pos.y,                 0 + pos.z,  0,  1,  0,                 0,  (float)surface.h, // A
@@ -595,7 +595,7 @@ void Chunk::updateSurfaceData()
                 (float)surface.w + pos.x,  1 + pos.y,  (float)surface.h + pos.z,  0,  1,  0,  (float)surface.w,                 0, // C
             };
         }
-        else if (surface.dir == BOTTOM)
+        else if (surface.dir == Dir::BOTTOM)
         {
             surfaceVerticies = {
                                0 + pos.x,  0 + pos.y,                 0 + pos.z,  0, -1,  0,  (float)surface.w,  (float)surface.h, // E
@@ -607,7 +607,7 @@ void Chunk::updateSurfaceData()
                 (float)surface.w + pos.x,  0 + pos.y,                 0 + pos.z,  0, -1,  0,                 0,  (float)surface.h, // F
             };
         }
-        else if (surface.dir == LEFT)
+        else if (surface.dir == Dir::LEFT)
         {
             surfaceVerticies = {
                 0 + pos.x,  (float)surface.w + pos.y,                 0 + pos.z, -1,  0,  0,                 0,  (float)surface.w, // A
@@ -619,7 +619,7 @@ void Chunk::updateSurfaceData()
                 0 + pos.x,                 0 + pos.y,                 0 + pos.z, -1,  0,  0,                 0,                 0, // E
             };
         }
-        else if (surface.dir == RIGHT)
+        else if (surface.dir == Dir::RIGHT)
         {
             surfaceVerticies = {
                 1 + pos.x,  (float)surface.w + pos.y,                 0 + pos.z,  1,  0,  0,  (float)surface.h,  (float)surface.w, // B
@@ -631,7 +631,7 @@ void Chunk::updateSurfaceData()
                 1 + pos.x,                 0 + pos.y,  (float)surface.h + pos.z,  1,  0,  0,                 0,                 0, // G
             };
         }
-        else if (surface.dir == FORWARD)
+        else if (surface.dir == Dir::FORWARD)
         {
             surfaceVerticies = {
                                0 + pos.x,  (float)surface.h + pos.y,  1 + pos.z,  0,  0,  1,                 0,  (float)surface.h, // D
@@ -644,7 +644,7 @@ void Chunk::updateSurfaceData()
             };
         }
 
-        else if (surface.dir == BACKWARD)
+        else if (surface.dir == Dir::BACKWARD)
         {
             surfaceVerticies = {
                                0 + pos.x,  (float)surface.h + pos.y,  0 + pos.z,  0,  0, -1,  (float)surface.w,  (float)surface.h, // A

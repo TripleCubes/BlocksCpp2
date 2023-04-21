@@ -21,7 +21,7 @@ extern GLFWwindow* glfwWindow;
 extern Color uiColor;
 extern Color uiTextColor;
 
-enum MenuGroup
+enum class MenuGroup
 {
     NONE, PAUSE, DEV
 };

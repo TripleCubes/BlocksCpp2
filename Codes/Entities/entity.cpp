@@ -74,7 +74,7 @@ void Entity::init(Vec3 pos, Vec3 frontDir)
 
     playerMesh.set(verticies);
 
-    playerTexture.load("./Textures/player.png", NEAREST);
+    playerTexture.load("./Textures/player.png", FilterType::NEAREST);
 }
 
 void Entity::update()
@@ -153,7 +153,7 @@ void Entity::moveX(float moveAmount)
     for (int i = 0; i < checkBlockPositions.size(); i++)
     {
         Block checkBlock = ChunkLoader::getBlock(checkBlockPositions[i]);
-        if (checkBlock.blockType != EMPTY)
+        if (checkBlock.blockType != BlockType::EMPTY)
         {
             pos.x = floor(nextPos.x) + 0.5;
             internalVelocity.x = 0;
@@ -200,7 +200,7 @@ void Entity::moveY(float moveAmount)
     for (int i = 0; i < checkBlockPositions.size(); i++)
     {
         Block checkBlock = ChunkLoader::getBlock(checkBlockPositions[i]);
-        if (checkBlock.blockType != EMPTY)
+        if (checkBlock.blockType != BlockType::EMPTY)
         {
             pos.y = floor(nextPos.y + 0.5);
             internalVelocity.y = 0;
@@ -253,7 +253,7 @@ void Entity::moveZ(float moveAmount)
     for (int i = 0; i < checkBlockPositions.size(); i++)
     {
         Block checkBlock = ChunkLoader::getBlock(checkBlockPositions[i]);
-        if (checkBlock.blockType != EMPTY)
+        if (checkBlock.blockType != BlockType::EMPTY)
         {
             pos.z = floor(nextPos.z) + 0.5;
             internalVelocity.z = 0;
