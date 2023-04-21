@@ -92,7 +92,7 @@ Block Terrain::getBlock(IntPos blockPos)
     bigMountains_height = bigMountains_curveMap.map(bigMountains_height);
     float smallMountains_height = (smallMountains_noise.GetNoise((float)blockPos.x, (float)blockPos.z)+1)/2;
     smallMountains_height = smallMountains_curveMap.map(smallMountains_height);
-    int combinedMountainsHeight = round((smallMountains_height * 0.3 + smallMountains_height * 0.7) * terrainHeight_max);
+    int combinedMountainsHeight = round((smallMountains_height * 0.3 + bigMountains_height * 0.7) * terrainHeight_max);
 
     float terrain_noiseValue = (terrainShape_noise.GetNoise((float)blockPos.x, (float)blockPos.y, (float)blockPos.z)+1)/2;
     int maxMountainsHeight = combinedMountainsHeight;
