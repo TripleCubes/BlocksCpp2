@@ -113,7 +113,7 @@ void Graphics::draw()
 
 
 
-    // GraphicEffects::Blur::createBlurTexture(viewFrameBuffer.getTexture());
+    // GraphicEffects::Blur::createBlurTexture(viewFrameBuffer.getTexture(), 8, 3);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

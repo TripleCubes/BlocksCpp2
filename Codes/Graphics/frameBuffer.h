@@ -6,7 +6,6 @@ class FrameBuffer
     private:
         unsigned int FBO;
         unsigned int texture;
-        unsigned int texture2;
         unsigned int RBO;
         bool isMultisample = false;
 
@@ -15,7 +14,6 @@ class FrameBuffer
         void bind();
         unsigned int getFrameBufferObject();
         unsigned int getTexture();
-        unsigned int getTexture2();
         void resize(int width = 0, int height = 0);
         void release();
 };

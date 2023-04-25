@@ -119,6 +119,11 @@ void Shader::setUniform(std::string uniformName, Color color)
     glUniform4f(glGetUniformLocation(shaderProgram, uniformName.c_str()), color.r, color.g, color.b, color.a);
 }
 
+void Shader::setUniform(std::string uniformName, int num)
+{
+    glUniform1i(glGetUniformLocation(shaderProgram, uniformName.c_str()), num);
+}
+
 void Shader::setTextureUniform(std::string uniformName, Texture texture, int textureUniformIndex) 
 {
     setTextureUniform(uniformName, texture.getTexture(), textureUniformIndex);

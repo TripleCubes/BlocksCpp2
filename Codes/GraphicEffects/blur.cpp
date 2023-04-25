@@ -4,12 +4,13 @@
 
 Shader GraphicEffects::Blur::shader;
 Mesh GraphicEffects::Blur::mesh;
-FrameBuffer GraphicEffects::Blur::reducedSizeFrameBufferMultisampled;
-FrameBuffer GraphicEffects::Blur::reducedSizeFrameBuffer;
+
+FrameBuffer GraphicEffects::Blur::horizontalBlurFrameBuffer;
+FrameBuffer GraphicEffects::Blur::blurFrameBuffer;
 
 void GraphicEffects::Blur::init()
 {
-    shader.init("./Shaders/screen");
+    shader.init("./Shaders/GraphicEffects/blur");
 
     std::vector<float> drawVerticies = {
         -1,  1,
@@ -22,40 +23,54 @@ void GraphicEffects::Blur::init()
     };
     mesh.set2d(drawVerticies);
 
-    reducedSizeFrameBufferMultisampled.init(true, true, currentWindowWidth/2, currentWindowHeight/2);
-    reducedSizeFrameBuffer.init(false, true, currentWindowWidth/2, currentWindowHeight/2);
+    horizontalBlurFrameBuffer.init();
+    blurFrameBuffer.init();
 }
 
-void GraphicEffects::Blur::createBlurTexture(Texture texture)
+void GraphicEffects::Blur::createBlurTexture1Time(unsigned int textureId)
 {
-    createBlurTexture(texture.getTexture());
-}
-
-void GraphicEffects::Blur::createBlurTexture(unsigned int textureId)
-{
-    reducedSizeFrameBufferMultisampled.bind();
+    horizontalBlurFrameBuffer.bind();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glViewport(0, 0, currentWindowWidth/2, currentWindowHeight/2);
 
     shader.useProgram();
-    shader.setTextureUniform("viewTexture", textureId, 0);
+    shader.setUniform("horizontal", 1);
+    shader.setTextureUniform("texture", textureId, 0);
     mesh.draw();
 
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, reducedSizeFrameBufferMultisampled.getFrameBufferObject());
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, reducedSizeFrameBuffer.getFrameBufferObject());
-    glBlitFramebuffer(0, 0, currentWindowWidth/2, currentWindowHeight/2, 
-                        0, 0, currentWindowWidth/2, currentWindowHeight/2, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    blurFrameBuffer.bind();
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    glViewport(0, 0, currentWindowWidth, currentWindowHeight);
+    shader.setUniform("horizontal", 0);
+    shader.setTextureUniform("texture", horizontalBlurFrameBuffer.getTexture(), 0);
+    mesh.draw();
+}
+
+void GraphicEffects::Blur::createBlurTexture(Texture texture, int blurSize, int blurTimes)
+{
+    createBlurTexture(texture.getTexture(), blurSize, blurTimes);
+}
+
+void GraphicEffects::Blur::createBlurTexture(unsigned int textureId, int blurSize, int blurTimes)
+{
+    shader.useProgram();
+    shader.setUniform("blurSize", blurSize);
+    createBlurTexture1Time(textureId);
+    for (int i = 0; i < blurTimes - 1; i++)
+    {
+        createBlurTexture1Time(blurFrameBuffer.getTexture());
+    }
 }
 
 void GraphicEffects::Blur::draw()
 {    
     shader.useProgram();
-    shader.setTextureUniform("viewTexture", reducedSizeFrameBuffer.getTexture(), 0);
+    shader.setTextureUniform("viewTexture", blurFrameBuffer.getTexture(), 0);
     mesh.draw();
 }
 
@@ -63,5 +78,6 @@ void GraphicEffects::Blur::release()
 {
     shader.release();
     mesh.release();
-    reducedSizeFrameBuffer.release();
+    horizontalBlurFrameBuffer.release();
+    blurFrameBuffer.release();
 }

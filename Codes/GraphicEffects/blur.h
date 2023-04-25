@@ -13,13 +13,15 @@ namespace GraphicEffects
         private:
             static Shader shader;
             static Mesh mesh;
-            static FrameBuffer reducedSizeFrameBufferMultisampled;
-            static FrameBuffer reducedSizeFrameBuffer;
+            static FrameBuffer horizontalBlurFrameBuffer;
+            static FrameBuffer blurFrameBuffer;
+
+            static void createBlurTexture1Time(unsigned int textureId);
 
         public:
             static void init();
-            static void createBlurTexture(Texture texture);
-            static void createBlurTexture(unsigned int textureId);
+            static void createBlurTexture(Texture texture, int blurSize = 1, int blurTimes = 1);
+            static void createBlurTexture(unsigned int textureId, int blurSize = 1, int blurTimes = 1);
             static void draw();
             static void release();
     };

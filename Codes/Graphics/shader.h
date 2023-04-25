@@ -25,6 +25,7 @@ class Shader
         void setUniform(std::string uniformName, float x, float y);
         void setUniform(std::string uniformName, Vec3 vec);
         void setUniform(std::string uniformName, Color color);
+        void setUniform(std::string uniformName, int num);
         void setTextureUniform(std::string uniformName, Texture texture, int textureUniformIndex);
         void setTextureUniform(std::string uniformName, unsigned int texture, int textureUniformIndex);
         void release();

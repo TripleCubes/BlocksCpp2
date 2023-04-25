@@ -85,11 +85,6 @@ unsigned int FrameBuffer::getTexture()
     return texture;
 }
 
-unsigned int FrameBuffer::getTexture2()
-{
-    return texture2;
-}
-
 void FrameBuffer::resize(int width, int height)
 {
     if (width == 0)
@@ -120,7 +115,6 @@ void FrameBuffer::resize(int width, int height)
 void FrameBuffer::release()
 {
     glDeleteTextures(1, &texture);
-    glDeleteTextures(1, &texture2);
     glDeleteRenderbuffers(1, &RBO);
     glDeleteFramebuffers(1, &FBO);  
 }
