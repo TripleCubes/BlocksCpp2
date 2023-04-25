@@ -5,6 +5,7 @@ OBJS =  globals 					$\
 		Graphics/texture 			$\
 		Graphics/graphics 			$\
 		Graphics/text				$\
+		GraphicEffects/blur			$\
 		UI/ui 						$\
 		UI/uiElement				$\
 		UI/button 					$\

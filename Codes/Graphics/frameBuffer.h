@@ -11,12 +11,13 @@ class FrameBuffer
         bool isMultisample = false;
 
     public:
-        void init(bool multisample, int numberOfTextures = 1);
+        void init(bool multisample = false, bool linearFilter = false, int numberOfTextures = 1, 
+                    int width = 0, int height = 0);
         void bind();
         unsigned int getFrameBufferObject();
         unsigned int getTexture();
         unsigned int getTexture2();
-        void resize();
+        void resize(int width = 0, int height = 0);
         void release();
 };
 

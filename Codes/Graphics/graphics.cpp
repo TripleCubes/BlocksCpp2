@@ -1,7 +1,8 @@
 #include "graphics.h"
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "../globals.h"
+#include "../GraphicEffects/blur.h"
+#include <stdio.h>
 
 class ChunkLoader
 {
@@ -27,6 +28,8 @@ Texture Graphics::testTexture;
 Shader Graphics::screenShader;
 Mesh Graphics::screenMesh;
 
+bool Graphics::initialized = false;
+
 void Graphics::init()
 {
     viewViewMat = glm::mat4(1.0f);
@@ -34,7 +37,7 @@ void Graphics::init()
                                         (float)INIT_WINDOW_WIDTH / (float)INIT_WINDOW_HEIGHT, 
                                         0.1f, 300.0f);
                                         
-    viewFrameBuffer.init(false, 1);
+    viewFrameBuffer.init();
     viewShader.init("./Shaders/viewVertex.glsl", "./Shaders/viewFragment.glsl");
     viewShader.useProgram();
     viewShader.setUniform("projectionMat", viewProjectionMat);
@@ -51,10 +54,18 @@ void Graphics::init()
         -1, -1
     };
     screenMesh.set2d(screenVerticies);
+
+    initialized = true;
 }
 
 void Graphics::update()
 {
+    if (!initialized)
+    {
+        printf("Graphics not initialized\n");
+        return;
+    }
+
     if (!thirdPersonView)
     {
         viewViewMat = glm::lookAt(toGlmVec3(mainCamera.pos + Vec3(0, 1.5, 0)),
@@ -71,6 +82,12 @@ void Graphics::update()
 
 void Graphics::draw()
 {
+    if (!initialized)
+    {
+        printf("Graphics not initialized\n");
+        return;
+    }
+
     viewFrameBuffer.bind();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -96,6 +113,8 @@ void Graphics::draw()
 
 
 
+    // GraphicEffects::Blur::createBlurTexture(viewFrameBuffer.getTexture());
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -105,6 +124,7 @@ void Graphics::draw()
     screenShader.useProgram();
     screenShader.setTextureUniform("viewTexture", viewFrameBuffer.getTexture(), 0);
     screenMesh.draw();
+    // GraphicEffects::Blur::draw();
 
     if (!thirdPersonView)
     {
@@ -115,21 +135,37 @@ void Graphics::draw()
 
 glm::mat4 Graphics::getViewViewMat()
 {
+    if (!initialized)
+    {
+        printf("Graphics not initialized\n");
+    }
     return viewViewMat;
 }
 
 glm::mat4 Graphics::getViewProjectionMat()
 {
+    if (!initialized)
+    {
+        printf("Graphics not initialized\n");
+    }
     return viewProjectionMat;
 }
 
 Shader Graphics::getViewShader()
 {
+    if (!initialized)
+    {
+        printf("Graphics not initialized\n");
+    }
     return viewShader;
 }
 
 FrameBuffer Graphics::getViewFrameBuffer()
 {
+    if (!initialized)
+    {
+        printf("Graphics not initialized\n");
+    }
     return viewFrameBuffer;
 }
 

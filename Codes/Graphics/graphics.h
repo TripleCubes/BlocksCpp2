@@ -21,6 +21,8 @@ class Graphics
         static Shader screenShader;
         static Mesh screenMesh;
 
+        static bool initialized;
+
     public:
         static void init();
         static void update();

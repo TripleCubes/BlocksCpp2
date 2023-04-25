@@ -1,7 +1,6 @@
 #include <iostream>
 #include "shader.h"
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 unsigned int compileShader(std::string path, ShaderType shaderType)
 {
@@ -69,6 +68,8 @@ void linkShaderProgram(unsigned int shaderProgram, std::string vertexShaderPath,
     {
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
         std::cout << "shader linking error\n"
+                  << vertexShaderPath << std::endl
+                  << fragmentShaderPath << std::endl
                   << infoLog << std::endl;
     }
 

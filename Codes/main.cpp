@@ -10,6 +10,7 @@
 #include "Graphics/texture.h"
 #include "Graphics/graphics.h"
 #include "Graphics/text.h"
+#include "GraphicEffects/blur.h"
 #include "ChunkLoader/chunkLoader.h"
 #include "Types/vectormath.h"
 #include "Types/intPos.h"
@@ -185,6 +186,8 @@ int main()
     ChunkLoader::init();
     UI::init();
 
+    GraphicEffects::Blur::init();
+
     player.init(Vec3(0, 0, 10), Vec3(0, 0, -1));
     mainCamera.init(player);
 
@@ -262,6 +265,7 @@ int main()
 
     // ThreadControls::release();
     player.release();
+    GraphicEffects::Blur::release();
     ChunkLoader::release();
     UI::release();
     Text::release();
