@@ -139,11 +139,23 @@ void UI::initMenus()
 
         Slider slider_loadDistance;
         slider_loadDistance.init(margin2, margin+lineHeight*3+sliderMarginTop, 100, 1, 10, uiColor, 0);
-        slider_loadDistance.onValueUpdate = [](Slider* self)
+        slider_loadDistance.onLeftMouseUp = [](Slider* self)
         {
             ChunkLoader::setLoadDistance((int)round(self->getValue()));
         };
         menu_pause_settings.add(std::make_unique<Slider>(slider_loadDistance));
+
+        Textbox text_fov;
+        text_fov.init(margin+textMarginLeft, margin+lineHeight*4+textMarginTop, "FOV", uiColor);
+        menu_pause_settings.add(std::make_unique<Textbox>(text_fov));
+
+        Slider slider_fov;
+        slider_fov.init(margin2, margin+lineHeight*4+sliderMarginTop, 100, 45, 120, uiColor, 0);
+        slider_fov.onLeftMouseHold = [](Slider* self)
+        {
+            fov = self->getValue();
+        };
+        menu_pause_settings.add(std::make_unique<Slider>(slider_fov));
     }
     
     {
@@ -206,7 +218,7 @@ void UI::initMenus()
         };
 
         Textbox text_title;
-        text_title.init(margin, margin, "MenuGroup::DEV > NOISES", uiColor);
+        text_title.init(margin, margin, "DEV > NOISES", uiColor);
         menu_dev_noises.add(std::make_unique<Textbox>(text_title));
 
         Button button_back;
@@ -272,7 +284,7 @@ void UI::initMenus()
         CurveGraph curveGraph;
         curveGraph.init(currentWindowWidth-margin-curveGraphWH, currentWindowHeight-margin-curveGraphWH,
                         curveGraphWH, curveGraphWH, uiColor, uiTextColor);
-        curveGraph.onPointsUpdate = [](CurveGraph* self)
+        curveGraph.onLeftMouseUp = [](CurveGraph* self)
         {
             Terrain::terrain_curveMap.setPoints(self->getPoints());
 
@@ -337,7 +349,7 @@ void UI::initMenus()
 
         Slider slider_maxHeight;
         slider_maxHeight.init(margin2, margin+lineHeight*2+sliderMarginTop, 150, 40, 150, uiColor, 0);
-        slider_maxHeight.onValueUpdate = [](Slider* self)
+        slider_maxHeight.onLeftMouseUp = [](Slider* self)
         {
             Terrain::terrainHeight_max = (int)round(self->getValue());
             ChunkLoader::requestUnloadAllChunks();
@@ -347,7 +359,7 @@ void UI::initMenus()
         CurveGraph curveGraph_bigMountains;
         curveGraph_bigMountains.init(currentWindowWidth-margin-(curveGraphWH-70), currentWindowHeight-margin-(curveGraphWH-70),
                         curveGraphWH-70, curveGraphWH-70, uiColor, uiTextColor);
-        curveGraph_bigMountains.onPointsUpdate = [](CurveGraph* self)
+        curveGraph_bigMountains.onLeftMouseUp = [](CurveGraph* self)
         {
             Terrain::bigMountains_curveMap.setPoints(self->getPoints());
 
@@ -370,7 +382,7 @@ void UI::initMenus()
         CurveGraph curveGraph_smallMountains;
         curveGraph_smallMountains.init(currentWindowWidth-margin-(curveGraphWH-70), currentWindowHeight-margin-(curveGraphWH-70)*2-50,
                         curveGraphWH-70, curveGraphWH-70, uiColor, uiTextColor);
-        curveGraph_smallMountains.onPointsUpdate = [](CurveGraph* self)
+        curveGraph_smallMountains.onLeftMouseUp = [](CurveGraph* self)
         {
             Terrain::smallMountains_curveMap.setPoints(self->getPoints());
 
@@ -419,8 +431,6 @@ void UI::init()
 
 
     blockSelectionShader.init("./Shaders/UI/blockSelection");
-    blockSelectionShader.useProgram();
-    blockSelectionShader.setUniform("projectionMat", Graphics::getViewProjectionMat());
 
     std::vector<float> blockSelectionVerticies = {
         -0.501,  0.501, -0.501, // A 0
@@ -520,6 +530,7 @@ void UI::drawSelectedBlock()
                                                                                 currentBlockRaycast.selectedBlockPos.z + 0.5));
                                 
     blockSelectionShader.useProgram();
+    blockSelectionShader.setUniform("projectionMat", Graphics::getViewProjectionMat());
     blockSelectionShader.setUniform("viewMat", Graphics::getViewViewMat());
     blockSelectionShader.setUniform("modelMat", blockSelectionModelMat);
     blockSelectionMesh.draw();

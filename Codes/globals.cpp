@@ -14,6 +14,8 @@ bool flying = true;
 bool wireframeMode = false;
 bool ignoreCollision = false;
 
+float fov = 70;
+
 Player player;
 Camera mainCamera;
 

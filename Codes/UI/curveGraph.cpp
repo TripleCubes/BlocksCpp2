@@ -127,17 +127,17 @@ void CurveGraph::update()
         if (controlPoints[i].getPoint().leftMouseUp() || controlPoints[i].getCurveControl1().leftMouseUp()
         || controlPoints[i].getCurveControl2().leftMouseUp())
         {
-            if (!error && onPointsUpdate)
+            if (!error && onLeftMouseUp)
             {
-                onPointsUpdate(this);
+                onLeftMouseUp(this);
             }
         }
     }
     if (addControlPointButton.leftMouseDown())
     {
-        if (!error && onPointsUpdate)
+        if (!error && onLeftMouseUp)
         {
-            onPointsUpdate(this);
+            onLeftMouseUp(this);
         }
     }
 }

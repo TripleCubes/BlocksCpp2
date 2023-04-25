@@ -34,7 +34,8 @@ class Slider: public UIElement
 
         float getValue();
 
-        std::function<void(Slider*)> onValueUpdate;
+        std::function<void(Slider*)> onLeftMouseUp;
+        std::function<void(Slider*)> onLeftMouseHold;
 };
 
 #endif

@@ -34,6 +34,8 @@ extern bool flying;
 extern bool wireframeMode;
 extern bool ignoreCollision;
 
+extern float fov;
+
 extern Player player;
 extern Camera mainCamera;
 

@@ -46,13 +46,18 @@ void Slider::update()
         std::stringstream ss;
         ss << std::fixed << std::setprecision(decimalNumbers) << currentValue;
         textbox.setText(ss.str());
+
+        if (onLeftMouseHold)
+        {
+            onLeftMouseHold(this);
+        }
     }
 
     if (button.leftMouseUp())
     {
-        if (onValueUpdate)
+        if (onLeftMouseUp)
         {
-            onValueUpdate(this);
+            onLeftMouseUp(this);
         }
     }
 }

@@ -44,7 +44,7 @@ class CurveGraph: public UIElement
 
         std::vector<Vec2> getPoints();
 
-        std::function<void(CurveGraph*)> onPointsUpdate;
+        std::function<void(CurveGraph*)> onLeftMouseUp;
 };
 
 #endif

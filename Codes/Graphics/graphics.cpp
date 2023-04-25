@@ -33,14 +33,10 @@ bool Graphics::initialized = false;
 void Graphics::init()
 {
     viewViewMat = glm::mat4(1.0f);
-    viewProjectionMat = glm::perspective(glm::radians(70.0f), 
-                                        (float)INIT_WINDOW_WIDTH / (float)INIT_WINDOW_HEIGHT, 
-                                        0.1f, 300.0f);
+    viewProjectionMat = glm::mat4(1.0f);
                                         
     viewFrameBuffer.init();
     viewShader.init("./Shaders/viewVertex.glsl", "./Shaders/viewFragment.glsl");
-    viewShader.useProgram();
-    viewShader.setUniform("projectionMat", viewProjectionMat);
     testTexture.load("./Textures/test.png", FilterType::NEAREST);
 
     screenShader.init("./Shaders/screenVertex.glsl", "./Shaders/screenFragment.glsl");
@@ -65,6 +61,10 @@ void Graphics::update()
         printf("Graphics not initialized\n");
         return;
     }
+
+    viewProjectionMat = glm::perspective(glm::radians(fov), 
+                                        (float)currentWindowWidth / (float)currentWindowHeight, 
+                                        0.1f, 300.0f);
 
     if (!thirdPersonView)
     {
@@ -104,6 +104,7 @@ void Graphics::draw()
 
     viewShader.useProgram();
     viewShader.setUniform("viewMat", viewViewMat);
+    viewShader.setUniform("projectionMat", viewProjectionMat);
     ChunkLoader::draw();
     player.draw();
     if (!thirdPersonView && currentBlockRaycast.found)
