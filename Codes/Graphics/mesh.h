@@ -12,13 +12,14 @@ class Mesh
         bool EBOInitialized = false;
         int numberOfVerticies = 0;
         int numberOfIndicies = 0;
+        bool drawLine = false;
 
     public:
-        void set(std::vector<float> verticies);
-        void set(std::vector<float> verticies, std::vector<unsigned int> indicies);
-        void set2d(std::vector<float> verticies);
-        void set2d(std::vector<float> verticies, std::vector<unsigned int> indicies);
-        void draw(bool drawLine = false);
+        void set3d(std::vector<float> verticies, bool drawLine = false);
+        void set3d(std::vector<float> verticies, std::vector<unsigned int> indicies, bool drawLine = false);
+        void set2d(std::vector<float> verticies, bool drawLine = false);
+        void set2d(std::vector<float> verticies, std::vector<unsigned int> indicies, bool drawLine = false);
+        void draw();
 
         void release();
 };

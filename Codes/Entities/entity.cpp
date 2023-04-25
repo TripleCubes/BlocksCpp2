@@ -72,7 +72,7 @@ void Entity::init(Vec3 pos, Vec3 frontDir)
          0.5,    0, -0.5,    0,    0,   -1,    0,    0, // F
     };
 
-    playerMesh.set(verticies);
+    playerMesh.set3d(verticies);
 
     playerTexture.load("./Textures/player.png", FilterType::NEAREST);
 }

@@ -22,8 +22,8 @@ void GraphicEffects::Blur::init()
     };
     mesh.set2d(drawVerticies);
 
-    reducedSizeFrameBufferMultisampled.init(true, true, 1, currentWindowWidth/2, currentWindowHeight/2);
-    reducedSizeFrameBuffer.init(false, true, 1, currentWindowWidth/2, currentWindowHeight/2);
+    reducedSizeFrameBufferMultisampled.init(true, true, currentWindowWidth/2, currentWindowHeight/2);
+    reducedSizeFrameBuffer.init(false, true, currentWindowWidth/2, currentWindowHeight/2);
 }
 
 void GraphicEffects::Blur::createBlurTexture(Texture texture)

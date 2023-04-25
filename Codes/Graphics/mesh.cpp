@@ -1,8 +1,10 @@
 #include "mesh.h"
 #include <glad/glad.h>
 
-void Mesh::set(std::vector<float> verticies)
+void Mesh::set3d(std::vector<float> verticies, bool drawLine)
 {
+    this->drawLine = drawLine;
+    
     if (VAOInitialized)
     {
         glDeleteVertexArrays(1, &VAO);
@@ -41,8 +43,10 @@ void Mesh::set(std::vector<float> verticies)
     glDeleteBuffers(1, &VBO);
 }
 
-void Mesh::set(std::vector<float> verticies, std::vector<unsigned int> indicies)
+void Mesh::set3d(std::vector<float> verticies, std::vector<unsigned int> indicies, bool drawLine)
 {
+    this->drawLine = drawLine;
+    
     if (VAOInitialized)
     {
         glDeleteVertexArrays(1, &VAO);
@@ -84,8 +88,10 @@ void Mesh::set(std::vector<float> verticies, std::vector<unsigned int> indicies)
     glDeleteBuffers(1, &VBO);
 }
 
-void Mesh::set2d(std::vector<float> verticies)
+void Mesh::set2d(std::vector<float> verticies, bool drawLine)
 {
+    this->drawLine = drawLine;
+    
     if (VAOInitialized)
     {
         glDeleteVertexArrays(1, &VAO);
@@ -120,8 +126,10 @@ void Mesh::set2d(std::vector<float> verticies)
     glDeleteBuffers(1, &VBO);
 }
 
-void Mesh::set2d(std::vector<float> verticies, std::vector<unsigned int> indicies)
+void Mesh::set2d(std::vector<float> verticies, std::vector<unsigned int> indicies, bool drawLine)
 {
+    this->drawLine = drawLine;
+    
     if (VAOInitialized)
     {
         glDeleteVertexArrays(1, &VAO);
@@ -163,7 +171,7 @@ void Mesh::set2d(std::vector<float> verticies, std::vector<unsigned int> indicie
     glDeleteBuffers(1, &VBO);
 }
 
-void Mesh::draw(bool drawLine)
+void Mesh::draw()
 {
     if (!VAOInitialized)
     {
@@ -171,13 +179,13 @@ void Mesh::draw(bool drawLine)
     }
 
     glBindVertexArray(VAO);
+    glLineWidth(2);
     if (!EBOInitialized)
     {
-        glDrawArrays(GL_TRIANGLES, 0, numberOfVerticies);
+        glDrawArrays(drawLine ? GL_LINES : GL_TRIANGLES, 0, numberOfVerticies);
     }
     else 
     {
-        glLineWidth(2);
         glDrawElements(drawLine ? GL_LINES : GL_TRIANGLES, numberOfIndicies, GL_UNSIGNED_INT, 0);
     }
 }

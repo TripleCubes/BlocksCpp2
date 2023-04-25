@@ -667,7 +667,7 @@ void Chunk::updateMesh()
 {
     if (surfaceDataUpdated && !meshUpdated)
     {
-        mesh.set(verticies);
+        mesh.set3d(verticies);
         
         meshInitialized = true;
         meshUpdated = true;

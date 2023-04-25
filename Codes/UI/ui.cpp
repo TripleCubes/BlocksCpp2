@@ -446,7 +446,7 @@ void UI::init()
         6, 7,
         7, 4
     };
-    blockSelectionMesh.set(blockSelectionVerticies, blockSelectionIndicies);
+    blockSelectionMesh.set3d(blockSelectionVerticies, blockSelectionIndicies, true);
 
 
 
@@ -522,7 +522,7 @@ void UI::drawSelectedBlock()
     blockSelectionShader.useProgram();
     blockSelectionShader.setUniform("viewMat", Graphics::getViewViewMat());
     blockSelectionShader.setUniform("modelMat", blockSelectionModelMat);
-    blockSelectionMesh.draw(true);
+    blockSelectionMesh.draw();
 }
 
 void UI::drawRectPos(float x1, float y1, float x2, float y2, Color color)
