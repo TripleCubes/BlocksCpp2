@@ -20,7 +20,7 @@ class Mesh
         void set3d(std::vector<float> verticies, std::vector<unsigned int> indicies, bool drawLine = false);
         void set2d(std::vector<float> verticies, bool drawLine = false);
         void set2d(std::vector<float> verticies, std::vector<unsigned int> indicies, bool drawLine = false);
-        void draw();
+        void draw() const;
 
         void release();
 };

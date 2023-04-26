@@ -24,6 +24,8 @@ class Terrain
     public:
         static void init();
         static Block getBlock(IntPos blockPos);
+        static void paintTerrainBase(Chunk &chunk);
+        static void paintTerrainTop(Chunk &chunk);
 
         friend void UI::initMenus();
 };

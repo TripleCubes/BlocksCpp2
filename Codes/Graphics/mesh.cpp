@@ -215,7 +215,7 @@ void Mesh::set2d(std::vector<float> verticies, std::vector<unsigned int> indicie
     glDeleteBuffers(1, &VBO);
 }
 
-void Mesh::draw()
+void Mesh::draw() const
 {
     if (!VAOInitialized)
     {

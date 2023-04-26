@@ -25,6 +25,7 @@ class ChunkLoader
         static void init();
 
         static void chunkLoadThreadFunction();
+        static void chunkPaintTopThreadFunction();
         static void updateSurfaceDataThreadFunction();
         static void updateMeshesThreadFunction();
         static void chunkUnloadThreadFunction();
@@ -32,8 +33,8 @@ class ChunkLoader
         static std::string convertToKey(int x, int y, int z);
         static std::string convertToKey(IntPos chunkPos);
 
-        static Chunk getChunk(IntPos chunkPos);
-        static Chunk getChunk(std::string key);
+        static Chunk &getChunk(IntPos chunkPos);
+        static Chunk &getChunk(std::string key);
         static Block getBlock(int x, int y, int z);
         static Block getBlock(IntPos pos);
         static void placeBlock(Block block);

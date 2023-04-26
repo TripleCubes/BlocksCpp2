@@ -35,7 +35,17 @@ void ChunkLoader::chunkLoadThreadFunction()
             }
         }
     }
+}
 
+void ChunkLoader::chunkPaintTopThreadFunction()
+{
+    for (std::unordered_map<std::string, Chunk>::iterator i = chunks.begin(); i != chunks.end(); i++)
+    {
+        if (!i->second.topPainted())
+        {
+            Terrain::paintTerrainTop(i->second);
+        }
+    }
 }
 
 void ChunkLoader::updateSurfaceDataThreadFunction()
@@ -112,12 +122,12 @@ std::string ChunkLoader::convertToKey(IntPos chunkPos)
     return convertToKey(chunkPos.x, chunkPos.y, chunkPos.z);
 }
 
-Chunk ChunkLoader::getChunk(IntPos chunkPos)
+Chunk &ChunkLoader::getChunk(IntPos chunkPos)
 {
     return getChunk(convertToKey(chunkPos));
 }
 
-Chunk ChunkLoader::getChunk(std::string key)
+Chunk &ChunkLoader::getChunk(std::string key)
 {
     return chunks[key];
 }
@@ -225,8 +235,8 @@ void ChunkLoader::loadChunk(IntPos chunkPos)
             }
         }
     }
+    Terrain::paintTerrainBase(chunk);
     chunks.insert(std::make_pair(convertToKey(chunkPos), chunk));
-
     requestUpdateChunksAround(chunkPos);
 }
 
@@ -252,6 +262,7 @@ void ChunkLoader::setLoadDistance(int loadDistance)
 void ChunkLoader::update()
 {
     chunkLoadThreadFunction();
+    chunkPaintTopThreadFunction();
     updateSurfaceDataThreadFunction();
     updateMeshesThreadFunction();
     chunkUnloadThreadFunction();

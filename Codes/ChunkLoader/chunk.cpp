@@ -12,7 +12,7 @@ Chunk::Chunk(int x, int y, int z): chunkPos(IntPos(x, y, z)) {}
 Chunk::Chunk(IntPos chunkPos): chunkPos(chunkPos) {}
 Chunk::Chunk(): chunkPos(IntPos(0, 0, 0)) {}
 
-IntPos Chunk::getChunkPos()
+IntPos Chunk::getChunkPos() const
 {
     return chunkPos;
 }
@@ -33,7 +33,7 @@ void Chunk::removeBlock(IntPos blockChunkPos)
     blocks[blockChunkPos.x][blockChunkPos.y][blockChunkPos.z] = Block(BlockType::EMPTY, IntPos(0, 0, 0));
 }
 
-Block Chunk::getBlock(IntPos blockChunkPos)
+Block Chunk::getBlock(IntPos blockChunkPos) const
 {
     return blocks[blockChunkPos.x][blockChunkPos.y][blockChunkPos.z];
 }
@@ -703,7 +703,7 @@ void Chunk::updateMesh()
     }
 }
 
-void Chunk::draw()
+void Chunk::draw() const
 {
     if (meshInitialized)
     {
@@ -716,6 +716,26 @@ void Chunk::draw()
 
         mesh.draw();
     }
+}
+
+void Chunk::markBasePainted()
+{
+    isBasePainted = true;
+}
+
+void Chunk::markTopPainted()
+{
+    isTopPainted = true;
+}
+
+bool Chunk::basePainted()
+{
+    return isBasePainted;
+}
+
+bool Chunk::topPainted()
+{
+    return isTopPainted;
 }
 
 void Chunk::release()

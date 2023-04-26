@@ -1,5 +1,7 @@
 #include "terrain.h"
 #include "../Types/vec2.h"
+#include "chunkLoader.h"
+#include "chunk.h"
 #include <vector>
 
 FastNoiseLite Terrain::terrainShape_noise;
@@ -80,6 +82,40 @@ void Terrain::init()
     bigMountains_noise.SetFractalOctaves(1);
     bigMountains_noise.SetFrequency(0.002);
 
+    std::vector<Vec2> bigMountains_curveMap_points = {
+        Vec2(0.000000, 0.000000),
+        Vec2(0.017381, 0.000756),
+        Vec2(0.064800, 0.003050),
+        Vec2(0.135169, 0.006919),
+        Vec2(0.221400, 0.012400),
+        Vec2(0.316406, 0.019531),
+        Vec2(0.413100, 0.028350),
+        Vec2(0.504394, 0.038894),
+        Vec2(0.583200, 0.051200),
+        Vec2(0.642431, 0.065306),
+        Vec2(0.675000, 0.081250),
+        Vec2(0.691012, 0.108225),
+        Vec2(0.705600, 0.153050),
+        Vec2(0.719213, 0.212200),
+        Vec2(0.732300, 0.282150),
+        Vec2(0.745312, 0.359375),
+        Vec2(0.758700, 0.440350),
+        Vec2(0.772913, 0.521550),
+        Vec2(0.788400, 0.599450),
+        Vec2(0.805613, 0.670525),
+        Vec2(0.825000, 0.731250),
+        Vec2(0.846606, 0.782819),
+        Vec2(0.869600, 0.828800),
+        Vec2(0.893119, 0.869231),
+        Vec2(0.916300, 0.904150),
+        Vec2(0.938281, 0.933594),
+        Vec2(0.958200, 0.957600),
+        Vec2(0.975194, 0.976206),
+        Vec2(0.988400, 0.989450),
+        Vec2(1.000000, 1.000000),
+    };
+    bigMountains_curveMap.setPoints(bigMountains_curveMap_points);
+
     smallMountains_noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
     smallMountains_noise.SetSeed(rand());
     smallMountains_noise.SetFractalOctaves(3);
@@ -111,9 +147,63 @@ Block Terrain::getBlock(IntPos blockPos)
         terrainShape_noiseValueFilter = terrain_curveMap.map(terrainShape_noiseValueFilter);
         if (terrain_noiseValue > terrainShape_noiseValueFilter)
         {
+            if (maxMountainsHeight - blockPos.y < 25)
+            {
+                if (terrain_noiseValue - terrainShape_noiseValueFilter < 0.2f / pow((float)(maxMountainsHeight - blockPos.y)/25.0f, 0.2f))
+                {
+                    return Block(BlockType::DIRT, blockPos);
+                }
+            }
             return Block(BlockType::STONE, blockPos);
         }
     }
 
     return Block(BlockType::EMPTY, IntPos(0, 0, 0));
+}
+
+void Terrain::paintTerrainBase(Chunk &chunk)
+{
+    for (int x = 0; x < CHUNK_SIZE; x++)
+    {
+        for (int y = 0; y < CHUNK_SIZE - 1; y++)
+        {
+            for (int z = 0; z < CHUNK_SIZE; z++)
+            {
+                if (chunk.getBlock(IntPos(x, y, z)).blockType == BlockType::DIRT
+                && chunk.getBlock(IntPos(x, y + 1, z)).blockType == BlockType::EMPTY)
+                {
+                    IntPos blockPos = chunk.getBlock(IntPos(x, y, z)).pos;
+                    chunk.addBlock(Block(BlockType::GRASS, blockPos));
+                }
+            }
+        }
+    }
+
+    chunk.markBasePainted();
+}
+
+void Terrain::paintTerrainTop(Chunk &chunk)
+{
+    IntPos chunkPos = chunk.getChunkPos();
+    if (!ChunkLoader::chunkLoaded(IntPos(chunkPos.x, chunkPos.y + 1, chunkPos.z)))
+    {
+        return;
+    }
+
+    const Chunk topChunk = ChunkLoader::getChunk(IntPos(chunkPos.x, chunkPos.y + 1, chunkPos.z));
+
+    for (int x = 0; x < CHUNK_SIZE; x++)
+    {
+        for (int z = 0; z < CHUNK_SIZE; z++)
+        {
+            if (chunk.getBlock(IntPos(x, CHUNK_SIZE - 1, z)).blockType == BlockType::DIRT
+            && topChunk.getBlock(IntPos(x, 0, z)).blockType == BlockType::EMPTY)
+            {
+                IntPos blockPos = chunk.getBlock(IntPos(x, CHUNK_SIZE - 1, z)).pos;
+                chunk.addBlock(Block(BlockType::GRASS, blockPos));
+            }
+        }
+    }
+
+    chunk.markTopPainted();
 }

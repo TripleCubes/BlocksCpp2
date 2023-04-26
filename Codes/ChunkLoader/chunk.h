@@ -25,20 +25,28 @@ class Chunk
         bool meshUpdated = false;
         bool surfaceDataUpdated = false;
 
+        bool isBasePainted = false;
+        bool isTopPainted = false;
+
     public:
         Chunk(int x, int y, int z);
         Chunk(IntPos chunkPos);
         Chunk();
 
-        IntPos getChunkPos();
+        IntPos getChunkPos() const;
         void addBlock(Block block);
         void removeBlock(IntPos blockChunkPos);
-        Block getBlock(IntPos blockChunkPos);
+        Block getBlock(IntPos blockChunkPos) const;
 
         void requestUpdateMesh();
         void updateSurfaceData();
         void updateMesh();
-        void draw();
+        void draw() const;
+
+        void markBasePainted();
+        void markTopPainted();
+        bool basePainted();
+        bool topPainted();
 
         void release();
 };
