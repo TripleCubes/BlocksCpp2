@@ -21,7 +21,7 @@ class Graphics
         static Shader screenShader;
         static Mesh screenMesh;
 
-        static bool initialized;
+        static Shader blockShader;
 
     public:
         static void init();
@@ -33,9 +33,9 @@ class Graphics
         static Shader getViewShader();
         static FrameBuffer getViewFrameBuffer();
 
-        static void release();
+        static Shader getBlockShader();
 
-        static Texture testTexture;
+        static void release();
 };
 
 #endif

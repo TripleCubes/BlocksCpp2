@@ -150,7 +150,7 @@ void UI::initMenus()
         menu_pause_settings.add(std::make_unique<Textbox>(text_fov));
 
         Slider slider_fov;
-        slider_fov.init(margin2, margin+lineHeight*4+sliderMarginTop, 100, 45, 120, uiColor, 0);
+        slider_fov.init(margin2, margin+lineHeight*4+sliderMarginTop, 200, 45, 120, uiColor, 0);
         slider_fov.onLeftMouseHold = [](Slider* self)
         {
             fov = self->getValue();
@@ -426,7 +426,7 @@ void UI::init()
     crosshairMesh.set2d(crosshairVerticies, crosshairIndicies);
     crosshairShader.init("./Shaders/UI/crosshair");
     crosshairShader.useProgram();
-    crosshairShader.setUniform("currentWindowSize", (float)currentWindowWidth, (float)currentWindowHeight);
+    crosshairShader.setUniform("currentWindowSize", Vec2((float)currentWindowWidth, (float)currentWindowHeight));
 
 
 
@@ -472,7 +472,7 @@ void UI::init()
     rectMesh.set2d(rectVerticies);
     rectShader.init("./Shaders/UI/rect");
     rectShader.useProgram();
-    rectShader.setUniform("windowSize", (float)currentWindowWidth, (float)currentWindowHeight);
+    rectShader.setUniform("windowSize", Vec2((float)currentWindowWidth, (float)currentWindowHeight));
 
 
 
@@ -556,8 +556,8 @@ void UI::drawRectPos(float x1, float y1, float x2, float y2, Color color)
     y2 = currentWindowHeight - y3;
 
     rectShader.useProgram();
-    rectShader.setUniform("rectPos", x1, y1);
-    rectShader.setUniform("rectSize", x2 - x1, y2 - y1);
+    rectShader.setUniform("rectPos", Vec2(x1, y1));
+    rectShader.setUniform("rectSize", Vec2(x2 - x1, y2 - y1));
     rectShader.setUniform("rectColor", color);
     rectMesh.draw();
 }

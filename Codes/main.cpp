@@ -16,6 +16,7 @@
 #include "Types/intPos.h"
 #include "Entities/camera.h"
 #include "UI/ui.h"
+#include "GameTextures/blockTextures.h"
 #include "time.h"
 #include "intervalsAndWaits.h"
 #include "input.h"
@@ -123,7 +124,7 @@ void onMouseClick(GLFWwindow* window, int button, int action, int mods)
         {
             if (currentBlockRaycast.found)
             {
-                ChunkLoader::placeBlock(Block(BlockType::TEST, IntPos(currentBlockRaycast.blockPlacingPos)));
+                ChunkLoader::placeBlock(Block(BlockType::GRASS, IntPos(currentBlockRaycast.blockPlacingPos)));
             }
         }
 
@@ -179,6 +180,8 @@ int main()
 
     initOpenGL();
 
+    GameTextures::BlockTextures::init();
+    
     Graphics::init();
     Text::init();
     Input::init();
@@ -247,6 +250,8 @@ int main()
         currentBlockRaycast = BlockRaycast(Vec3(mainCamera.pos.x, mainCamera.pos.y + 1.5, mainCamera.pos.z), mainCamera.lookDir, 5);
         mainCamera.update(player);
 
+        // printf(mainCamera.lookDir.toString().c_str());
+
         UI::update();
 
         updateIntervals();
@@ -265,6 +270,7 @@ int main()
 
     // ThreadControls::release();
     player.release();
+    GameTextures::BlockTextures::release();
     GraphicEffects::Blur::release();
     ChunkLoader::release();
     UI::release();

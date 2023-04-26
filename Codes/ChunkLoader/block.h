@@ -6,7 +6,14 @@
 enum class BlockType
 {
     EMPTY,
-    TEST
+    STONE,
+    DIRT,
+    GRASS,
+};
+
+enum class BlockDir
+{
+    TOP, BOTTOM, LEFT, RIGHT, FORWARD, BACKWARD
 };
 
 struct Block

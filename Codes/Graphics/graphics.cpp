@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include "../globals.h"
 #include "../GraphicEffects/blur.h"
+#include "../GameTextures/blockTextures.h"
 #include <stdio.h>
 
 class ChunkLoader
@@ -23,12 +24,11 @@ glm::mat4 Graphics::viewProjectionMat;
 
 Shader Graphics::viewShader;
 FrameBuffer Graphics::viewFrameBuffer;
-Texture Graphics::testTexture;
 
 Shader Graphics::screenShader;
 Mesh Graphics::screenMesh;
 
-bool Graphics::initialized = false;
+Shader Graphics::blockShader;
 
 void Graphics::init()
 {
@@ -37,7 +37,6 @@ void Graphics::init()
                                         
     viewFrameBuffer.init();
     viewShader.init("./Shaders/viewVertex.glsl", "./Shaders/viewFragment.glsl");
-    testTexture.load("./Textures/test.png", FilterType::NEAREST);
 
     screenShader.init("./Shaders/screenVertex.glsl", "./Shaders/screenFragment.glsl");
     std::vector<float> screenVerticies = {
@@ -51,17 +50,16 @@ void Graphics::init()
     };
     screenMesh.set2d(screenVerticies);
 
-    initialized = true;
+    blockShader.init("./Shaders/Blocks/block");
+    Vec2 oneBlockTextureSize = Vec2(1.0f/(float)GameTextures::BlockTextures::getTexture().getWidth(),
+                                    1.0f/(float)GameTextures::BlockTextures::getTexture().getHeight());
+    oneBlockTextureSize = oneBlockTextureSize * (float)GameTextures::BlockTextures::blockPixelSize;
+    blockShader.useProgram();
+    blockShader.setUniform("oneBlockTextureSize", oneBlockTextureSize);
 }
 
 void Graphics::update()
 {
-    if (!initialized)
-    {
-        printf("Graphics not initialized\n");
-        return;
-    }
-
     viewProjectionMat = glm::perspective(glm::radians(fov), 
                                         (float)currentWindowWidth / (float)currentWindowHeight, 
                                         0.1f, 300.0f);
@@ -82,12 +80,6 @@ void Graphics::update()
 
 void Graphics::draw()
 {
-    if (!initialized)
-    {
-        printf("Graphics not initialized\n");
-        return;
-    }
-
     viewFrameBuffer.bind();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -100,21 +92,26 @@ void Graphics::draw()
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
-    glLineWidth(1);
+
+    blockShader.useProgram();
+    blockShader.setUniform("viewMat", viewViewMat);
+    blockShader.setUniform("projectionMat", viewProjectionMat);
+    ChunkLoader::draw();
 
     viewShader.useProgram();
     viewShader.setUniform("viewMat", viewViewMat);
     viewShader.setUniform("projectionMat", viewProjectionMat);
-    ChunkLoader::draw();
     player.draw();
     if (!thirdPersonView && currentBlockRaycast.found)
     {
+        glLineWidth(2);
         UI::drawSelectedBlock();
+        glLineWidth(1);
     }
 
 
 
-    // GraphicEffects::Blur::createBlurTexture(viewFrameBuffer.getTexture(), 8, 3);
+    // GraphicEffects::Blur::createBlurTexture(viewFrameBuffer.getTexture(), 10, 2);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -136,38 +133,27 @@ void Graphics::draw()
 
 glm::mat4 Graphics::getViewViewMat()
 {
-    if (!initialized)
-    {
-        printf("Graphics not initialized\n");
-    }
     return viewViewMat;
 }
 
 glm::mat4 Graphics::getViewProjectionMat()
 {
-    if (!initialized)
-    {
-        printf("Graphics not initialized\n");
-    }
     return viewProjectionMat;
 }
 
 Shader Graphics::getViewShader()
 {
-    if (!initialized)
-    {
-        printf("Graphics not initialized\n");
-    }
     return viewShader;
 }
 
 FrameBuffer Graphics::getViewFrameBuffer()
 {
-    if (!initialized)
-    {
-        printf("Graphics not initialized\n");
-    }
     return viewFrameBuffer;
+}
+
+Shader Graphics::getBlockShader()
+{
+    return blockShader;
 }
 
 void Graphics::release()
@@ -177,4 +163,6 @@ void Graphics::release()
 
     screenShader.release();
     screenMesh.release();
+
+    blockShader.release();
 }

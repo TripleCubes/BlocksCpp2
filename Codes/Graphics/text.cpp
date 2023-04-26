@@ -72,10 +72,10 @@ Text::Character Text::drawCharacter(float x, float y, char characterCode, Color 
     y -= character.h - character.bearingY;
     textShader.useProgram();
     textShader.setTextureUniform("textTexture", character.textureId, 0);
-    textShader.setUniform("textPos", x, y);
-    textShader.setUniform("textSize", character.w, character.h);
+    textShader.setUniform("textPos", Vec2(x, y));
+    textShader.setUniform("textSize", Vec2(character.w, character.h));
     textShader.setUniform("textColor", color);
-    textShader.setUniform("windowSize", (float)currentWindowWidth, (float)currentWindowHeight);
+    textShader.setUniform("windowSize", Vec2((float)currentWindowWidth, (float)currentWindowHeight));
     textMesh.draw();
 
     return character;

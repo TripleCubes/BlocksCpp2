@@ -29,6 +29,7 @@ OBJS =  globals 					$\
 		Types/color 				$\
 		Types/rect					$\
 		Types/curveMap				$\
+		GameTextures/blockTextures	$\
 		time 						$\
 		intervalsAndWaits			$\
 		math 						$\

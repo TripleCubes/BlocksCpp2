@@ -5,6 +5,8 @@
 #include "../math.h"
 #include "../globals.h"
 #include "../Graphics/graphics.h"
+#include "../Types/vec2.h"
+#include "../GameTextures/blockTextures.h"
 
 Chunk::Chunk(int x, int y, int z): chunkPos(IntPos(x, y, z)) {}
 Chunk::Chunk(IntPos chunkPos): chunkPos(chunkPos) {}
@@ -233,14 +235,10 @@ void Chunk::updateSurfaceData()
 
 
 
-    enum class Dir
-    {
-        TOP, BOTTOM, LEFT, RIGHT, FORWARD, BACKWARD
-    };
-
     struct Surface
     {
-        Dir dir;
+        Vec2 uv;
+        BlockDir dir;
         IntPos blockChunkPos;
         int w;
         int h;
@@ -256,11 +254,13 @@ void Chunk::updateSurfaceData()
             {
                 if (blockFaces[x][y][z].hasTopFace && !blockFaces[x][y][z].topChecked)
                 {
+                    BlockType blockType = blockFaces[x][y][z].blockType;
                     blockFaces[x][y][z].topChecked = true;
                     int checkWidth = 1;
                     int checkHeight = 1;
 
-                    while (blockFaces[x + checkWidth][y][z].hasTopFace 
+                    while (blockFaces[x + checkWidth][y][z].blockType == blockType
+                    && blockFaces[x + checkWidth][y][z].hasTopFace 
                     && !blockFaces[x + checkWidth][y][z].topChecked
                     && x + checkWidth <= CHUNK_SIZE - 1)
                     {
@@ -278,7 +278,8 @@ void Chunk::updateSurfaceData()
 
                         for (int i = 0; i < checkWidth; i++)
                         {
-                            if (!blockFaces[x + i][y][z + checkHeight].hasTopFace
+                            if (blockFaces[x + i][y][z + checkHeight].blockType != blockType
+                            || !blockFaces[x + i][y][z + checkHeight].hasTopFace
                             || blockFaces[x + i][y][z + checkHeight].topChecked)
                             {
                                 stopHeightCheck = true;
@@ -296,7 +297,8 @@ void Chunk::updateSurfaceData()
                         }
                     }
 
-                    surfaceData.push_back({Dir::TOP, IntPos(x, y, z), checkWidth, checkHeight});
+                    surfaceData.push_back({GameTextures::BlockTextures::getUV(blockFaces[x][y][z].blockType, BlockDir::TOP),
+                                            BlockDir::TOP, IntPos(x, y, z), checkWidth, checkHeight});
                 }
             }
         }
@@ -310,11 +312,13 @@ void Chunk::updateSurfaceData()
             {
                 if (blockFaces[x][y][z].hasBottomFace && !blockFaces[x][y][z].bottomChecked)
                 {
+                    BlockType blockType = blockFaces[x][y][z].blockType;
                     blockFaces[x][y][z].bottomChecked = true;
                     int checkWidth = 1;
                     int checkHeight = 1;
 
-                    while (blockFaces[x + checkWidth][y][z].hasBottomFace 
+                    while (blockFaces[x + checkWidth][y][z].blockType == blockType
+                    && blockFaces[x + checkWidth][y][z].hasBottomFace 
                     && !blockFaces[x + checkWidth][y][z].bottomChecked
                     && x + checkWidth <= CHUNK_SIZE - 1)
                     {
@@ -332,7 +336,8 @@ void Chunk::updateSurfaceData()
 
                         for (int i = 0; i < checkWidth; i++)
                         {
-                            if (!blockFaces[x + i][y][z + checkHeight].hasBottomFace
+                            if (blockFaces[x + i][y][z + checkHeight].blockType != blockType
+                            || !blockFaces[x + i][y][z + checkHeight].hasBottomFace
                             || blockFaces[x + i][y][z + checkHeight].bottomChecked)
                             {
                                 stopHeightCheck = true;
@@ -350,7 +355,8 @@ void Chunk::updateSurfaceData()
                         }
                     }
 
-                    surfaceData.push_back({Dir::BOTTOM, IntPos(x, y, z), checkWidth, checkHeight});
+                    surfaceData.push_back({GameTextures::BlockTextures::getUV(blockFaces[x][y][z].blockType, BlockDir::BOTTOM),
+                                            BlockDir::BOTTOM, IntPos(x, y, z), checkWidth, checkHeight});
                 }
             }
         }
@@ -364,11 +370,13 @@ void Chunk::updateSurfaceData()
             {
                 if (blockFaces[x][y][z].hasLeftFace && !blockFaces[x][y][z].leftChecked)
                 {
+                    BlockType blockType = blockFaces[x][y][z].blockType;
                     blockFaces[x][y][z].leftChecked = true;
                     int checkWidth = 1;
                     int checkHeight = 1;
 
-                    while (blockFaces[x][y + checkWidth][z].hasLeftFace 
+                    while (blockFaces[x][y + checkWidth][z].blockType == blockType
+                    && blockFaces[x][y + checkWidth][z].hasLeftFace 
                     && !blockFaces[x][y + checkWidth][z].leftChecked
                     && y + checkWidth <= CHUNK_SIZE - 1)
                     {
@@ -386,7 +394,8 @@ void Chunk::updateSurfaceData()
 
                         for (int i = 0; i < checkWidth; i++)
                         {
-                            if (!blockFaces[x][y + i][z + checkHeight].hasLeftFace
+                            if (blockFaces[x][y + i][z + checkHeight].blockType != blockType
+                            || !blockFaces[x][y + i][z + checkHeight].hasLeftFace
                             || blockFaces[x][y + i][z + checkHeight].leftChecked)
                             {
                                 stopHeightCheck = true;
@@ -404,7 +413,8 @@ void Chunk::updateSurfaceData()
                         }
                     }
 
-                    surfaceData.push_back({Dir::LEFT, IntPos(x, y, z), checkWidth, checkHeight});
+                    surfaceData.push_back({GameTextures::BlockTextures::getUV(blockFaces[x][y][z].blockType, BlockDir::LEFT),
+                                            BlockDir::LEFT, IntPos(x, y, z), checkWidth, checkHeight});
                 }
             }
         }
@@ -418,11 +428,13 @@ void Chunk::updateSurfaceData()
             {
                 if (blockFaces[x][y][z].hasRightFace && !blockFaces[x][y][z].rightChecked)
                 {
+                    BlockType blockType = blockFaces[x][y][z].blockType;
                     blockFaces[x][y][z].rightChecked = true;
                     int checkWidth = 1;
                     int checkHeight = 1;
 
-                    while (blockFaces[x][y + checkWidth][z].hasRightFace 
+                    while (blockFaces[x][y + checkWidth][z].blockType == blockType
+                    && blockFaces[x][y + checkWidth][z].hasRightFace 
                     && !blockFaces[x][y + checkWidth][z].rightChecked
                     && y + checkWidth <= CHUNK_SIZE - 1)
                     {
@@ -440,7 +452,8 @@ void Chunk::updateSurfaceData()
 
                         for (int i = 0; i < checkWidth; i++)
                         {
-                            if (!blockFaces[x][y + i][z + checkHeight].hasRightFace
+                            if (blockFaces[x][y + i][z + checkHeight].blockType != blockType
+                            || !blockFaces[x][y + i][z + checkHeight].hasRightFace
                             || blockFaces[x][y + i][z + checkHeight].rightChecked)
                             {
                                 stopHeightCheck = true;
@@ -458,7 +471,8 @@ void Chunk::updateSurfaceData()
                         }
                     }
 
-                    surfaceData.push_back({Dir::RIGHT, IntPos(x, y, z), checkWidth, checkHeight});
+                    surfaceData.push_back({GameTextures::BlockTextures::getUV(blockFaces[x][y][z].blockType, BlockDir::RIGHT),
+                                            BlockDir::RIGHT, IntPos(x, y, z), checkWidth, checkHeight});
                 }
             }
         }
@@ -472,11 +486,13 @@ void Chunk::updateSurfaceData()
             {
                 if (blockFaces[x][y][z].hasForwardFace && !blockFaces[x][y][z].forwardChecked)
                 {
+                    BlockType blockType = blockFaces[x][y][z].blockType;
                     blockFaces[x][y][z].forwardChecked = true;
                     int checkWidth = 1;
                     int checkHeight = 1;
 
-                    while (blockFaces[x + checkWidth][y][z].hasForwardFace 
+                    while (blockFaces[x + checkWidth][y][z].blockType == blockType
+                    && blockFaces[x + checkWidth][y][z].hasForwardFace 
                     && !blockFaces[x + checkWidth][y][z].forwardChecked
                     && x + checkWidth <= CHUNK_SIZE - 1)
                     {
@@ -494,7 +510,8 @@ void Chunk::updateSurfaceData()
 
                         for (int i = 0; i < checkWidth; i++)
                         {
-                            if (!blockFaces[x + i][y + checkHeight][z].hasForwardFace
+                            if (blockFaces[x + i][y + checkHeight][z].blockType != blockType
+                            || !blockFaces[x + i][y + checkHeight][z].hasForwardFace
                             || blockFaces[x + i][y + checkHeight][z].forwardChecked)
                             {
                                 stopHeightCheck = true;
@@ -512,7 +529,8 @@ void Chunk::updateSurfaceData()
                         }
                     }
 
-                    surfaceData.push_back({Dir::FORWARD, IntPos(x, y, z), checkWidth, checkHeight});
+                    surfaceData.push_back({GameTextures::BlockTextures::getUV(blockFaces[x][y][z].blockType, BlockDir::FORWARD),
+                                            BlockDir::FORWARD, IntPos(x, y, z), checkWidth, checkHeight});
                 }
             }
         }
@@ -526,11 +544,13 @@ void Chunk::updateSurfaceData()
             {
                 if (blockFaces[x][y][z].hasBackwardFace && !blockFaces[x][y][z].backwardChecked)
                 {
+                    BlockType blockType = blockFaces[x][y][z].blockType;
                     blockFaces[x][y][z].backwardChecked = true;
                     int checkWidth = 1;
                     int checkHeight = 1;
 
-                    while (blockFaces[x + checkWidth][y][z].hasBackwardFace 
+                    while (blockFaces[x + checkWidth][y][z].blockType == blockType
+                    && blockFaces[x + checkWidth][y][z].hasBackwardFace 
                     && !blockFaces[x + checkWidth][y][z].backwardChecked
                     && x + checkWidth <= CHUNK_SIZE - 1)
                     {
@@ -548,7 +568,8 @@ void Chunk::updateSurfaceData()
 
                         for (int i = 0; i < checkWidth; i++)
                         {
-                            if (!blockFaces[x + i][y + checkHeight][z].hasBackwardFace
+                            if (blockFaces[x + i][y + checkHeight][z].blockType != blockType
+                            || !blockFaces[x + i][y + checkHeight][z].hasBackwardFace
                             || blockFaces[x + i][y + checkHeight][z].backwardChecked)
                             {
                                 stopHeightCheck = true;
@@ -566,7 +587,8 @@ void Chunk::updateSurfaceData()
                         }
                     }
 
-                    surfaceData.push_back({Dir::BACKWARD, IntPos(x, y, z), checkWidth, checkHeight});
+                    surfaceData.push_back({GameTextures::BlockTextures::getUV(blockFaces[x][y][z].blockType, BlockDir::BACKWARD),
+                                            BlockDir::BACKWARD, IntPos(x, y, z), checkWidth, checkHeight});
                 }
             }
         }
@@ -580,80 +602,87 @@ void Chunk::updateSurfaceData()
     {
         Surface surface = surfaceData[i];
         Vec3 pos = surface.blockChunkPos.toVec3();
+        Vec2 uvSize = Vec2(1.0f/(float)GameTextures::BlockTextures::getTexture().getWidth(),
+                            1.0f/(float)GameTextures::BlockTextures::getTexture().getHeight());
+        uvSize = uvSize * (float)GameTextures::BlockTextures::blockPixelSize;
+        float w = surface.uv.x + (float)surface.w * uvSize.x;
+        float h = surface.uv.y + (float)surface.h * uvSize.y;
+        float w2 = surface.uv.x + (float)surface.h * uvSize.x;
+        float h2 = surface.uv.y + (float)surface.w * uvSize.y;
 
         std::vector<float> surfaceVerticies;
         
-        if (surface.dir == Dir::TOP)
+        if (surface.dir == BlockDir::TOP)
         {
             surfaceVerticies = {
-                               0 + pos.x,  1 + pos.y,                 0 + pos.z,  0,  1,  0,                 0,  (float)surface.h, // A
-                (float)surface.w + pos.x,  1 + pos.y,  (float)surface.h + pos.z,  0,  1,  0,  (float)surface.w,                 0, // C
-                               0 + pos.x,  1 + pos.y,  (float)surface.h + pos.z,  0,  1,  0,                 0,                 0, // D
+                               0 + pos.x,  1 + pos.y,                 0 + pos.z,  0,  1,  0,  surface.uv.x,  surface.uv.y,  surface.uv.x,  surface.uv.y, // A
+                (float)surface.w + pos.x,  1 + pos.y,  (float)surface.h + pos.z,  0,  1,  0,  surface.uv.x,  surface.uv.y,             w,             h, // C
+                               0 + pos.x,  1 + pos.y,  (float)surface.h + pos.z,  0,  1,  0,  surface.uv.x,  surface.uv.y,  surface.uv.x,             h, // D
 
-                               0 + pos.x,  1 + pos.y,                 0 + pos.z,  0,  1,  0,                 0,  (float)surface.h, // A
-                (float)surface.w + pos.x,  1 + pos.y,                 0 + pos.z,  0,  1,  0,  (float)surface.w,  (float)surface.h, // B
-                (float)surface.w + pos.x,  1 + pos.y,  (float)surface.h + pos.z,  0,  1,  0,  (float)surface.w,                 0, // C
+                               0 + pos.x,  1 + pos.y,                 0 + pos.z,  0,  1,  0,  surface.uv.x,  surface.uv.y,  surface.uv.x,  surface.uv.y, // A
+                (float)surface.w + pos.x,  1 + pos.y,                 0 + pos.z,  0,  1,  0,  surface.uv.x,  surface.uv.y,             w,  surface.uv.y, // B
+                (float)surface.w + pos.x,  1 + pos.y,  (float)surface.h + pos.z,  0,  1,  0,  surface.uv.x,  surface.uv.y,             w,             h, // C
             };
         }
-        else if (surface.dir == Dir::BOTTOM)
+        else if (surface.dir == BlockDir::BOTTOM)
         {
             surfaceVerticies = {
-                               0 + pos.x,  0 + pos.y,                 0 + pos.z,  0, -1,  0,  (float)surface.w,  (float)surface.h, // E
-                               0 + pos.x,  0 + pos.y,  (float)surface.h + pos.z,  0, -1,  0,  (float)surface.w,                 0, // H
-                (float)surface.w + pos.x,  0 + pos.y,  (float)surface.h + pos.z,  0, -1,  0,                 0,                 0, // G
+                               0 + pos.x,  0 + pos.y,                 0 + pos.z,  0, -1,  0,  surface.uv.x,  surface.uv.y,  surface.uv.x,             h, // E
+                               0 + pos.x,  0 + pos.y,  (float)surface.h + pos.z,  0, -1,  0,  surface.uv.x,  surface.uv.y,  surface.uv.x,  surface.uv.y, // H
+                (float)surface.w + pos.x,  0 + pos.y,  (float)surface.h + pos.z,  0, -1,  0,  surface.uv.x,  surface.uv.y,             w,  surface.uv.y, // G
 
-                               0 + pos.x,  0 + pos.y,                 0 + pos.z,  0, -1,  0,  (float)surface.w,  (float)surface.h, // E
-                (float)surface.w + pos.x,  0 + pos.y,  (float)surface.h + pos.z,  0, -1,  0,                 0,                 0, // G
-                (float)surface.w + pos.x,  0 + pos.y,                 0 + pos.z,  0, -1,  0,                 0,  (float)surface.h, // F
+                               0 + pos.x,  0 + pos.y,                 0 + pos.z,  0, -1,  0,  surface.uv.x,  surface.uv.y,  surface.uv.x,             h, // E
+                (float)surface.w + pos.x,  0 + pos.y,  (float)surface.h + pos.z,  0, -1,  0,  surface.uv.x,  surface.uv.y,             w,  surface.uv.y, // G
+                (float)surface.w + pos.x,  0 + pos.y,                 0 + pos.z,  0, -1,  0,  surface.uv.x,  surface.uv.y,             w,             h, // F
             };
         }
-        else if (surface.dir == Dir::LEFT)
+        else if (surface.dir == BlockDir::LEFT)
         {
             surfaceVerticies = {
-                0 + pos.x,  (float)surface.w + pos.y,                 0 + pos.z, -1,  0,  0,                 0,  (float)surface.w, // A
-                0 + pos.x,  (float)surface.w + pos.y,  (float)surface.h + pos.z, -1,  0,  0,  (float)surface.h,  (float)surface.w, // D
-                0 + pos.x,                 0 + pos.y,  (float)surface.h + pos.z, -1,  0,  0,  (float)surface.h,                 0, // H
+                0 + pos.x,  (float)surface.w + pos.y,                 0 + pos.z, -1,  0,  0,  surface.uv.x,  surface.uv.y,  surface.uv.x,  surface.uv.y, // A
+                0 + pos.x,  (float)surface.w + pos.y,  (float)surface.h + pos.z, -1,  0,  0,  surface.uv.x,  surface.uv.y,            w2,  surface.uv.y, // D
+                0 + pos.x,                 0 + pos.y,  (float)surface.h + pos.z, -1,  0,  0,  surface.uv.x,  surface.uv.y,            w2,            h2, // H
 
-                0 + pos.x,  (float)surface.w + pos.y,                 0 + pos.z, -1,  0,  0,                 0,  (float)surface.w, // A
-                0 + pos.x,                 0 + pos.y,  (float)surface.h + pos.z, -1,  0,  0,  (float)surface.h,                 0, // H
-                0 + pos.x,                 0 + pos.y,                 0 + pos.z, -1,  0,  0,                 0,                 0, // E
+                0 + pos.x,  (float)surface.w + pos.y,                 0 + pos.z, -1,  0,  0,  surface.uv.x,  surface.uv.y,  surface.uv.x,  surface.uv.y, // A
+                0 + pos.x,                 0 + pos.y,  (float)surface.h + pos.z, -1,  0,  0,  surface.uv.x,  surface.uv.y,            w2,            h2, // H
+                0 + pos.x,                 0 + pos.y,                 0 + pos.z, -1,  0,  0,  surface.uv.x,  surface.uv.y,  surface.uv.x,            h2, // E
             };
         }
-        else if (surface.dir == Dir::RIGHT)
+        else if (surface.dir == BlockDir::RIGHT)
         {
             surfaceVerticies = {
-                1 + pos.x,  (float)surface.w + pos.y,                 0 + pos.z,  1,  0,  0,  (float)surface.h,  (float)surface.w, // B
-                1 + pos.x,                 0 + pos.y,  (float)surface.h + pos.z,  1,  0,  0,                 0,                 0, // G
-                1 + pos.x,  (float)surface.w + pos.y,  (float)surface.h + pos.z,  1,  0,  0,                 0,  (float)surface.w, // C
+                1 + pos.x,  (float)surface.w + pos.y,                 0 + pos.z,  1,  0,  0,  surface.uv.x,  surface.uv.y,            w2,  surface.uv.y, // B
+                1 + pos.x,                 0 + pos.y,  (float)surface.h + pos.z,  1,  0,  0,  surface.uv.x,  surface.uv.y,  surface.uv.x,            h2, // G
+                1 + pos.x,  (float)surface.w + pos.y,  (float)surface.h + pos.z,  1,  0,  0,  surface.uv.x,  surface.uv.y,  surface.uv.x,  surface.uv.y, // C
 
-                1 + pos.x,  (float)surface.w + pos.y,                 0 + pos.z,  1,  0,  0,  (float)surface.h,  (float)surface.w, // B
-                1 + pos.x,                 0 + pos.y,                 0 + pos.z,  1,  0,  0,  (float)surface.h,                 0, // F
-                1 + pos.x,                 0 + pos.y,  (float)surface.h + pos.z,  1,  0,  0,                 0,                 0, // G
+                1 + pos.x,  (float)surface.w + pos.y,                 0 + pos.z,  1,  0,  0,  surface.uv.x,  surface.uv.y,            w2,  surface.uv.y, // B
+                1 + pos.x,                 0 + pos.y,                 0 + pos.z,  1,  0,  0,  surface.uv.x,  surface.uv.y,            w2,            h2, // F
+                1 + pos.x,                 0 + pos.y,  (float)surface.h + pos.z,  1,  0,  0,  surface.uv.x,  surface.uv.y,  surface.uv.x,            h2, // G
             };
         }
-        else if (surface.dir == Dir::FORWARD)
+        else if (surface.dir == BlockDir::FORWARD)
         {
             surfaceVerticies = {
-                               0 + pos.x,  (float)surface.h + pos.y,  1 + pos.z,  0,  0,  1,                 0,  (float)surface.h, // D
-                (float)surface.w + pos.x,  (float)surface.h + pos.y,  1 + pos.z,  0,  0,  1,  (float)surface.w,  (float)surface.h, // C
-                               0 + pos.x,                 0 + pos.y,  1 + pos.z,  0,  0,  1,                 0,                 0, // H
+                               0 + pos.x,  (float)surface.h + pos.y,  1 + pos.z,  0,  0,  1,  surface.uv.x,  surface.uv.y,  surface.uv.x,  surface.uv.y, // D
+                (float)surface.w + pos.x,  (float)surface.h + pos.y,  1 + pos.z,  0,  0,  1,  surface.uv.x,  surface.uv.y,             w,  surface.uv.y, // C
+                               0 + pos.x,                 0 + pos.y,  1 + pos.z,  0,  0,  1,  surface.uv.x,  surface.uv.y,  surface.uv.x,             h, // H
 
-                (float)surface.w + pos.x,  (float)surface.h + pos.y,  1 + pos.z,  0,  0,  1,  (float)surface.w,  (float)surface.h, // C
-                (float)surface.w + pos.x,                 0 + pos.y,  1 + pos.z,  0,  0,  1,  (float)surface.w,                 0, // G
-                               0 + pos.x,                 0 + pos.y,  1 + pos.z,  0,  0,  1,                 0,                 0, // H
+                (float)surface.w + pos.x,  (float)surface.h + pos.y,  1 + pos.z,  0,  0,  1,  surface.uv.x,  surface.uv.y,             w,  surface.uv.y, // C
+                (float)surface.w + pos.x,                 0 + pos.y,  1 + pos.z,  0,  0,  1,  surface.uv.x,  surface.uv.y,             w,             h, // G
+                               0 + pos.x,                 0 + pos.y,  1 + pos.z,  0,  0,  1,  surface.uv.x,  surface.uv.y,  surface.uv.x,             h, // H
             };
         }
 
-        else if (surface.dir == Dir::BACKWARD)
+        else if (surface.dir == BlockDir::BACKWARD)
         {
             surfaceVerticies = {
-                               0 + pos.x,  (float)surface.h + pos.y,  0 + pos.z,  0,  0, -1,  (float)surface.w,  (float)surface.h, // A
-                               0 + pos.x,                 0 + pos.y,  0 + pos.z,  0,  0, -1,  (float)surface.w,                 0, // E
-                (float)surface.w + pos.x,  (float)surface.h + pos.y,  0 + pos.z,  0,  0, -1,                 0,  (float)surface.h, // B
+                               0 + pos.x,  (float)surface.h + pos.y,  0 + pos.z,  0,  0, -1,  surface.uv.x,  surface.uv.y,             w,  surface.uv.y, // A
+                               0 + pos.x,                 0 + pos.y,  0 + pos.z,  0,  0, -1,  surface.uv.x,  surface.uv.y,             w,             h, // E
+                (float)surface.w + pos.x,  (float)surface.h + pos.y,  0 + pos.z,  0,  0, -1,  surface.uv.x,  surface.uv.y,  surface.uv.x,  surface.uv.y, // B
 
-                (float)surface.w + pos.x,  (float)surface.h + pos.y,  0 + pos.z,  0,  0, -1,                 0,  (float)surface.h, // B
-                               0 + pos.x,                 0 + pos.y,  0 + pos.z,  0,  0, -1,  (float)surface.w,                 0, // E
-                (float)surface.w + pos.x,                 0 + pos.y,  0 + pos.z,  0,  0, -1,                 0,                 0, // F
+                (float)surface.w + pos.x,  (float)surface.h + pos.y,  0 + pos.z,  0,  0, -1,  surface.uv.x,  surface.uv.y,  surface.uv.x,  surface.uv.y, // B
+                               0 + pos.x,                 0 + pos.y,  0 + pos.z,  0,  0, -1,  surface.uv.x,  surface.uv.y,             w,             h, // E
+                (float)surface.w + pos.x,                 0 + pos.y,  0 + pos.z,  0,  0, -1,  surface.uv.x,  surface.uv.y,  surface.uv.x,             h, // F
             };
         }
 
@@ -667,7 +696,7 @@ void Chunk::updateMesh()
 {
     if (surfaceDataUpdated && !meshUpdated)
     {
-        mesh.set3d(verticies);
+        mesh.setBlockMesh(verticies);
         
         meshInitialized = true;
         meshUpdated = true;
@@ -681,9 +710,9 @@ void Chunk::draw()
         glm::mat4 modelMat = glm::mat4(1.0f);
         modelMat = glm::translate(modelMat, glm::vec3(chunkPos.x*CHUNK_SIZE, chunkPos.y*CHUNK_SIZE, chunkPos.z*CHUNK_SIZE));
 
-        Graphics::getViewShader().useProgram();
-        Graphics::getViewShader().setUniform("modelMat", modelMat);
-        Graphics::getViewShader().setTextureUniform("testTexture", Graphics::testTexture, 0);
+        Graphics::getBlockShader().useProgram();
+        Graphics::getBlockShader().setUniform("modelMat", modelMat);
+        Graphics::getBlockShader().setTextureUniform("texture", GameTextures::BlockTextures::getTexture(), 0);
 
         mesh.draw();
     }

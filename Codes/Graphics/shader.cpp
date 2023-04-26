@@ -104,14 +104,14 @@ void Shader::setUniform(std::string uniformName, glm::mat4 mat)
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, uniformName.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
 }
 
-void Shader::setUniform(std::string uniformName, float x, float y)
-{
-    glUniform2f(glGetUniformLocation(shaderProgram, uniformName.c_str()), x, y);
-}
-
 void Shader::setUniform(std::string uniformName, Vec3 vec)
 {
     glUniform3f(glGetUniformLocation(shaderProgram, uniformName.c_str()), vec.x, vec.y, vec.z);
+}
+
+void Shader::setUniform(std::string uniformName, Vec2 vec)
+{
+    glUniform2f(glGetUniformLocation(shaderProgram, uniformName.c_str()), vec.x, vec.y);
 }
 
 void Shader::setUniform(std::string uniformName, Color color)

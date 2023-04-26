@@ -100,7 +100,7 @@ Block Terrain::getBlock(IntPos blockPos)
     float terrainShape_noiseValueFilter = ((float)blockPos.y-(float)minMountainsHeight)/((float)maxMountainsHeight-(float)minMountainsHeight);
     if (terrainShape_noiseValueFilter <= 0)
     {
-        return Block(BlockType::TEST, blockPos);
+        return Block(BlockType::STONE, blockPos);
     }
     else if (terrainShape_noiseValueFilter >= 1)
     {
@@ -111,7 +111,7 @@ Block Terrain::getBlock(IntPos blockPos)
         terrainShape_noiseValueFilter = terrain_curveMap.map(terrainShape_noiseValueFilter);
         if (terrain_noiseValue > terrainShape_noiseValueFilter)
         {
-            return Block(BlockType::TEST, blockPos);
+            return Block(BlockType::STONE, blockPos);
         }
     }
 

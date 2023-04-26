@@ -10,6 +10,7 @@
 #include "texture.h"
 #include "../Types/vectormath.h"
 #include "../Types/color.h"
+#include "../Types/vec2.h"
 
 class Shader
 {
@@ -22,8 +23,8 @@ class Shader
         unsigned int getShaderProgram();
         void useProgram();
         void setUniform(std::string uniformName, glm::mat4 mat);
-        void setUniform(std::string uniformName, float x, float y);
         void setUniform(std::string uniformName, Vec3 vec);
+        void setUniform(std::string uniformName, Vec2 vec);
         void setUniform(std::string uniformName, Color color);
         void setUniform(std::string uniformName, int num);
         void setTextureUniform(std::string uniformName, Texture texture, int textureUniformIndex);
