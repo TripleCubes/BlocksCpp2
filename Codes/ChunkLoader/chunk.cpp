@@ -259,10 +259,10 @@ void Chunk::updateSurfaceData()
                     int checkWidth = 1;
                     int checkHeight = 1;
 
-                    while (blockFaces[x + checkWidth][y][z].blockType == blockType
+                    while (x + checkWidth <= CHUNK_SIZE - 1
+                    && blockFaces[x + checkWidth][y][z].blockType == blockType
                     && blockFaces[x + checkWidth][y][z].hasTopFace 
-                    && !blockFaces[x + checkWidth][y][z].topChecked
-                    && x + checkWidth <= CHUNK_SIZE - 1)
+                    && !blockFaces[x + checkWidth][y][z].topChecked)
                     {
                         blockFaces[x + checkWidth][y][z].topChecked = true;
                         checkWidth++;
@@ -317,10 +317,10 @@ void Chunk::updateSurfaceData()
                     int checkWidth = 1;
                     int checkHeight = 1;
 
-                    while (blockFaces[x + checkWidth][y][z].blockType == blockType
+                    while (x + checkWidth <= CHUNK_SIZE - 1
+                    && blockFaces[x + checkWidth][y][z].blockType == blockType
                     && blockFaces[x + checkWidth][y][z].hasBottomFace 
-                    && !blockFaces[x + checkWidth][y][z].bottomChecked
-                    && x + checkWidth <= CHUNK_SIZE - 1)
+                    && !blockFaces[x + checkWidth][y][z].bottomChecked)
                     {
                         blockFaces[x + checkWidth][y][z].bottomChecked = true;
                         checkWidth++;
@@ -375,10 +375,10 @@ void Chunk::updateSurfaceData()
                     int checkWidth = 1;
                     int checkHeight = 1;
 
-                    while (blockFaces[x][y + checkWidth][z].blockType == blockType
+                    while (y + checkWidth <= CHUNK_SIZE - 1
+                    && blockFaces[x][y + checkWidth][z].blockType == blockType
                     && blockFaces[x][y + checkWidth][z].hasLeftFace 
-                    && !blockFaces[x][y + checkWidth][z].leftChecked
-                    && y + checkWidth <= CHUNK_SIZE - 1)
+                    && !blockFaces[x][y + checkWidth][z].leftChecked)
                     {
                         blockFaces[x][y + checkWidth][z].leftChecked = true;
                         checkWidth++;
@@ -433,10 +433,10 @@ void Chunk::updateSurfaceData()
                     int checkWidth = 1;
                     int checkHeight = 1;
 
-                    while (blockFaces[x][y + checkWidth][z].blockType == blockType
+                    while (y + checkWidth <= CHUNK_SIZE - 1
+                    && blockFaces[x][y + checkWidth][z].blockType == blockType
                     && blockFaces[x][y + checkWidth][z].hasRightFace 
-                    && !blockFaces[x][y + checkWidth][z].rightChecked
-                    && y + checkWidth <= CHUNK_SIZE - 1)
+                    && !blockFaces[x][y + checkWidth][z].rightChecked)
                     {
                         blockFaces[x][y + checkWidth][z].rightChecked = true;
                         checkWidth++;
@@ -491,10 +491,10 @@ void Chunk::updateSurfaceData()
                     int checkWidth = 1;
                     int checkHeight = 1;
 
-                    while (blockFaces[x + checkWidth][y][z].blockType == blockType
+                    while (x + checkWidth <= CHUNK_SIZE - 1
+                    && blockFaces[x + checkWidth][y][z].blockType == blockType
                     && blockFaces[x + checkWidth][y][z].hasForwardFace 
-                    && !blockFaces[x + checkWidth][y][z].forwardChecked
-                    && x + checkWidth <= CHUNK_SIZE - 1)
+                    && !blockFaces[x + checkWidth][y][z].forwardChecked)
                     {
                         blockFaces[x + checkWidth][y][z].forwardChecked = true;
                         checkWidth++;
@@ -549,10 +549,10 @@ void Chunk::updateSurfaceData()
                     int checkWidth = 1;
                     int checkHeight = 1;
 
-                    while (blockFaces[x + checkWidth][y][z].blockType == blockType
+                    while (x + checkWidth <= CHUNK_SIZE - 1
+                    && blockFaces[x + checkWidth][y][z].blockType == blockType
                     && blockFaces[x + checkWidth][y][z].hasBackwardFace 
-                    && !blockFaces[x + checkWidth][y][z].backwardChecked
-                    && x + checkWidth <= CHUNK_SIZE - 1)
+                    && !blockFaces[x + checkWidth][y][z].backwardChecked)
                     {
                         blockFaces[x + checkWidth][y][z].backwardChecked = true;
                         checkWidth++;
