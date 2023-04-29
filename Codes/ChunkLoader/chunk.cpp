@@ -786,7 +786,8 @@ void Chunk::clearVerticiesData()
         return;
     }
 
-    std::vector<float>().swap(verticies);
+    verticies.clear();
+    verticies.shrink_to_fit();
 }
 
 void Chunk::release()

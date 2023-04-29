@@ -26,10 +26,10 @@ int findInList(const std::vector<ListType> &list, FindType find,
 template <typename FindType>
 int findInList(const std::vector<FindType> &list, FindType find)
 {
-    int i = std::find(list.begin(), list.end(), find);
+    auto i = std::find(list.begin(), list.end(), find);
     if (i != list.end())
     {
-        return i;
+        return std::distance(list.begin(), i);
     }
 
     return -1;
