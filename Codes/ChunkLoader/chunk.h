@@ -28,6 +28,8 @@ class Chunk
         bool isBasePainted = false;
         bool isTopPainted = false;
 
+        bool isStructuresAdded = false;
+
     public:
         Chunk(int x, int y, int z);
         Chunk(IntPos chunkPos);
@@ -45,8 +47,13 @@ class Chunk
 
         void markBasePainted();
         void markTopPainted();
-        bool basePainted();
-        bool topPainted();
+        bool basePainted() const;
+        bool topPainted() const;
+
+        void markStructuresAdded();
+        bool structuresAdded() const;
+
+        void clearVerticiesData();
 
         void release();
 };

@@ -2,7 +2,7 @@
 
 #include "chunk.h"
 #include "chunkLoader.h"
-#include "../math.h"
+#include "../globalFunctions.h"
 #include "../globals.h"
 #include "../Graphics/graphics.h"
 #include "../Types/vec2.h"
@@ -19,6 +19,15 @@ IntPos Chunk::getChunkPos() const
 
 void Chunk::addBlock(Block block)
 {
+    if (block.pos.chunkPos() != chunkPos)
+    {
+        printf("Chunk::addBlock(): block pos %s has chunkPos %s not belong to chunk %s\n", 
+                block.pos.toString(false).c_str(),
+                block.pos.chunkPos().toString(false).c_str(),
+                chunkPos.toString(false).c_str());
+        return;
+    }
+
     surfaceDataUpdated = false;
     meshUpdated = false;
 
@@ -129,7 +138,9 @@ void Chunk::updateSurfaceData()
                 {
                     if (y == CHUNK_SIZE - 1)
                     {
-                        if (!topChunkLoaded || topChunk.getBlock(IntPos(x, 0, z)).blockType == BlockType::EMPTY)
+                        if (!topChunkLoaded 
+                        || findInList<BlockType>(blocksWithAlpha, 
+                                                topChunk.getBlock(IntPos(x, 0, z)).blockType) != -1)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasTopFace = true;
@@ -137,7 +148,7 @@ void Chunk::updateSurfaceData()
                     }
                     else
                     {
-                        if (blocks[x][y + 1][z].blockType == BlockType::EMPTY)
+                        if (findInList<BlockType>(blocksWithAlpha, blocks[x][y + 1][z].blockType) != -1)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasTopFace = true;
@@ -146,7 +157,9 @@ void Chunk::updateSurfaceData()
 
                     if (y == 0)
                     {
-                        if (!bottomChunkLoaded || bottomChunk.getBlock(IntPos(x, CHUNK_SIZE - 1, z)).blockType == BlockType::EMPTY)
+                        if (!bottomChunkLoaded 
+                        || findInList<BlockType>(blocksWithAlpha, 
+                                                bottomChunk.getBlock(IntPos(x, CHUNK_SIZE - 1, z)).blockType) != -1)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasBottomFace = true;
@@ -154,7 +167,7 @@ void Chunk::updateSurfaceData()
                     }
                     else
                     {
-                        if (blocks[x][y - 1][z].blockType == BlockType::EMPTY)
+                        if (findInList<BlockType>(blocksWithAlpha, blocks[x][y - 1][z].blockType) != -1)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasBottomFace = true;
@@ -163,7 +176,9 @@ void Chunk::updateSurfaceData()
 
                     if (x == 0)
                     {
-                        if (!leftChunkLoaded || leftChunk.getBlock(IntPos(CHUNK_SIZE - 1, y, z)).blockType == BlockType::EMPTY)
+                        if (!leftChunkLoaded 
+                        || findInList<BlockType>(blocksWithAlpha, 
+                                                leftChunk.getBlock(IntPos(CHUNK_SIZE - 1, y, z)).blockType) != -1)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasLeftFace = true;
@@ -171,7 +186,7 @@ void Chunk::updateSurfaceData()
                     }
                     else
                     {
-                        if (blocks[x - 1][y][z].blockType == BlockType::EMPTY)
+                        if (findInList<BlockType>(blocksWithAlpha, blocks[x - 1][y][z].blockType) != -1)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasLeftFace = true;
@@ -180,7 +195,9 @@ void Chunk::updateSurfaceData()
 
                     if (x == CHUNK_SIZE - 1)
                     {
-                        if (!rightChunkLoaded || rightChunk.getBlock(IntPos(0, y, z)).blockType == BlockType::EMPTY)
+                        if (!rightChunkLoaded 
+                        || findInList<BlockType>(blocksWithAlpha, 
+                                                rightChunk.getBlock(IntPos(0, y, z)).blockType) != -1)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasRightFace = true;
@@ -188,7 +205,7 @@ void Chunk::updateSurfaceData()
                     }
                     else
                     {
-                        if (blocks[x + 1][y][z].blockType == BlockType::EMPTY)
+                        if (findInList<BlockType>(blocksWithAlpha, blocks[x + 1][y][z].blockType) != -1)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasRightFace = true;
@@ -197,7 +214,9 @@ void Chunk::updateSurfaceData()
 
                     if (z == CHUNK_SIZE - 1)
                     {
-                        if (!forwardChunkLoaded || forwardChunk.getBlock(IntPos(x, y, 0)).blockType == BlockType::EMPTY)
+                        if (!forwardChunkLoaded 
+                        || findInList<BlockType>(blocksWithAlpha, 
+                                                forwardChunk.getBlock(IntPos(x, y, 0)).blockType) != -1)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasForwardFace = true;
@@ -205,7 +224,7 @@ void Chunk::updateSurfaceData()
                     }
                     else
                     {
-                        if (blocks[x][y][z + 1].blockType == BlockType::EMPTY)
+                        if (findInList<BlockType>(blocksWithAlpha, blocks[x][y][z + 1].blockType) != -1)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasForwardFace = true;
@@ -214,7 +233,9 @@ void Chunk::updateSurfaceData()
 
                     if (z == 0)
                     {
-                        if (!backwardChunkLoaded || backwardChunk.getBlock(IntPos(x, y, CHUNK_SIZE - 1)).blockType == BlockType::EMPTY)
+                        if (!backwardChunkLoaded 
+                        || findInList<BlockType>(blocksWithAlpha, 
+                                                backwardChunk.getBlock(IntPos(x, y, CHUNK_SIZE - 1)).blockType) != -1)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasBackwardFace = true;
@@ -222,7 +243,7 @@ void Chunk::updateSurfaceData()
                     }
                     else
                     {
-                        if (blocks[x][y][z - 1].blockType == BlockType::EMPTY)
+                        if (findInList<BlockType>(blocksWithAlpha, blocks[x][y][z - 1].blockType) != -1)
                         {
                             blockFaces[x][y][z].blockType = block.blockType;
                             blockFaces[x][y][z].hasBackwardFace = true;
@@ -728,14 +749,44 @@ void Chunk::markTopPainted()
     isTopPainted = true;
 }
 
-bool Chunk::basePainted()
+bool Chunk::basePainted() const
 {
     return isBasePainted;
 }
 
-bool Chunk::topPainted()
+bool Chunk::topPainted() const
 {
     return isTopPainted;
+}
+
+void Chunk::markStructuresAdded()
+{
+    isStructuresAdded = true;
+}
+
+bool Chunk::structuresAdded() const
+{
+    return isStructuresAdded;
+}
+
+void Chunk::clearVerticiesData()
+{
+    if (verticies.size() == 0)
+    {
+        return;
+    } 
+
+    if (!meshInitialized
+    || !meshUpdated
+    || !surfaceDataUpdated
+    || !isBasePainted
+    || !isTopPainted
+    || !isStructuresAdded)
+    {
+        return;
+    }
+
+    std::vector<float>().swap(verticies);
 }
 
 void Chunk::release()

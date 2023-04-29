@@ -12,6 +12,7 @@
 #include "Graphics/text.h"
 #include "GraphicEffects/blur.h"
 #include "ChunkLoader/chunkLoader.h"
+#include "StructureLoader/structureLoader.h"
 #include "Types/vectormath.h"
 #include "Types/intPos.h"
 #include "Entities/camera.h"
@@ -20,7 +21,9 @@
 #include "time.h"
 #include "intervalsAndWaits.h"
 #include "input.h"
+#include "random.h"
 
+#include "StructureLoader/tree.h"
 #include "threadControls.h"
 
 float cameraRotationX = 0;
@@ -124,7 +127,10 @@ void onMouseClick(GLFWwindow* window, int button, int action, int mods)
         {
             if (currentBlockRaycast.found)
             {
-                ChunkLoader::placeBlock(Block(BlockType::GRASS, IntPos(currentBlockRaycast.blockPlacingPos)));
+                // ChunkLoader::placeBlock(Block(BlockType::LOG, IntPos(currentBlockRaycast.blockPlacingPos)));
+                Structure::Tree tree;
+                tree.init(IntPos(currentBlockRaycast.blockPlacingPos));
+                tree.place();
             }
         }
 
@@ -177,6 +183,7 @@ void initOpenGL()
 int main()
 {
     srand(time(0));
+    Random::init();
 
     initOpenGL();
 
@@ -203,6 +210,7 @@ int main()
         // ThreadControls::lockMainThread();
         Input::update();
         ChunkLoader::update();
+        StructureLoader::removeCheckedMarks();
 
         if (openingMenuGroup == MenuGroup::NONE)
         {

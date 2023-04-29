@@ -1,4 +1,4 @@
-#include "math.h"
+#include "globalFunctions.h"
 
 int mod(int a, int b)
 {

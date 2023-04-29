@@ -23,6 +23,7 @@ class Terrain
 
     public:
         static void init();
+        static int getTerrainHeight(IntPos block2dPos);
         static Block getBlock(IntPos blockPos);
         static void paintTerrainBase(Chunk &chunk);
         static void paintTerrainTop(Chunk &chunk);

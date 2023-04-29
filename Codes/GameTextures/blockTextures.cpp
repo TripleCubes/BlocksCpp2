@@ -39,6 +39,17 @@ Vec2 GameTextures::BlockTextures::getUV(BlockType blockType, BlockDir blockDir)
         }
         return Vec2(2, 0) * oneBlockTextureSize;
         break;
+
+    case BlockType::LOG:
+        if (blockDir == BlockDir::TOP || blockDir == BlockDir::BOTTOM)
+        {
+            return Vec2(5, 0) * oneBlockTextureSize;
+        }
+        return Vec2(4, 0) * oneBlockTextureSize;
+        break;
+
+    case BlockType::LEAF:
+        return Vec2(6, 0) * oneBlockTextureSize;
     
     default:
         return Vec2(0, 0);

@@ -26,15 +26,17 @@ class ChunkLoader
 
         static void chunkLoadThreadFunction();
         static void chunkPaintTopThreadFunction();
+        static void chunkAddStructureThreadFunction();
         static void updateSurfaceDataThreadFunction();
         static void updateMeshesThreadFunction();
+        static void chunkClearVerticiesDataThreadFunction();
         static void chunkUnloadThreadFunction();
 
         static std::string convertToKey(int x, int y, int z);
         static std::string convertToKey(IntPos chunkPos);
 
         static Chunk &getChunk(IntPos chunkPos);
-        static Chunk &getChunk(std::string key);
+        static Chunk &getChunk(const std::string &key);
         static Block getBlock(int x, int y, int z);
         static Block getBlock(IntPos pos);
         static void placeBlock(Block block);
@@ -43,12 +45,12 @@ class ChunkLoader
         static void requestUnloadAllChunks();
 
         static bool chunkLoaded(IntPos chunkPos);
-        static bool chunkLoaded(std::string key);
+        static bool chunkLoaded(const std::string &key);
 
         static void loadChunk(IntPos chunkPos);
-        static std::unordered_map<std::string, Chunk>::iterator unloadChunk(IntPos chunkPos);
 
         static void setLoadDistance(int loadDistance);
+        static int getLoadDistance();
 
         static void update();
         static void draw();

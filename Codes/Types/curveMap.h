@@ -12,8 +12,8 @@ class CurveMap
     public:
         CurveMap();
         void setPoints(std::vector<Vec2> points);
-        float map(float x);
-        bool error();
+        float map(float x) const;
+        bool error() const;
 };
 
 #endif

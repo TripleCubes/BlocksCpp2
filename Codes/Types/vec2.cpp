@@ -4,47 +4,47 @@
 
 Vec2::Vec2(float x, float y): x{x}, y{y} {}
 
-Vec2 Vec2::operator + (Vec2 vec)
+Vec2 Vec2::operator + (Vec2 vec) const
 {
     return Vec2(x + vec.x, y + vec.y);
 }
 
-Vec2 Vec2::operator - (Vec2 vec)
+Vec2 Vec2::operator - (Vec2 vec) const
 {
     return Vec2(x - vec.x, y - vec.y);
 }
 
-Vec2 Vec2::operator * (float num)
+Vec2 Vec2::operator * (float num) const
 {
     return Vec2(x * num, y * num);
 }
 
-Vec2 Vec2::operator / (float num)
+Vec2 Vec2::operator / (float num) const
 {
     return Vec2(x / num, y / num);
 }
 
-Vec2 Vec2::operator * (Vec2 vec)
+Vec2 Vec2::operator * (Vec2 vec) const
 {
     return Vec2(x*vec.x, y*vec.y);
 }
 
-Vec2 Vec2::operator / (Vec2 vec)
+Vec2 Vec2::operator / (Vec2 vec) const
 {
     return Vec2(x/vec.x, y/vec.y);
 }
 
-Vec2 Vec2::normalize()
+Vec2 Vec2::normalize() const
 {
     return Vec2(x, y) / length();
 }
 
-float Vec2::length()
+float Vec2::length() const
 {
     return sqrt(x*x + y*y);
 }
 
-float Vec2::getYFromX(Vec2 vec, float x)
+float Vec2::getYFromX(Vec2 vec, float x) const
 {
     if (x == this->x)
     {
@@ -70,7 +70,7 @@ float Vec2::getYFromX(Vec2 vec, float x)
     return m*x + a;
 }
 
-std::string Vec2::toString(bool endline)
+std::string Vec2::toString(bool endline) const
 {
     return std::to_string(x) +  " " + std::to_string(y) + (endline ? "\n" : "");
 }

@@ -4,27 +4,27 @@
 Vec3::Vec3(): x(0), y(0), z(0){}
 Vec3::Vec3(float x, float y, float z): x(x), y(y), z(z){}
 
-Vec3 Vec3::operator + (Vec3 vec)
+Vec3 Vec3::operator + (Vec3 vec) const
 {
     return Vec3(x + vec.x, y + vec.y, z + vec.z);
 }
 
-Vec3 Vec3::operator - (Vec3 vec)
+Vec3 Vec3::operator - (Vec3 vec) const
 {
     return Vec3(x - vec.x, y - vec.y, z - vec.z);
 }
 
-Vec3 Vec3::operator * (float num)
+Vec3 Vec3::operator * (float num) const
 {
     return Vec3(x * num, y * num, z * num);
 }
 
-Vec3 Vec3::operator / (float num)
+Vec3 Vec3::operator / (float num) const
 {
     return Vec3(x / num, y / num, z / num);
 }
 
-bool Vec3::operator == (Vec3 vec)
+bool Vec3::operator == (Vec3 vec) const
 {
     if (x != vec.x || y != vec.y || z != vec.z)
     {
@@ -61,26 +61,26 @@ void Vec3::operator /= (float num)
     z /= num;
 }
 
-Vec3 Vec3::rotateX(float deg)
+Vec3 Vec3::rotateX(float deg) const
 {
     glm::vec3 glmVec = glm::vec3(x, y, z);
     glmVec = glm::rotateX(glmVec, glm::radians(deg));
     return Vec3(glmVec.x, glmVec.y, glmVec.z);
 }
 
-Vec3 Vec3::rotateY(float deg)
+Vec3 Vec3::rotateY(float deg) const
 {
     glm::vec3 glmVec = glm::vec3(x, y, z);
     glmVec = glm::rotateY(glmVec, glm::radians(deg));
     return Vec3(glmVec.x, glmVec.y, glmVec.z);
 }
 
-float Vec3::length()
+float Vec3::length() const
 {
     return distance(Vec3(0, 0, 0), Vec3(x, y, z));
 }
 
-Vec3 Vec3::normalize()
+Vec3 Vec3::normalize() const
 {
     if (Vec3(x, y, z).length() == 0)
     {
@@ -89,17 +89,17 @@ Vec3 Vec3::normalize()
     return Vec3(x, y, z) / Vec3(x, y, z).length();
 }
 
-float Vec3::dot(Vec3 vec)
+float Vec3::dot(Vec3 vec) const
 {
     return ::dot(Vec3(x, y, z), vec);
 }
 
-Vec3 Vec3::cross(Vec3 vec)
+Vec3 Vec3::cross(Vec3 vec) const
 {
     return ::cross(Vec3(x, y, z), vec);
 }
 
-std::string Vec3::toString(bool endline)
+std::string Vec3::toString(bool endline) const
 {
     return std::to_string(x) +  " " + std::to_string(y) + " " + std::to_string(z) + (endline ? "\n" : "");
 }

@@ -47,7 +47,7 @@ void CurveMap::setPoints(std::vector<Vec2> points)
     this->points = points;
 }
 
-float CurveMap::map(float x)
+float CurveMap::map(float x) const
 {
     if (x < 0 || x > 1)
     {
@@ -72,7 +72,7 @@ float CurveMap::map(float x)
     return 0;
 }
 
-bool CurveMap::error()
+bool CurveMap::error() const
 {
     return isError;
 }

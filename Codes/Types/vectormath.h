@@ -16,23 +16,23 @@ struct Vec3
     Vec3();
     Vec3(float x, float y, float z);
 
-    Vec3 operator + (Vec3 vec);
-    Vec3 operator - (Vec3 vec);
-    Vec3 operator * (float num);
-    Vec3 operator / (float num);
-    bool operator == (Vec3 vec);
+    Vec3 operator + (Vec3 vec) const;
+    Vec3 operator - (Vec3 vec) const;
+    Vec3 operator * (float num) const;
+    Vec3 operator / (float num) const;
+    bool operator == (Vec3 vec) const;
     void operator += (Vec3 vec);
     void operator -= (Vec3 vec);
     void operator *= (float num);
     void operator /= (float num);
-    Vec3 rotateX(float deg);
-    Vec3 rotateY(float deg); 
-    float length();
-    Vec3 normalize();
-    float dot(Vec3 vec);
-    Vec3 cross(Vec3 vec);
+    Vec3 rotateX(float deg) const;
+    Vec3 rotateY(float deg) const; 
+    float length() const;
+    Vec3 normalize() const;
+    float dot(Vec3 vec) const;
+    Vec3 cross(Vec3 vec) const;
     
-    std::string toString(bool endline = true);
+    std::string toString(bool endline = true) const;
 };
 
 Vec3 cross(Vec3 vec_a, Vec3 vec_b);

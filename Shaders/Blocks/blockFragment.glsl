@@ -16,10 +16,15 @@ void main()
     vec2 textureCoord = fragmentInputUVStartCoord 
         + vec2(mod((fragmentInputTextureCoord.x - fragmentInputUVStartCoord.x), oneBlockTextureSize.x),
                 mod((fragmentInputTextureCoord.y - fragmentInputUVStartCoord.y), oneBlockTextureSize.y));
-    vec3 result = texture(texture, textureCoord).xyz;
+
+    vec4 result = texture(texture, textureCoord);
+    if (result.a == 0.0)
+    {
+        discard;
+    }
 
     float light = max(0.2, dot(lightDir, fragmentInputNormal));
-    result *= light;
+    result.rgb *= light;
 
-    outputColor = vec4(result, 1.0f);
+    outputColor = result;
 } 

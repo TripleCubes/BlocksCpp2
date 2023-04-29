@@ -6,8 +6,8 @@ void Texture::load(std::string path, FilterType filterType)
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     if (filterType == FilterType::LINEAR)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -25,7 +25,7 @@ void Texture::load(std::string path, FilterType filterType)
         printf("failed to load texture %s\n", path.c_str());
         return;
     }
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(textureData);

@@ -2,6 +2,7 @@
 #define BLOCK_H
 
 #include "../Types/intPos.h"
+#include <vector>
 
 enum class BlockType
 {
@@ -9,6 +10,13 @@ enum class BlockType
     STONE,
     DIRT,
     GRASS,
+    LOG,
+    LEAF,
+};
+
+const std::vector<BlockType> blocksWithAlpha = {
+    BlockType::EMPTY, 
+    BlockType::LEAF,
 };
 
 enum class BlockDir

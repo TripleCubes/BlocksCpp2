@@ -8,8 +8,8 @@ struct Color
     float b = 0.0;
     float a = 1.0;
     Color(float r, float g, float b, float a);
-    Color operator + (Color color);
-    Color operator - (Color color);
+    Color operator + (Color color) const;
+    Color operator - (Color color) const;
 };
 
 #endif

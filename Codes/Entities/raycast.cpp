@@ -1,5 +1,5 @@
 #include "raycast.h"
-#include "../math.h"
+#include "../globalFunctions.h"
 #include "../ChunkLoader/chunkLoader.h"
 
 BlockRaycast::BlockRaycast(Vec3 from, Vec3 dir, float range)

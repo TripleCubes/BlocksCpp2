@@ -4,6 +4,8 @@
 #include "chunk.h"
 #include <vector>
 
+#include "../random.h"
+
 FastNoiseLite Terrain::terrainShape_noise;
 CurveMap Terrain::terrain_curveMap;
 
@@ -122,16 +124,19 @@ void Terrain::init()
     smallMountains_noise.SetFrequency(0.005);
 }
 
+int Terrain::getTerrainHeight(IntPos block2dPos)
+{
+    float bigMountains_height = (bigMountains_noise.GetNoise((float)block2dPos.x, (float)block2dPos.z)+1)/2;
+    bigMountains_height = bigMountains_curveMap.map(bigMountains_height);
+    float smallMountains_height = (smallMountains_noise.GetNoise((float)block2dPos.x, (float)block2dPos.z)+1)/2;
+    smallMountains_height = smallMountains_curveMap.map(smallMountains_height);
+    return (int)round((smallMountains_height * 0.3 + bigMountains_height * 0.7) * terrainHeight_max);
+}
+
 Block Terrain::getBlock(IntPos blockPos)
 {
-    float bigMountains_height = (bigMountains_noise.GetNoise((float)blockPos.x, (float)blockPos.z)+1)/2;
-    bigMountains_height = bigMountains_curveMap.map(bigMountains_height);
-    float smallMountains_height = (smallMountains_noise.GetNoise((float)blockPos.x, (float)blockPos.z)+1)/2;
-    smallMountains_height = smallMountains_curveMap.map(smallMountains_height);
-    int combinedMountainsHeight = round((smallMountains_height * 0.3 + bigMountains_height * 0.7) * terrainHeight_max);
-
     float terrain_noiseValue = (terrainShape_noise.GetNoise((float)blockPos.x, (float)blockPos.y, (float)blockPos.z)+1)/2;
-    int maxMountainsHeight = combinedMountainsHeight;
+    int maxMountainsHeight = getTerrainHeight(blockPos);
     int minMountainsHeight = -10;
     float terrainShape_noiseValueFilter = ((float)blockPos.y-(float)minMountainsHeight)/((float)maxMountainsHeight-(float)minMountainsHeight);
     if (terrainShape_noiseValueFilter <= 0)

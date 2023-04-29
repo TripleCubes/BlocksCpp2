@@ -1,7 +1,8 @@
 #include "chunkLoader.h"
 #include "terrain.h"
-#include "../math.h"
+#include "../globalFunctions.h"
 #include "../globals.h"
+#include "../StructureLoader/structureLoader.h"
 #include "../threadControls.h"
 
 int ChunkLoader::loadDistance = 8;
@@ -48,6 +49,17 @@ void ChunkLoader::chunkPaintTopThreadFunction()
     }
 }
 
+void ChunkLoader::chunkAddStructureThreadFunction()
+{
+    for (std::unordered_map<std::string, Chunk>::iterator i = chunks.begin(); i != chunks.end(); i++)
+    {
+        if (!i->second.structuresAdded())
+        {
+            StructureLoader::placeStructures(i->second);
+        }
+    }
+}
+
 void ChunkLoader::updateSurfaceDataThreadFunction()
 {
     for (std::unordered_map<std::string, Chunk>::iterator i = chunks.begin(); i != chunks.end(); i++)
@@ -61,6 +73,14 @@ void ChunkLoader::updateMeshesThreadFunction()
     for (std::unordered_map<std::string, Chunk>::iterator i = chunks.begin(); i != chunks.end(); i++)
     {
         i->second.updateMesh();
+    }
+}
+
+void ChunkLoader::chunkClearVerticiesDataThreadFunction()
+{
+    for (std::unordered_map<std::string, Chunk>::iterator i = chunks.begin(); i != chunks.end(); i++)
+    {
+        i->second.clearVerticiesData();
     }
 }
 
@@ -95,8 +115,8 @@ void ChunkLoader::unloadAllChunks()
 {
     for (std::unordered_map<std::string, Chunk>::iterator i = chunks.begin(); i != chunks.end();)
     {
-        IntPos chunkPos = i->second.getChunkPos();
-        i = unloadChunk(chunkPos);
+        i->second.release();
+        i = chunks.erase(i);
     }
 }
 
@@ -127,7 +147,7 @@ Chunk &ChunkLoader::getChunk(IntPos chunkPos)
     return getChunk(convertToKey(chunkPos));
 }
 
-Chunk &ChunkLoader::getChunk(std::string key)
+Chunk &ChunkLoader::getChunk(const std::string &key)
 {
     return chunks[key];
 }
@@ -213,7 +233,7 @@ bool ChunkLoader::chunkLoaded(IntPos chunkPos)
     return chunkLoaded(convertToKey(chunkPos));
 }
 
-bool ChunkLoader::chunkLoaded(std::string key)
+bool ChunkLoader::chunkLoaded(const std::string &key)
 {
     return chunks.find(key) != chunks.end();
 }
@@ -236,22 +256,9 @@ void ChunkLoader::loadChunk(IntPos chunkPos)
         }
     }
     Terrain::paintTerrainBase(chunk);
+    StructureLoader::checkLoad(chunkPos);
     chunks.insert(std::make_pair(convertToKey(chunkPos), chunk));
     requestUpdateChunksAround(chunkPos);
-}
-
-std::unordered_map<std::string, Chunk>::iterator ChunkLoader::unloadChunk(IntPos chunkPos)
-{
-    std::string key = convertToKey(chunkPos);
-    std::unordered_map<std::string, Chunk>::iterator i = chunks.find(key);
-
-    if (i != chunks.end())
-    {
-        chunks[key].release();
-        return chunks.erase(i);
-    }
-
-    return ++i;
 }
 
 void ChunkLoader::setLoadDistance(int loadDistance)
@@ -259,12 +266,19 @@ void ChunkLoader::setLoadDistance(int loadDistance)
     ChunkLoader::loadDistance = loadDistance;
 }
 
+int ChunkLoader::getLoadDistance()
+{
+    return loadDistance;
+}
+
 void ChunkLoader::update()
 {
     chunkLoadThreadFunction();
     chunkPaintTopThreadFunction();
+    chunkAddStructureThreadFunction();
     updateSurfaceDataThreadFunction();
     updateMeshesThreadFunction();
+    chunkClearVerticiesDataThreadFunction();
     chunkUnloadThreadFunction();
 }
 

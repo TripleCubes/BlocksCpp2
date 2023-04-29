@@ -10,11 +10,16 @@ struct IntPos
     int x = 0;
     int y = 0;
     int z = 0;
-    bool operator == (IntPos pos);
-    IntPos chunkPos();
-    IntPos blockChunkPos();
-    std::string toString(bool endline = true);
-    Vec3 toVec3();
+    bool operator == (IntPos pos) const;
+    bool operator != (IntPos pos) const;
+    IntPos operator + (IntPos pos) const;
+    IntPos operator - (IntPos pos) const;
+    IntPos operator * (int num) const;
+    IntPos operator / (int num) const;
+    IntPos chunkPos() const;
+    IntPos blockChunkPos() const;
+    std::string toString(bool endline = true) const;
+    Vec3 toVec3() const;
 };
 
 #endif
