@@ -1,1 +1,0 @@
-gdb %~dp0Build/blocks.exe

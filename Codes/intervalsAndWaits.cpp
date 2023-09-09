@@ -1,5 +1,5 @@
 #include "intervalsAndWaits.h"
-#include "time.h"
+#include "gametime.h"
 #include <vector>
 #include <stdio.h>
 

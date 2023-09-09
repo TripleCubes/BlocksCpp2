@@ -1,3 +1,6 @@
-Build
-Release
-.vscode
+.vscode/
+
+_Build/
+_Premake/
+
+*.bat

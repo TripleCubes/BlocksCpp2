@@ -4,7 +4,7 @@
 #include "../globals.h"
 #include "../ChunkLoader/chunkLoader.h"
 #include "../Graphics/graphics.h"
-#include "../time.h"
+#include "../gametime.h"
 
 #include "../Types/intPos.h"
 

@@ -18,7 +18,7 @@
 #include "Entities/camera.h"
 #include "UI/ui.h"
 #include "GameTextures/blockTextures.h"
-#include "time.h"
+#include "gametime.h"
 #include "intervalsAndWaits.h"
 #include "input.h"
 #include "random.h"

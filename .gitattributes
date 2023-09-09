@@ -1,0 +1,2 @@
+_Libs/** linguist-vendored
+*.h linguist-language=C++
