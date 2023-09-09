@@ -2,6 +2,22 @@ Voxel game written in C++
 
 This is an old project, my coding style has changed a lot after this project. I am making a new voxel game. Checkout https://github.com/TripleCubes/Plane.
 
+Controls:
+
+WASD to move, SPACE to jump, F to toggle fly mode.
+
+When in fly mode, SPACE to fly up and SHIFT to fly down.
+
+LEFT CLICK to break block, RIGHT CLICK to place a log block.
+
+M to toggle wireframe mode, N to toggle collisions. If collision is disabled the player will be in fly mode. To disable fly mode collision need to be enabled.
+
+ESC to open pause menu. You can change FOV and load distance in the settings submenu.
+
+P open a dev menu that allow terrain modification.
+
+There is a chance you will spawn inside a tree or a mountain. If that happen you can dig your way out or disable collisions.
+
 # LICENSE
 BlocksCpp2 is under the MIT license. Check [LICENSE](LICENSE) for full information.
 
