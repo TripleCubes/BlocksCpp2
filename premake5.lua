@@ -26,7 +26,7 @@ project "Blocks"
 
     files { "Codes/**.cpp", "_Libs/Stb_image/Codes/stb_image.cpp", }
 
-    buildoptions { "-Wall" }
+    buildoptions { "-Wall", "-static-libgcc", "-static-libstdc++" }
 
     links { "gdi32", "GLFW", "GLAD", "FreeType", }
 
