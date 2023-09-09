@@ -127,10 +127,10 @@ void onMouseClick(GLFWwindow* window, int button, int action, int mods)
         {
             if (currentBlockRaycast.found)
             {
-                // ChunkLoader::placeBlock(Block(BlockType::LOG, IntPos(currentBlockRaycast.blockPlacingPos)));
-                Structure::Tree tree;
-                tree.init(IntPos(currentBlockRaycast.blockPlacingPos));
-                tree.place();
+                ChunkLoader::placeBlock(Block(BlockType::LOG, IntPos(currentBlockRaycast.blockPlacingPos)));
+                // Structure::Tree tree;
+                // tree.init(IntPos(currentBlockRaycast.blockPlacingPos));
+                // tree.place();
             }
         }
 
