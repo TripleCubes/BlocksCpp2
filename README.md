@@ -27,7 +27,7 @@ BSD 3-Clause License
 Copyright (c) 2018, Salesforce
 All rights reserved.
 
-The license file is located at [_Libs/glad/LICENSE](_Libs/glad/LICENSE)
+The license file is located at [_Libs/GLAD/LICENSE](_Libs/GLAD/LICENSE)
 
 ## GLFW
 the [zlib/libpng license](https://www.glfw.org/license.html)
