@@ -198,7 +198,7 @@ int main()
 
     GraphicEffects::Blur::init();
 
-    player.init(Vec3(0, 0, 10), Vec3(0, 0, -1));
+    player.init(Vec3(0, 40, 10), Vec3(0, 0, -1));
     mainCamera.init(player);
 
     // ThreadControls::init();

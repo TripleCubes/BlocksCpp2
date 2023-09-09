@@ -10,7 +10,7 @@ MenuGroup openingMenuGroup = MenuGroup::NONE;
 bool mouseLock = true;
 
 bool thirdPersonView = false;
-bool flying = true;
+bool flying = false;
 bool wireframeMode = false;
 bool ignoreCollision = false;
 
