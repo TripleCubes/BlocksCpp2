@@ -1,3 +1,7 @@
+Voxel game written in C++
+
+This is an old project, my coding style has changed a lot after this project. I am making a new voxel game. Checkout https://github.com/TripleCubes/Plane
+
 # LICENSE
 BlocksCpp2 is under the MIT license. Check [LICENSE](LICENSE) for full information.
 
