@@ -26,7 +26,8 @@ project "Blocks"
 
     files { "Codes/**.cpp", "_Libs/Stb_image/Codes/stb_image.cpp", }
 
-    buildoptions { "-Wall", "-static-libgcc", "-static-libstdc++" }
+    buildoptions { "-Wall" }
+    linkoptions { "-static", "-static-libgcc", "-static-libstdc++", }
 
     links { "gdi32", "GLFW", "GLAD", "FreeType", }
 
@@ -85,6 +86,8 @@ project "GLFW"
             "_GLFW_WIN32",
             "_CRT_SECURE_NO_WARNINGS",
         }
+
+    filter {}
 
     filter "configurations:Debug"
         runtime "Debug"
